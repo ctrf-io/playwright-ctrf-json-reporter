@@ -9,7 +9,6 @@ export interface Results {
 }
 
 export interface Totals {
-  suites?: number
   tests: number
   passed: number
   failed: number
@@ -18,29 +17,29 @@ export interface Totals {
   timedOut: number
   interrupted: number
   other: number
+  suites?: number
 }
 
 export interface CtrfTest {
   name: string
-  duration: number
   status: CtrfTestState
+  duration: number
   start?: number
   stop?: number
+  suite?: string
   message?: string
   trace?: string
   rawStatus?: string
-  environment?: string
   tags?: string[]
   type?: string
-  suite?: string
-  parameters?: Record<string, any>
-  steps?: Step[]
-  screenshot?: string
   filePath?: string
-  flake?: boolean
   retry?: number
+  flake?: boolean
   browser?: string
   device?: string
+  screenshot?: string
+  parameters?: Record<string, any>
+  steps?: Step[]
   extras?: Record<string, any>
 }
 

@@ -40,8 +40,10 @@ class GenerateCtrfReport implements Reporter {
   readonly ctrfReport: CtrfReport
   readonly defaultOptions: ReporterConfigOptions
   reporterConfigOptions: ReporterConfigOptions | undefined = undefined
-  readonly reporterName = "ctrf-json-reporter";
-  
+  // readonly reporterName = "ctrf-json-reporter";
+  readonly reporterName =
+    '/Users/matthew/projects/personal/ctrf/playwright-ctrf-json-report/dist/index.js'
+
   readonly defaultOutputFile = 'ctrf-report.json'
   readonly defaultOutputDir = '.'
   filename = this.defaultOutputFile
