@@ -39,8 +39,7 @@ type ReporterConfig = [string, ReporterConfigOptions?]
 class GenerateCtrfReport implements Reporter {
   readonly ctrfReport: CtrfReport
   reporterConfigOptions: ReporterConfigOptions
-  readonly reporterName =
-    '/Users/matthew/projects/personal/ctrf/playwright-ctrf-json-report/dist/index.js'
+  readonly reporterName = 'ctrf-json-reporter'
 
   readonly defaultOutputFile = 'ctrf-report.json'
   readonly defaultOutputDir = '.'
