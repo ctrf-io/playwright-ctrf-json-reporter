@@ -19,18 +19,18 @@ interface ReporterConfigOptions {
   minimal: boolean
   start: boolean
   stop: boolean
+  suite: boolean
   message: boolean
   trace: boolean
   rawStatus: boolean
   tags: boolean
-  filePath: boolean
-  flake: boolean
-  retry: boolean
-  screenshot: boolean
-  suite: boolean
   type: boolean
+  filePath: boolean
+  retry: boolean
+  flake: boolean
   browser: boolean
   device: boolean
+  screenshot: boolean
   customType?: string
 }
 
@@ -38,9 +38,7 @@ type ReporterConfig = [string, ReporterConfigOptions?]
 
 class GenerateCtrfReport implements Reporter {
   readonly ctrfReport: CtrfReport
-  readonly defaultOptions: ReporterConfigOptions
-  reporterConfigOptions: ReporterConfigOptions | undefined = undefined
-  // readonly reporterName = "ctrf-json-reporter";
+  reporterConfigOptions: ReporterConfigOptions
   readonly reporterName =
     '/Users/matthew/projects/personal/ctrf/playwright-ctrf-json-report/dist/index.js'
 
@@ -50,24 +48,24 @@ class GenerateCtrfReport implements Reporter {
   outputDir = this.defaultOutputDir
 
   constructor() {
-    this.defaultOptions = {
+    this.reporterConfigOptions = {
       outputFile: this.defaultOutputFile,
       outputDir: this.defaultOutputDir,
       minimal: false,
       start: true,
       stop: true,
+      suite: true,
       message: true,
       trace: true,
       rawStatus: true,
       tags: true,
-      filePath: true,
-      flake: true,
-      retry: true,
-      screenshot: false,
-      suite: true,
       type: true,
+      filePath: true,
+      retry: true,
+      flake: true,
       browser: true,
       device: true,
+      screenshot: false,
     }
 
     this.ctrfReport = {
@@ -91,8 +89,7 @@ class GenerateCtrfReport implements Reporter {
   }
 
   onBegin(config: FullConfig): void {
-    const providedOptions = this.getReporterConfigOptions(config)
-    this.reporterConfigOptions = { ...this.defaultOptions, ...providedOptions }
+    this.reporterConfigOptions = this.getReporterConfigOptions(config)
 
     if (!fs.existsSync(this.reporterConfigOptions.outputDir)) {
       fs.mkdirSync(this.reporterConfigOptions.outputDir, { recursive: true })
@@ -107,24 +104,19 @@ class GenerateCtrfReport implements Reporter {
   }
 
   onEnd(): void {
-    this.writeToFile(this.filename, this.ctrfReport)
+    this.writeReportToFile(this.ctrfReport)
   }
 
-  getReporterConfigOptions(
-    config: FullConfig
-  ): ReporterConfigOptions | undefined {
+  getReporterConfigOptions(config: FullConfig): ReporterConfigOptions {
     const reporterConfig = config.reporter.find(
       (r) => r[0] === this.reporterName
     ) as ReporterConfig | undefined
 
-    if (reporterConfig === null || reporterConfig === undefined) {
-      console.warn(
-        `${this.reporterName} configuration was not found in the reporter config`
-      )
-      return undefined
+    if (reporterConfig == null) {
+      return this.reporterConfigOptions
     }
 
-    return reporterConfig[1]
+    return { ...this.reporterConfigOptions, ...reporterConfig[1] }
   }
 
   setFilename(filename: string): void {
@@ -146,36 +138,42 @@ class GenerateCtrfReport implements Reporter {
       duration: testResult.duration,
     }
 
-    if (!this.reporterConfigOptions?.minimal) {
-      if (this.reporterConfigOptions?.start)
+    if (!this.reporterConfigOptions.minimal) {
+      if (this.reporterConfigOptions.start)
         test.start = this.updateStart(testResult.startTime)
-      if (this.reporterConfigOptions?.stop)
+      if (this.reporterConfigOptions.stop)
         test.stop = Math.floor(Date.now() / 1000)
-      if (this.reporterConfigOptions?.message)
+      if (this.reporterConfigOptions.message)
         test.message = this.extractFailureDetails(testResult).message
-      if (this.reporterConfigOptions?.message)
-        test.message = this.extractFailureDetails(testResult).trace
-      if (this.reporterConfigOptions?.rawStatus)
+      if (this.reporterConfigOptions.trace)
+        test.trace = this.extractFailureDetails(testResult).trace
+      if (this.reporterConfigOptions.rawStatus)
         test.rawStatus = testResult.status
-      if (this.reporterConfigOptions?.tags)
+      if (this.reporterConfigOptions.tags)
         test.tags = this.extractTagsFromTitle(testCase.title)
       if (
-        this.reporterConfigOptions?.type ||
-        this.reporterConfigOptions?.customType
+        this.reporterConfigOptions.type !== undefined ||
+        (this.reporterConfigOptions.customType !== undefined &&
+          this.reporterConfigOptions.customType !== '')
       )
-        test.type = this.reporterConfigOptions?.customType || 'e2e'
-      if (this.reporterConfigOptions?.filePath)
+        test.type =
+          this.reporterConfigOptions.customType != null &&
+          this.reporterConfigOptions.customType !== ''
+            ? this.reporterConfigOptions.customType
+            : 'e2e'
+      if (this.reporterConfigOptions.filePath)
         test.filePath = testCase.location.file
-      if (this.reporterConfigOptions?.flake)
+      if (this.reporterConfigOptions.flake)
         test.flake = testResult.status === 'passed' && testResult.retry > 0
-      if (this.reporterConfigOptions?.retry) test.retry = testResult.retry
-      if (this.reporterConfigOptions?.screenshot)
+      if (this.reporterConfigOptions.retry) test.retry = testResult.retry
+      if (this.reporterConfigOptions.screenshot)
         test.screenshot = this.extractScreenshotBase64(testResult)
-      if (this.reporterConfigOptions?.suite)
+      if (this.reporterConfigOptions.suite)
         test.suite = this.buildSuitePath(testCase)
-      if (this.reporterConfigOptions?.browser) {
-        test.browser = `${this.extractMetadata(testResult).name} ${this.extractMetadata(testResult).version
-          }`
+      if (this.reporterConfigOptions.browser) {
+        test.browser = `${this.extractMetadata(testResult).name} ${
+          this.extractMetadata(testResult).version
+        }`
       }
     }
 
@@ -203,12 +201,19 @@ class GenerateCtrfReport implements Reporter {
     const metadataAttachment = testResult.attachments.find(
       (attachment) => attachment.name === 'metadata.json'
     )
-    if (metadataAttachment?.body) {
+    if (
+      metadataAttachment?.body !== null &&
+      metadataAttachment?.body !== undefined
+    ) {
       try {
         const metadataRaw = metadataAttachment.body.toString('utf-8')
         return JSON.parse(metadataRaw)
       } catch (e) {
-        console.error(`Error parsing browser metadata: ${e}`)
+        if (e instanceof Error) {
+          console.error(`Error parsing browser metadata: ${e.message}`)
+        } else {
+          console.error('An unknown error occurred in parsing browser metadata')
+        }
       }
     }
     return null
@@ -224,10 +229,8 @@ class GenerateCtrfReport implements Reporter {
     const pathComponents = []
     let currentSuite: Suite | undefined = test.parent
 
-    const fileName = path.basename(test.location.file)
-
-    while (currentSuite) {
-      if (currentSuite.title) {
+    while (currentSuite !== undefined) {
+      if (currentSuite.title !== '') {
         pathComponents.unshift(currentSuite.title)
       }
       currentSuite = currentSuite.parent
@@ -239,7 +242,7 @@ class GenerateCtrfReport implements Reporter {
   extractTagsFromTitle(title: string): string[] {
     const tagPattern = /@\w+/g
     const tags = title.match(tagPattern)
-    return tags || []
+    return tags ?? []
   }
 
   extractScreenshotBase64(testResult: TestResult): string | undefined {
@@ -282,17 +285,17 @@ class GenerateCtrfReport implements Reporter {
     }
   }
 
-  writeToFile(filename: string, data: CtrfReport): void {
+  writeReportToFile(data: CtrfReport): void {
     const filePath = path.join(
-      this.reporterConfigOptions?.outputDir || this.outputDir,
-      this.filename
+      this.reporterConfigOptions.outputDir,
+      this.reporterConfigOptions.outputFile
     )
     const str = JSON.stringify(data, null, 2)
     try {
       fs.writeFileSync(filePath, str + '\n')
       console.log(
         `${this.reporterName}: successfully written ctrf json to %s`,
-        filename
+        this.reporterConfigOptions.outputFile
       )
     } catch (error) {
       console.error(`Error writing ctrf json report:, ${String(error)}`)

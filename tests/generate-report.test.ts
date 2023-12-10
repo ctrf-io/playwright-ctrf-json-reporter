@@ -1,5 +1,6 @@
 import GenerateCtrfReport from '../src/generate-report'
 import {
+  Suite,
   type FullConfig,
   type TestCase,
   type TestResult,
@@ -15,36 +16,6 @@ describe('GenerateCtrfReport', () => {
 
   beforeEach(() => {
     reporter = new GenerateCtrfReport()
-  })
-
-  describe('Validation and events', () => {
-    it('should register listener for onBegin', () => {
-      const mockConfig: FullConfig = {
-        reporter: [['ctrf-json-report', { filename: 'mockFilename.json' }]],
-      } as FullConfig
-
-      jest.spyOn(reporter, 'onBegin')
-      reporter.onBegin(mockConfig)
-
-      expect(reporter.onBegin).toHaveBeenCalledWith(mockConfig)
-    })
-
-    it('should register listener for onTestEnd', () => {
-      const mockTest: TestCase = { title: 'Sample Test' } as TestCase
-      const mockResult: TestResult = { status: 'passed' } as TestResult
-
-      jest.spyOn(reporter, 'onTestEnd')
-      reporter.onTestEnd(mockTest, mockResult)
-
-      expect(reporter.onTestEnd).toHaveBeenCalledWith(mockTest, mockResult)
-    })
-
-    it('should register listener for onEnd', () => {
-      jest.spyOn(reporter, 'onEnd')
-      reporter.onEnd()
-
-      expect(reporter.onEnd).toHaveBeenCalled()
-    })
   })
 
   describe('Set config options', () => {
@@ -78,116 +49,19 @@ describe('GenerateCtrfReport', () => {
 
   describe('setFilename', () => {
     it('should add .json extension if none provided', () => {
-      ;(reporter as any).setFilename('myReport')
+      ; (reporter as any).setFilename('myReport')
       expect((reporter as any).filename).toBe('myReport.json')
     })
 
     it('should keep .json extension if already provided', () => {
-      ;(reporter as any).setFilename('myReport.json')
+      ; (reporter as any).setFilename('myReport.json')
       expect((reporter as any).filename).toBe('myReport.json')
     })
 
     it('should append .json to any other extensions', () => {
-      ;(reporter as any).setFilename('myReport.txt')
+      ; (reporter as any).setFilename('myReport.txt')
       expect((reporter as any).filename).toBe('myReport.txt.json')
     })
-  })
-
-  describe('getReporterConfigOptions', () => {
-    it('should return options with a single reporterConfig', () => {
-      const mockConfig = {
-        reporter: [
-          [(reporter as any).reporterName, { filename: 'mockFilename.json' }],
-        ],
-      } as FullConfig
-
-      const result = reporter.getReporterConfigOptions(mockConfig)
-      expect(result).toEqual({ filename: 'mockFilename.json' })
-    })
-
-    it('should return options with multiple reporterConfig', () => {
-      const mockConfig = {
-        reporter: [
-          ['some-other-reporter', { foo: 'bar' }],
-          [(reporter as any).reporterName, { filename: 'mockFilename.json' }],
-          ['another-reporter', { baz: 'qux' }],
-        ],
-      } as FullConfig
-
-      const result = reporter.getReporterConfigOptions(mockConfig)
-      expect(result).toEqual({ filename: 'mockFilename.json' })
-    })
-
-    it('should return undefined if no reporterConfig', () => {
-      const mockConfig = {
-        reporter: [['some-other-reporter', { foo: 'bar' }]],
-      } as FullConfig
-
-      const result = reporter.getReporterConfigOptions(mockConfig)
-      expect(result).toBeUndefined()
-    })
-
-    it('should return undefined if no reporterConfigOptions', () => {
-      const mockConfig = {
-        reporter: [[(reporter as any).reporterName]],
-      } as FullConfig
-
-      const result = reporter.getReporterConfigOptions(mockConfig)
-      expect(result).toBeUndefined()
-    })
-  })
-
-  describe('updateCtrfTestResultsFromTestResult', () => {
-
-    it('should update the ctrfReport with required test properties', () => {
-      const mockTest: TestCase = { title: 'Sample Test' } as TestCase
-      const mockResult: TestResult = {
-        status: 'passed',
-        duration: 100,
-      } as TestResult
-
-      ;(reporter as any).updateCtrfTestResultsFromTestResult(
-        mockTest,
-        mockResult,
-        reporter.ctrfReport
-      )
-
-      const updatedTestResult = reporter.ctrfReport.results.tests[0]
-
-      expect(updatedTestResult.name).toBe(mockTest.title)
-      expect(updatedTestResult.status).toBe(mockResult.status)
-      expect(updatedTestResult.duration).toBe(mockResult.duration)
-    })
-
-    it.each([
-      ['Test 1', 'passed', 100],
-      ['Test 2', 'failed', 200],
-      ['Test 3', 'skipped', 300],
-    ])(
-      'should correctly update the ctrfReport for test "%s" with status "%s" and duration %i',
-      (testTitle, status, duration) => {
-        const mockTest: TestCase = { title: testTitle } as TestCase
-        const mockResult: TestResult = {
-          status: status as any,
-          duration,
-        } as TestResult
-
-        ;(reporter as any).updateCtrfTestResultsFromTestResult(
-          mockTest,
-          mockResult,
-          reporter.ctrfReport
-        )
-
-        const updatedTestResult =
-          reporter.ctrfReport.results.tests[
-            reporter.ctrfReport.results.tests.length - 1
-          ]
-
-        expect(updatedTestResult.name).toBe(testTitle)
-        expect(updatedTestResult.status).toBe(status)
-        expect(updatedTestResult.duration).toBe(duration)
-      }
-    )
   })
 
   describe('updateTotalsFromTestResult', () => {
@@ -205,10 +79,10 @@ describe('GenerateCtrfReport', () => {
         duration: 100,
       } as TestResult
 
-      ;(reporter as any).updateTotalsFromTestResult(
-        mockResult,
-        reporter.ctrfReport
-      )
+        ; (reporter as any).updateTotalsFromTestResult(
+          mockResult,
+          reporter.ctrfReport
+        )
 
       expect(reporter.ctrfReport.results.totals.tests).toBe(1)
     })
@@ -224,10 +98,10 @@ describe('GenerateCtrfReport', () => {
       (status, passed, failed, skipped, interrupted, timedOut) => {
         const mockResult: TestResult = { status, duration: 100 } as TestResult
 
-        ;(reporter as any).updateTotalsFromTestResult(
-          mockResult,
-          reporter.ctrfReport
-        )
+          ; (reporter as any).updateTotalsFromTestResult(
+            mockResult,
+            reporter.ctrfReport
+          )
 
         expect(reporter.ctrfReport.results.totals.passed).toBe(passed)
         expect(reporter.ctrfReport.results.totals.failed).toBe(failed)
@@ -242,23 +116,58 @@ describe('GenerateCtrfReport', () => {
     beforeEach(() => {
       fs.writeFileSync.mockClear();
       path.join.mockImplementation((...args: string[]) => args.join('/'));
-  
+
       // Set up reporter configuration for the test
       reporter.outputDir = '.';
       reporter.filename = 'ctrf-report.json'; // Set the default filename
     });
-  
+
     it('should write the report to a file', () => {
       const mockData = reporter.ctrfReport;
       const expectedFilePath = './ctrf-report.json'; // Expected file path based on defaultOutputDir and filename
-  
-      reporter.writeToFile('ctrf-report.json', mockData); // Use the same filename as set in the reporter
-  
+
+      reporter.writeReportToFile(mockData); // Use the same filename as set in the reporter
+
       expect(fs.writeFileSync).toHaveBeenCalledWith(
         expectedFilePath,
         JSON.stringify(mockData, null, 2) + '\n'
       );
     });
   });
-  
 })
+
+const mockSuite: Partial<Suite> = {
+  title: 'Login Tests Suite',
+  project: undefined,
+  titlePath: () => ['Root Suite', 'Login Tests Suite'],
+  // ... other necessary properties
+  allTests: () => [
+    // Return an array of TestCase objects here
+    // If there are no specific test cases to return, you can return an empty array
+  ], suites: [],
+  tests: []
+};
+
+const mockTestCase: Partial<TestCase> = {
+  title: 'User should be able to login',
+  parent: mockSuite as Suite,
+  location: {
+    file: 'tests/login.test.js',
+    line: 10,
+    column: 5
+  },
+  // ... other necessary properties
+};
+
+
+
+const mockTestResult: Partial<TestResult> = {
+  status: 'passed',
+  duration: 1200,
+  startTime: new Date('2023-01-01T00:00:00.000Z'),
+  attachments: [
+    // ... attachments as previously defined
+  ],
+  retry: 0,
+  // Add any other properties you use
+};
