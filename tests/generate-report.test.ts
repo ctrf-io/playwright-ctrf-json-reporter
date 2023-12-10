@@ -30,7 +30,7 @@ describe('GenerateCtrfReport', () => {
 
         reporter.onBegin(mockConfig as FullConfig)
 
-        expect((reporter as any).filename).toBe(mockFilename)
+        expect((reporter as any).reporterConfigOptions.outputFile).toBe(mockFilename)
       })
 
       it('should use default filename if reporterConfigOptions filename is not present', () => {
@@ -50,17 +50,17 @@ describe('GenerateCtrfReport', () => {
   describe('setFilename', () => {
     it('should add .json extension if none provided', () => {
       ; (reporter as any).setFilename('myReport')
-      expect((reporter as any).filename).toBe('myReport.json')
+      expect((reporter as any).reporterConfigOptions.outputFile).toBe('myReport.json')
     })
 
     it('should keep .json extension if already provided', () => {
       ; (reporter as any).setFilename('myReport.json')
-      expect((reporter as any).filename).toBe('myReport.json')
+      expect((reporter as any).reporterConfigOptions.outputFile).toBe('myReport.json')
     })
 
     it('should append .json to any other extensions', () => {
       ; (reporter as any).setFilename('myReport.txt')
-      expect((reporter as any).filename).toBe('myReport.txt.json')
+      expect((reporter as any).reporterConfigOptions.outputFile).toBe('myReport.txt.json')
     })
   })
 
@@ -117,16 +117,15 @@ describe('GenerateCtrfReport', () => {
       fs.writeFileSync.mockClear();
       path.join.mockImplementation((...args: string[]) => args.join('/'));
 
-      // Set up reporter configuration for the test
-      reporter.outputDir = '.';
-      reporter.filename = 'ctrf-report.json'; // Set the default filename
+      reporter.reporterConfigOptions.outputDir = '.';
+      reporter.reporterConfigOptions.outputFile = 'ctrf-report.json'; 
     });
 
     it('should write the report to a file', () => {
       const mockData = reporter.ctrfReport;
-      const expectedFilePath = './ctrf-report.json'; // Expected file path based on defaultOutputDir and filename
+      const expectedFilePath = './ctrf-report.json';
 
-      reporter.writeReportToFile(mockData); // Use the same filename as set in the reporter
+      reporter.writeReportToFile(mockData);
 
       expect(fs.writeFileSync).toHaveBeenCalledWith(
         expectedFilePath,
@@ -140,10 +139,7 @@ const mockSuite: Partial<Suite> = {
   title: 'Login Tests Suite',
   project: undefined,
   titlePath: () => ['Root Suite', 'Login Tests Suite'],
-  // ... other necessary properties
   allTests: () => [
-    // Return an array of TestCase objects here
-    // If there are no specific test cases to return, you can return an empty array
   ], suites: [],
   tests: []
 };
@@ -156,18 +152,13 @@ const mockTestCase: Partial<TestCase> = {
     line: 10,
     column: 5
   },
-  // ... other necessary properties
 };
-
-
 
 const mockTestResult: Partial<TestResult> = {
   status: 'passed',
   duration: 1200,
   startTime: new Date('2023-01-01T00:00:00.000Z'),
   attachments: [
-    // ... attachments as previously defined
   ],
   retry: 0,
-  // Add any other properties you use
 };

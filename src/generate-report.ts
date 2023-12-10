@@ -43,8 +43,6 @@ class GenerateCtrfReport implements Reporter {
 
   readonly defaultOutputFile = 'ctrf-report.json'
   readonly defaultOutputDir = '.'
-  filename = this.defaultOutputFile
-  outputDir = this.defaultOutputDir
 
   constructor() {
     this.reporterConfigOptions = {
@@ -120,9 +118,9 @@ class GenerateCtrfReport implements Reporter {
 
   setFilename(filename: string): void {
     if (filename.endsWith('.json')) {
-      this.filename = filename
+      this.reporterConfigOptions.outputFile = filename
     } else {
-      this.filename = `${filename}.json`
+      this.reporterConfigOptions.outputFile = `${filename}.json`
     }
   }
 
