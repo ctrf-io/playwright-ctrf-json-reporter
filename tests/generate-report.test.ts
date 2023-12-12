@@ -72,7 +72,7 @@ describe('GenerateCtrfReport', () => {
     })
   })
 
-  describe('updateTotalsFromTestResult', () => {
+  describe('updateStatsFromTestResult', () => {
     let reporter: GenerateCtrfReport
 
     beforeEach(() => {
@@ -87,12 +87,12 @@ describe('GenerateCtrfReport', () => {
         duration: 100,
       } as TestResult
 
-      ;(reporter as any).updateTotalsFromTestResult(
+      ;(reporter as any).updateStatsFromTestResult(
         mockResult,
         reporter.ctrfReport
       )
 
-      expect(reporter.ctrfReport.results.totals.tests).toBe(1)
+      expect(reporter.ctrfReport.results.stats.tests).toBe(1)
     })
 
     it.each([
@@ -106,14 +106,14 @@ describe('GenerateCtrfReport', () => {
       (status, passed, failed, skipped, interrupted, timedOut) => {
         const mockResult: TestResult = { status, duration: 100 } as TestResult
 
-        ;(reporter as any).updateTotalsFromTestResult(
+        ;(reporter as any).updateStatsFromTestResult(
           mockResult,
           reporter.ctrfReport
         )
 
-        expect(reporter.ctrfReport.results.totals.passed).toBe(passed)
-        expect(reporter.ctrfReport.results.totals.failed).toBe(failed)
-        expect(reporter.ctrfReport.results.totals.skipped).toBe(skipped)
+        expect(reporter.ctrfReport.results.stats.passed).toBe(passed)
+        expect(reporter.ctrfReport.results.stats.failed).toBe(failed)
+        expect(reporter.ctrfReport.results.stats.skipped).toBe(skipped)
       }
     )
   })

@@ -4,11 +4,11 @@ export interface CtrfReport {
 
 export interface Results {
   tool: Tool
-  totals: Totals
+  stats: Stats
   tests: CtrfTest[]
 }
 
-export interface Totals {
+export interface Stats {
   tests: number
   passed: number
   failed: number
@@ -16,8 +16,8 @@ export interface Totals {
   pending: number
   other: number
   suites?: number
-  start: number
-  stop: number
+  start?: number
+  stop?: number
 }
 
 export interface CtrfTest {

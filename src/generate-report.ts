@@ -1,3 +1,6 @@
+import * as fs from 'fs'
+import * as path from 'path'
+
 import {
   type Suite,
   type FullConfig,
@@ -5,8 +8,7 @@ import {
   type TestCase,
   type TestResult,
 } from '@playwright/test/reporter'
-import * as fs from 'fs'
-import * as path from 'path'
+
 import {
   type CtrfTestState,
   type CtrfReport,
@@ -39,7 +41,9 @@ type ReporterConfig = [string, ReporterConfigOptions?]
 class GenerateCtrfReport implements Reporter {
   readonly ctrfReport: CtrfReport
   reporterConfigOptions: ReporterConfigOptions
-  readonly reporterName = 'ctrf-json-reporter'
+  //readonly reporterName = 'ctrf-json-reporter'
+  readonly reporterName =
+    '/Users/matthew/projects/personal/ctrf/playwright-ctrf-json-report/dist/index.js'
 
   readonly defaultOutputFile = 'ctrf-report.json'
   readonly defaultOutputDir = '.'
@@ -70,15 +74,13 @@ class GenerateCtrfReport implements Reporter {
         tool: {
           name: 'playwright',
         },
-        totals: {
+        stats: {
           tests: 0,
           passed: 0,
           failed: 0,
           pending: 0,
           skipped: 0,
           other: 0,
-          start: 0,
-          stop: 0,
         },
         tests: [],
       },
@@ -86,7 +88,7 @@ class GenerateCtrfReport implements Reporter {
   }
 
   onBegin(config: FullConfig): void {
-    this.ctrfReport.results.totals.start = Date.now()
+    this.ctrfReport.results.stats.start = Date.now()
     this.reporterConfigOptions = this.getReporterConfigOptions(config)
 
     if (!fs.existsSync(this.reporterConfigOptions.outputDir)) {
@@ -98,11 +100,11 @@ class GenerateCtrfReport implements Reporter {
 
   onTestEnd(test: TestCase, result: TestResult): void {
     this.updateCtrfTestResultsFromTestResult(test, result, this.ctrfReport)
-    this.updateTotalsFromTestResult(result, this.ctrfReport)
+    this.updateStatsFromTestResult(result, this.ctrfReport)
   }
 
   onEnd(): void {
-    this.ctrfReport.results.totals.stop = Date.now()
+    this.ctrfReport.results.stats.stop = Date.now()
     this.writeReportToFile(this.ctrfReport)
   }
 
@@ -177,6 +179,21 @@ class GenerateCtrfReport implements Reporter {
     }
 
     ctrfReport.results.tests.push(test)
+  }
+
+  updateStatsFromTestResult(
+    testResult: TestResult,
+    ctrfReport: CtrfReport
+  ): void {
+    ctrfReport.results.stats.tests++
+
+    const ctrfStatus = this.mapPlaywrightStatusToCtrf(testResult.status)
+
+    if (ctrfStatus in ctrfReport.results.stats) {
+      ctrfReport.results.stats[ctrfStatus]++
+    } else {
+      ctrfReport.results.stats.other++
+    }
   }
 
   mapPlaywrightStatusToCtrf(testStatus: string): CtrfTestState {
@@ -267,21 +284,6 @@ class GenerateCtrfReport implements Reporter {
       return failureDetails
     }
     return {}
-  }
-
-  updateTotalsFromTestResult(
-    testResult: TestResult,
-    ctrfReport: CtrfReport
-  ): void {
-    ctrfReport.results.totals.tests++
-
-    const ctrfStatus = this.mapPlaywrightStatusToCtrf(testResult.status)
-
-    if (ctrfStatus in ctrfReport.results.totals) {
-      ctrfReport.results.totals[ctrfStatus]++
-    } else {
-      ctrfReport.results.totals.other++
-    }
   }
 
   writeReportToFile(data: CtrfReport): void {
