@@ -76,9 +76,9 @@ class GenerateCtrfReport implements Reporter {
           failed: 0,
           pending: 0,
           skipped: 0,
-          timedOut: 0,
-          interrupted: 0,
           other: 0,
+          start: 0,
+          stop: 0,
         },
         tests: [],
       },
@@ -86,6 +86,7 @@ class GenerateCtrfReport implements Reporter {
   }
 
   onBegin(config: FullConfig): void {
+    this.ctrfReport.results.totals.start = Date.now()
     this.reporterConfigOptions = this.getReporterConfigOptions(config)
 
     if (!fs.existsSync(this.reporterConfigOptions.outputDir)) {
@@ -101,6 +102,7 @@ class GenerateCtrfReport implements Reporter {
   }
 
   onEnd(): void {
+    this.ctrfReport.results.totals.stop = Date.now()
     this.writeReportToFile(this.ctrfReport)
   }
 

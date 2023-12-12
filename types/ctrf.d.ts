@@ -14,10 +14,10 @@ export interface Totals {
   failed: number
   skipped: number
   pending: number
-  timedOut: number
-  interrupted: number
   other: number
   suites?: number
+  start: number
+  stop: number
 }
 
 export interface CtrfTest {

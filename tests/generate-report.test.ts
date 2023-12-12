@@ -106,8 +106,6 @@ describe('GenerateCtrfReport', () => {
         expect(reporter.ctrfReport.results.totals.passed).toBe(passed)
         expect(reporter.ctrfReport.results.totals.failed).toBe(failed)
         expect(reporter.ctrfReport.results.totals.skipped).toBe(skipped)
-        expect(reporter.ctrfReport.results.totals.interrupted).toBe(interrupted)
-        expect(reporter.ctrfReport.results.totals.timedOut).toBe(timedOut)
       }
     )
   })
