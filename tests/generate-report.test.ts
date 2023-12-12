@@ -6,10 +6,10 @@ import {
   type TestResult,
 } from '@playwright/test/reporter'
 const fs = require('fs')
-const path = require('path');
+const path = require('path')
 
 jest.mock('fs')
-jest.mock('path');
+jest.mock('path')
 
 describe('GenerateCtrfReport', () => {
   let reporter: GenerateCtrfReport
@@ -30,7 +30,9 @@ describe('GenerateCtrfReport', () => {
 
         reporter.onBegin(mockConfig as FullConfig)
 
-        expect((reporter as any).reporterConfigOptions.outputFile).toBe(mockFilename)
+        expect((reporter as any).reporterConfigOptions.outputFile).toBe(
+          mockFilename
+        )
       })
 
       it('should use default filename if reporterConfigOptions filename is not present', () => {
@@ -49,18 +51,24 @@ describe('GenerateCtrfReport', () => {
 
   describe('setFilename', () => {
     it('should add .json extension if none provided', () => {
-      ; (reporter as any).setFilename('myReport')
-      expect((reporter as any).reporterConfigOptions.outputFile).toBe('myReport.json')
+      ;(reporter as any).setFilename('myReport')
+      expect((reporter as any).reporterConfigOptions.outputFile).toBe(
+        'myReport.json'
+      )
     })
 
     it('should keep .json extension if already provided', () => {
-      ; (reporter as any).setFilename('myReport.json')
-      expect((reporter as any).reporterConfigOptions.outputFile).toBe('myReport.json')
+      ;(reporter as any).setFilename('myReport.json')
+      expect((reporter as any).reporterConfigOptions.outputFile).toBe(
+        'myReport.json'
+      )
     })
 
     it('should append .json to any other extensions', () => {
-      ; (reporter as any).setFilename('myReport.txt')
-      expect((reporter as any).reporterConfigOptions.outputFile).toBe('myReport.txt.json')
+      ;(reporter as any).setFilename('myReport.txt')
+      expect((reporter as any).reporterConfigOptions.outputFile).toBe(
+        'myReport.txt.json'
+      )
     })
   })
 
@@ -79,10 +87,10 @@ describe('GenerateCtrfReport', () => {
         duration: 100,
       } as TestResult
 
-        ; (reporter as any).updateTotalsFromTestResult(
-          mockResult,
-          reporter.ctrfReport
-        )
+      ;(reporter as any).updateTotalsFromTestResult(
+        mockResult,
+        reporter.ctrfReport
+      )
 
       expect(reporter.ctrfReport.results.totals.tests).toBe(1)
     })
@@ -98,10 +106,10 @@ describe('GenerateCtrfReport', () => {
       (status, passed, failed, skipped, interrupted, timedOut) => {
         const mockResult: TestResult = { status, duration: 100 } as TestResult
 
-          ; (reporter as any).updateTotalsFromTestResult(
-            mockResult,
-            reporter.ctrfReport
-          )
+        ;(reporter as any).updateTotalsFromTestResult(
+          mockResult,
+          reporter.ctrfReport
+        )
 
         expect(reporter.ctrfReport.results.totals.passed).toBe(passed)
         expect(reporter.ctrfReport.results.totals.failed).toBe(failed)
@@ -112,35 +120,35 @@ describe('GenerateCtrfReport', () => {
 
   describe('writeToFile', () => {
     beforeEach(() => {
-      fs.writeFileSync.mockClear();
-      path.join.mockImplementation((...args: string[]) => args.join('/'));
+      fs.writeFileSync.mockClear()
+      path.join.mockImplementation((...args: string[]) => args.join('/'))
 
-      reporter.reporterConfigOptions.outputDir = '.';
-      reporter.reporterConfigOptions.outputFile = 'ctrf-report.json'; 
-    });
+      reporter.reporterConfigOptions.outputDir = '.'
+      reporter.reporterConfigOptions.outputFile = 'ctrf-report.json'
+    })
 
     it('should write the report to a file', () => {
-      const mockData = reporter.ctrfReport;
-      const expectedFilePath = './ctrf-report.json';
+      const mockData = reporter.ctrfReport
+      const expectedFilePath = './ctrf-report.json'
 
-      reporter.writeReportToFile(mockData);
+      reporter.writeReportToFile(mockData)
 
       expect(fs.writeFileSync).toHaveBeenCalledWith(
         expectedFilePath,
         JSON.stringify(mockData, null, 2) + '\n'
-      );
-    });
-  });
+      )
+    })
+  })
 })
 
 const mockSuite: Partial<Suite> = {
   title: 'Login Tests Suite',
   project: undefined,
   titlePath: () => ['Root Suite', 'Login Tests Suite'],
-  allTests: () => [
-  ], suites: [],
-  tests: []
-};
+  allTests: () => [],
+  suites: [],
+  tests: [],
+}
 
 const mockTestCase: Partial<TestCase> = {
   title: 'User should be able to login',
@@ -148,15 +156,14 @@ const mockTestCase: Partial<TestCase> = {
   location: {
     file: 'tests/login.test.js',
     line: 10,
-    column: 5
+    column: 5,
   },
-};
+}
 
 const mockTestResult: Partial<TestResult> = {
   status: 'passed',
   duration: 1200,
   startTime: new Date('2023-01-01T00:00:00.000Z'),
-  attachments: [
-  ],
+  attachments: [],
   retry: 0,
-};
+}
