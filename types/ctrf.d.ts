@@ -4,11 +4,12 @@ export interface CtrfReport {
 
 export interface Results {
   tool: Tool
-  stats: Stats
+  summary: Summary
   tests: CtrfTest[]
+  environment?: CtrfEnvironment
 }
 
-export interface Stats {
+export interface Summary {
   tests: number
   passed: number
   failed: number
@@ -42,6 +43,16 @@ export interface CtrfTest {
   parameters?: Record<string, any>
   steps?: Step[]
   extras?: Record<string, any>
+}
+
+export interface CtrfEnvironment {
+  appName?: string
+  appVersion?: string
+  osPlatform?: string
+  osRelease?: string
+  osVersion?: string
+  buildName?: string
+  buildNumber?: string
 }
 
 export interface Tool {

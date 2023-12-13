@@ -13,6 +13,7 @@ import {
   type CtrfTestState,
   type CtrfReport,
   type CtrfTest,
+  type CtrfEnvironment,
 } from '../types/ctrf'
 
 interface ReporterConfigOptions {
@@ -35,14 +36,24 @@ interface ReporterConfigOptions {
   device: boolean
   screenshot: boolean
   customType?: string
+  appName?: string
+  appVersion?: string
+  osPlatform?: string
+  osRelease?: string
+  osVersion?: string
+  buildName?: string
+  buildNumber?: string
 }
 
 type ReporterConfig = [string, ReporterConfigOptions?]
 
 class GenerateCtrfReport implements Reporter {
   readonly ctrfReport: CtrfReport
+  readonly ctrfEnvironment: CtrfEnvironment
   reporterConfigOptions: ReporterConfigOptions
-  readonly reporterName = 'ctrf-json-reporter'
+  // readonly reporterName = 'ctrf-json-reporter'
+  readonly reporterName =
+    '/Users/matthew/projects/personal/ctrf/playwright-ctrf-json-reporter/dist/index.js'
 
   readonly defaultOutputFile = 'ctrf-report.json'
   readonly defaultOutputDir = '.'
@@ -74,7 +85,7 @@ class GenerateCtrfReport implements Reporter {
         tool: {
           name: 'playwright',
         },
-        stats: {
+        summary: {
           tests: 0,
           passed: 0,
           failed: 0,
@@ -85,26 +96,33 @@ class GenerateCtrfReport implements Reporter {
         tests: [],
       },
     }
+
+    this.ctrfEnvironment = {}
   }
 
   onBegin(config: FullConfig): void {
-    this.ctrfReport.results.stats.start = Date.now()
+    this.ctrfReport.results.summary.start = Date.now()
     this.reporterConfigOptions = this.getReporterConfigOptions(config)
 
     if (!fs.existsSync(this.reporterConfigOptions.outputDir)) {
       fs.mkdirSync(this.reporterConfigOptions.outputDir, { recursive: true })
     }
 
+    this.setEnvironmentDetails(this.reporterConfigOptions)
+
+    if (this.hasEnvironmentDetails(this.ctrfEnvironment)) {
+      this.ctrfReport.results.environment = this.ctrfEnvironment
+    }
     this.setFilename(this.reporterConfigOptions.outputFile)
   }
 
   onTestEnd(test: TestCase, result: TestResult): void {
     this.updateCtrfTestResultsFromTestResult(test, result, this.ctrfReport)
-    this.updateStatsFromTestResult(result, this.ctrfReport)
+    this.updateSummaryFromTestResult(result, this.ctrfReport)
   }
 
   onEnd(): void {
-    this.ctrfReport.results.stats.stop = Date.now()
+    this.ctrfReport.results.summary.stop = Date.now()
     this.writeReportToFile(this.ctrfReport)
   }
 
@@ -181,18 +199,18 @@ class GenerateCtrfReport implements Reporter {
     ctrfReport.results.tests.push(test)
   }
 
-  updateStatsFromTestResult(
+  updateSummaryFromTestResult(
     testResult: TestResult,
     ctrfReport: CtrfReport
   ): void {
-    ctrfReport.results.stats.tests++
+    ctrfReport.results.summary.tests++
 
     const ctrfStatus = this.mapPlaywrightStatusToCtrf(testResult.status)
 
-    if (ctrfStatus in ctrfReport.results.stats) {
-      ctrfReport.results.stats[ctrfStatus]++
+    if (ctrfStatus in ctrfReport.results.summary) {
+      ctrfReport.results.summary[ctrfStatus]++
     } else {
-      ctrfReport.results.stats.other++
+      ctrfReport.results.summary.other++
     }
   }
 
@@ -211,6 +229,34 @@ class GenerateCtrfReport implements Reporter {
       default:
         return 'other'
     }
+  }
+
+  setEnvironmentDetails(reporterConfigOptions: ReporterConfigOptions): void {
+    if (reporterConfigOptions.appName != null) {
+      this.ctrfEnvironment.appName = reporterConfigOptions.appName
+    }
+    if (reporterConfigOptions.appVersion != null) {
+      this.ctrfEnvironment.appVersion = reporterConfigOptions.appVersion
+    }
+    if (reporterConfigOptions.osPlatform != null) {
+      this.ctrfEnvironment.osPlatform = reporterConfigOptions.osPlatform
+    }
+    if (reporterConfigOptions.osRelease != null) {
+      this.ctrfEnvironment.osRelease = reporterConfigOptions.osRelease
+    }
+    if (reporterConfigOptions.osVersion != null) {
+      this.ctrfEnvironment.osVersion = reporterConfigOptions.osVersion
+    }
+    if (reporterConfigOptions.buildName != null) {
+      this.ctrfEnvironment.buildName = reporterConfigOptions.buildName
+    }
+    if (reporterConfigOptions.buildNumber != null) {
+      this.ctrfEnvironment.buildNumber = reporterConfigOptions.buildNumber
+    }
+  }
+
+  hasEnvironmentDetails(environment: CtrfEnvironment): boolean {
+    return Object.keys(environment).length > 0
   }
 
   extractMetadata(testResult: TestResult): any {
