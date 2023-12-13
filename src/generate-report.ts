@@ -30,6 +30,7 @@ interface ReporterConfigOptions {
   filePath: boolean
   retry: boolean
   flake: boolean
+  attempts: boolean
   browser: boolean
   device: boolean
   screenshot: boolean
@@ -41,9 +42,7 @@ type ReporterConfig = [string, ReporterConfigOptions?]
 class GenerateCtrfReport implements Reporter {
   readonly ctrfReport: CtrfReport
   reporterConfigOptions: ReporterConfigOptions
-  //readonly reporterName = 'ctrf-json-reporter'
-  readonly reporterName =
-    '/Users/matthew/projects/personal/ctrf/playwright-ctrf-json-report/dist/index.js'
+  readonly reporterName = 'ctrf-json-reporter'
 
   readonly defaultOutputFile = 'ctrf-report.json'
   readonly defaultOutputDir = '.'
@@ -64,6 +63,7 @@ class GenerateCtrfReport implements Reporter {
       filePath: true,
       retry: true,
       flake: true,
+      attempts: false,
       browser: true,
       device: true,
       screenshot: false,

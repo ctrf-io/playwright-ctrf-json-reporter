@@ -35,6 +35,7 @@ export interface CtrfTest {
   filePath?: string
   retry?: number
   flake?: boolean
+  attempts?: CtrfTest[]
   browser?: string
   device?: string
   screenshot?: string
