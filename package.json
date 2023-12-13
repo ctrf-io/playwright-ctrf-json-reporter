@@ -1,5 +1,5 @@
 {
-  "name": "playwright-ctrf-json-report",
+  "name": "playwright-ctrf-json-reporter",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
