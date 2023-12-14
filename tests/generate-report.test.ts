@@ -15,20 +15,16 @@ describe('GenerateCtrfReport', () => {
   let reporter: GenerateCtrfReport
 
   beforeEach(() => {
-    reporter = new GenerateCtrfReport()
+    reporter = new GenerateCtrfReport({})
   })
 
   describe('Set config options', () => {
     describe('filename', () => {
       it('should set filename from reporterConfigOptions if present', () => {
         const mockFilename = 'mockFilename.json'
-        const mockConfig: Partial<FullConfig> = {
-          reporter: [
-            [(reporter as any).reporterName, { outputFile: mockFilename }],
-          ],
-        }
+        reporter = new GenerateCtrfReport({ outputFile: mockFilename })
 
-        reporter.onBegin(mockConfig as FullConfig)
+        reporter.onBegin()
 
         expect((reporter as any).reporterConfigOptions.outputFile).toBe(
           mockFilename
@@ -36,11 +32,7 @@ describe('GenerateCtrfReport', () => {
       })
 
       it('should use default filename if reporterConfigOptions filename is not present', () => {
-        const mockConfigWithoutFilename: Partial<FullConfig> = {
-          reporter: [[(reporter as any).reporterName]],
-        }
-
-        reporter.onBegin(mockConfigWithoutFilename as FullConfig)
+        reporter.onBegin()
 
         expect((reporter as any).outputFile).toBe(
           (reporter as any).defaultFilename
@@ -87,7 +79,7 @@ describe('GenerateCtrfReport', () => {
         duration: 100,
       } as TestResult
 
-      ;(reporter as any).updateStatsFromTestResult(
+      ;(reporter as any).updateSummaryFromTestResult(
         mockResult,
         reporter.ctrfReport
       )
@@ -106,7 +98,7 @@ describe('GenerateCtrfReport', () => {
       (status, passed, failed, skipped, interrupted, timedOut) => {
         const mockResult: TestResult = { status, duration: 100 } as TestResult
 
-        ;(reporter as any).updateStatsFromTestResult(
+        ;(reporter as any).updateSummaryFromTestResult(
           mockResult,
           reporter.ctrfReport
         )

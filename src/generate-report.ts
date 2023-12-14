@@ -3,7 +3,6 @@ import * as path from 'path'
 
 import {
   type Suite,
-  type FullConfig,
   type Reporter,
   type TestCase,
   type TestResult,
@@ -17,39 +16,42 @@ import {
 } from '../types/ctrf'
 
 interface ReporterConfigOptions {
-  outputFile: string
-  outputDir: string
-  minimal: boolean
-  screenshot: boolean
+  outputFile?: string
+  outputDir?: string
+  minimal?: boolean
+  screenshot?: boolean
   testType?: string
-  appName?: string
-  appVersion?: string
-  osPlatform?: string
-  osRelease?: string
-  osVersion?: string
-  buildName?: string
-  buildNumber?: string
+  appName?: string | undefined
+  appVersion?: string | undefined
+  osPlatform?: string | undefined
+  osRelease?: string | undefined
+  osVersion?: string | undefined
+  buildName?: string | undefined
+  buildNumber?: string | undefined
 }
-
-type ReporterConfig = [string, ReporterConfigOptions?]
 
 class GenerateCtrfReport implements Reporter {
   readonly ctrfReport: CtrfReport
   readonly ctrfEnvironment: CtrfEnvironment
-  reporterConfigOptions: ReporterConfigOptions
-  // readonly reporterName = 'ctrf-json-reporter'
-  readonly reporterName =
-    '/Users/matthew/projects/personal/ctrf/playwright-ctrf-json-reporter/dist/index.js'
-
+  readonly reporterConfigOptions: ReporterConfigOptions
+  readonly reporterName = 'playwright-ctrf-json-reporter'
   readonly defaultOutputFile = 'ctrf-report.json'
   readonly defaultOutputDir = '.'
 
-  constructor() {
+  constructor(config?: Partial<ReporterConfigOptions>) {
     this.reporterConfigOptions = {
-      outputFile: this.defaultOutputFile,
-      outputDir: this.defaultOutputDir,
-      minimal: false,
-      screenshot: false,
+      outputFile: config?.outputFile ?? this.defaultOutputFile,
+      outputDir: config?.outputDir ?? this.defaultOutputDir,
+      minimal: config?.minimal ?? false,
+      screenshot: config?.screenshot ?? false,
+      testType: config?.testType ?? 'e2e',
+      appName: config?.appName ?? '',
+      appVersion: config?.appVersion ?? '',
+      osPlatform: config?.osPlatform ?? '',
+      osRelease: config?.osRelease ?? '',
+      osVersion: config?.osVersion ?? '',
+      buildName: config?.buildName ?? '',
+      buildNumber: config?.buildNumber ?? '',
     }
 
     this.ctrfReport = {
@@ -72,12 +74,18 @@ class GenerateCtrfReport implements Reporter {
     this.ctrfEnvironment = {}
   }
 
-  onBegin(config: FullConfig): void {
+  onBegin(): void {
     this.ctrfReport.results.summary.start = Date.now()
-    this.reporterConfigOptions = this.getReporterConfigOptions(config)
 
-    if (!fs.existsSync(this.reporterConfigOptions.outputDir)) {
-      fs.mkdirSync(this.reporterConfigOptions.outputDir, { recursive: true })
+    if (
+      !fs.existsSync(
+        this.reporterConfigOptions.outputDir ?? this.defaultOutputDir
+      )
+    ) {
+      fs.mkdirSync(
+        this.reporterConfigOptions.outputDir ?? this.defaultOutputDir,
+        { recursive: true }
+      )
     }
 
     this.setEnvironmentDetails(this.reporterConfigOptions)
@@ -85,7 +93,9 @@ class GenerateCtrfReport implements Reporter {
     if (this.hasEnvironmentDetails(this.ctrfEnvironment)) {
       this.ctrfReport.results.environment = this.ctrfEnvironment
     }
-    this.setFilename(this.reporterConfigOptions.outputFile)
+    this.setFilename(
+      this.reporterConfigOptions.outputFile ?? this.defaultOutputFile
+    )
   }
 
   onTestEnd(test: TestCase, result: TestResult): void {
@@ -96,18 +106,6 @@ class GenerateCtrfReport implements Reporter {
   onEnd(): void {
     this.ctrfReport.results.summary.stop = Date.now()
     this.writeReportToFile(this.ctrfReport)
-  }
-
-  getReporterConfigOptions(config: FullConfig): ReporterConfigOptions {
-    const reporterConfig = config.reporter.find(
-      (r) => r[0] === this.reporterName
-    ) as ReporterConfig | undefined
-
-    if (reporterConfig == null) {
-      return this.reporterConfigOptions
-    }
-
-    return { ...this.reporterConfigOptions, ...reporterConfig[1] }
   }
 
   setFilename(filename: string): void {
@@ -129,22 +127,18 @@ class GenerateCtrfReport implements Reporter {
       duration: testResult.duration,
     }
 
-    if (!this.reporterConfigOptions.minimal) {
+    if (this.reporterConfigOptions.minimal === false) {
       test.start = this.updateStart(testResult.startTime)
       test.stop = Math.floor(Date.now() / 1000)
       test.message = this.extractFailureDetails(testResult).message
       test.trace = this.extractFailureDetails(testResult).trace
       test.rawStatus = testResult.status
       test.tags = this.extractTagsFromTitle(testCase.title)
-      test.type =
-        this.reporterConfigOptions.testType != null &&
-        this.reporterConfigOptions.testType !== ''
-          ? this.reporterConfigOptions.testType
-          : 'e2e'
+      test.type = this.reporterConfigOptions.testType ?? 'e2e'
       test.filePath = testCase.location.file
       test.retry = testResult.retry
       test.flake = testResult.status === 'passed' && testResult.retry > 0
-      if (this.reporterConfigOptions.screenshot) {
+      if (this.reporterConfigOptions.screenshot === true) {
         test.screenshot = this.extractScreenshotBase64(testResult)
       }
       test.suite = this.buildSuitePath(testCase)
@@ -290,8 +284,8 @@ class GenerateCtrfReport implements Reporter {
 
   writeReportToFile(data: CtrfReport): void {
     const filePath = path.join(
-      this.reporterConfigOptions.outputDir,
-      this.reporterConfigOptions.outputFile
+      this.reporterConfigOptions.outputDir ?? this.defaultOutputDir,
+      this.reporterConfigOptions.outputFile ?? this.defaultOutputFile
     )
     const str = JSON.stringify(data, null, 2)
     try {
