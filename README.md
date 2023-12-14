@@ -7,8 +7,8 @@ No matter which test framework or library you use, generate the same JSON report
 ## Features
 
 - Generate detailed JSON test reports that are [CTRF](https://ctrf.io) compliant
-- Customizable output options, a report as minimal or comprehensive as you like
-- Straightforward integration with Playwright testing framework
+- Customizable output options, generate minimal or comprehensive reports.
+- Straightforward integration with Playwright
 
 ## Installation
 
@@ -78,9 +78,7 @@ Some options require additional setup or usage considerations.
 
 ### Screenshots
 
-The `screenshots` option in the reporter configuration allows you to include base-64 screenshots in your test report, this feature requires additional steps to capture and attach screenshots within your Playwright tests.
-
-You'll need to capture and attach screenshots in your Playwright tests:
+The `screenshots` option in the reporter configuration allows you to include base-64 screenshots in your test report, you'll need to capture and attach screenshots in your Playwright tests:
 
 ```javascript
 import { test, expect } from '@playwright/test'
@@ -97,7 +95,7 @@ test('basic test', async ({ page }, testInfo) => {
 
 #### Supported Formats:
 
-Both JPEG and PNG formats are supported. Only the latest screenshot attached from each test will be included in the report.
+Both JPEG and PNG formats are supported and only the last screenshot attached from each test will be included in the report.
 
 #### Size Considerations:
 
@@ -105,7 +103,7 @@ Base64-encoded image data can greatly increase the size of your report, it's rec
 
 ### Browser
 
-The `browser` option allows you to include detailed browser in your test report. To enable this feature, you will need to extend Playwright's test object to automatically capture and attach browser metadata. Here's an example of how you can do this:
+The `browser` option allows you to include browser in your test report. You will need to extend Playwright's test object to capture and attach browser metadata. Here's an example of how you can do this:
 
 ```javascript
 // tests/helpers.ts
@@ -117,8 +115,8 @@ export const test = _test.extend<{ _autoAttachMetadata: void }>({
         // BEFORE: Generate an attachment for the test with the required info
         await testInfo.attach('metadata.json', {
             body: JSON.stringify({
-                version: browser.version(),
                 name: browserName,
+                version: browser.version(),
             })
         })
 
@@ -143,3 +141,5 @@ test('example test', async ({ page }) => {
   // ... your test logic ...
 })
 ```
+
+The browser metadata file must be called metadata.json and contain properties name and version in the body.
