@@ -328,7 +328,6 @@ class GenerateCtrfReport implements Reporter {
     let count = 0
 
     suite.suites.forEach((childSuite) => {
-      console.log(childSuite.title)
       count += this.countSuites(childSuite)
     })
 
