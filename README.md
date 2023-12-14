@@ -1,14 +1,19 @@
 # Playwright JSON Reporter - CTRF
 
-`playwright-ctrf-json-reporter` is a Playwright test reporter that generates JSON test reports that are [CTRF](https://ctrf.io) compliant.
+playwright-ctrf-json-reporter is a Playwright test reporter to generate JSON test reports that are [CTRF](https://ctrf.io) compliant.
 
-No matter which test framework or library you use, generate the same JSON report with [Common Test Report Format](https://ctrf.io)
+With [Common Test Report Format](https://ctrf.io) you can generate the same JSON report no matter which no matter which framework or library you use.
 
 ## Features
 
-- Generate detailed JSON test reports that are [CTRF](https://ctrf.io) compliant
-- Customizable output options, generate minimal or comprehensive reports.
+- Generate JSON test reports that are [CTRF](https://ctrf.io) compliant
+- Customizable output options, minimal or comprehensive reports
 - Straightforward integration with Playwright
+- Enhanced test insights with detailed test information, environment details, and more.
+
+## What is CTRF?
+
+A JSON test report that is the same structure, no matter which testing tool is used. It's created to provide consistent test reporting across multiple testing libraries and frameworks. Many testing libraries exist, each generating test reports in their own way, CTRF provides a standardised JSON report schema for all so you can generate the same report anywhere.
 
 ## Installation
 
@@ -16,7 +21,7 @@ No matter which test framework or library you use, generate the same JSON report
 npm install --save-dev playwright-ctrf-json-reporter
 ```
 
-To configure the reporter, add it to your playwright.config.ts/js file.
+Add the reporter to your playwright.config.ts file:
 
 ```javascript
   reporter: [
@@ -25,9 +30,7 @@ To configure the reporter, add it to your playwright.config.ts/js file.
   ],
 ```
 
-## Usage
-
-Simply run your tests:
+Run your tests:
 
 ```bash
 npx playwright test
@@ -37,20 +40,30 @@ You'll find a JSON file named `ctrf-report.json` in the root of your project.
 
 ## Reporter Options
 
-The reporter supports several configuration options, by default a comprehensive report is generated.
+The reporter supports several configuration options:
 
 ```javascript
- reporter: [
+reporter: [
     ['playwright-ctrf-json-reporter', {
-      outputFile: 'custom-name.json',
-      outputDir: 'custom-directory',
-      'minimal': true,
-       // ... other options ...
+        outputFile: 'custom-name.json', // Optional: Output file name. Defaults to 'ctrf-report.json'.
+        outputDir: 'custom-directory',  // Optional: Output directory path. Defaults to '.' (project root).
+        minimal: true,                  // Optional: Generate a minimal report. Defaults to 'false'. Overrides screenshot and testType
+        screenshot: false,               // Optional: Include screenshots in the report. Defaults to 'false'.
+        testType: 'e2e',                // Optional: Specify the test type (e.g., 'unit', 'e2e'). Defaults to 'e2e'.
+        appName: 'MyApp',               // Optional: Specify the name of the application under test.
+        appVersion: '1.0.0',            // Optional: Specify the version of the application under test.
+        osPlatform: 'linux',            // Optional: Specify the OS platform.
+        osRelease: '18.04',             // Optional: Specify the OS release version.
+        osVersion: '5.4.0',             // Optional: Specify the OS version.
+        buildName: 'MyApp Build',       // Optional: Specify the build name.
+        buildNumber: '100',             // Optional: Specify the build number.
     }]
   ],
 ```
 
-You can set reporter options as follows:
+By default, a comprehensive report is generated, with the exception of screenshots, which you must explicitly set to true.
+
+## CTRF types supported
 
 | Name         | Default                   | Description                                                                                                                          |
 | ------------ | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
@@ -74,11 +87,11 @@ You can set reporter options as follows:
 
 ## Advanced usage
 
-Some options require additional setup or usage considerations.
+Some features require additional setup or usage considerations.
 
 ### Screenshots
 
-The `screenshots` option in the reporter configuration allows you to include base-64 screenshots in your test report, you'll need to capture and attach screenshots in your Playwright tests:
+You can include base-64 screenshots in your test report, you'll need to capture and attach screenshots in your Playwright tests:
 
 ```javascript
 import { test, expect } from '@playwright/test'
@@ -93,17 +106,17 @@ test('basic test', async ({ page }, testInfo) => {
 })
 ```
 
-#### Supported Formats:
+#### Supported Formats
 
-Both JPEG and PNG formats are supported and only the last screenshot attached from each test will be included in the report.
+Both JPEG and PNG formats are supported, only the last screenshot attached from each test will be included in the report.
 
-#### Size Considerations:
+#### Size Considerations
 
-Base64-encoded image data can greatly increase the size of your report, it's recommended to use screenshots with a lower quality setting (less than 50%) to reduce file size, particularly if you are generating JPEG images. This trade-off between image quality and file size can help keep your reports more manageable.
+Base64-encoded image data can greatly increase the size of your report, it's recommended to use screenshots with a lower quality setting (less than 50%) to reduce file size, particularly if you are generating JPEG images.
 
 ### Browser
 
-The `browser` option allows you to include browser in your test report. You will need to extend Playwright's test object to capture and attach browser metadata. Here's an example of how you can do this:
+You can include browser information in your test report. You will need to extend Playwright's test object to capture and attach browser metadata for each test:
 
 ```javascript
 // tests/helpers.ts
