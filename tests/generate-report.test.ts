@@ -92,7 +92,7 @@ describe('GenerateCtrfReport', () => {
         reporter.ctrfReport
       )
 
-      expect(reporter.ctrfReport.results.stats.tests).toBe(1)
+      expect(reporter.ctrfReport.results.summary.tests).toBe(1)
     })
 
     it.each([
@@ -111,9 +111,9 @@ describe('GenerateCtrfReport', () => {
           reporter.ctrfReport
         )
 
-        expect(reporter.ctrfReport.results.stats.passed).toBe(passed)
-        expect(reporter.ctrfReport.results.stats.failed).toBe(failed)
-        expect(reporter.ctrfReport.results.stats.skipped).toBe(skipped)
+        expect(reporter.ctrfReport.results.summary.passed).toBe(passed)
+        expect(reporter.ctrfReport.results.summary.failed).toBe(failed)
+        expect(reporter.ctrfReport.results.summary.skipped).toBe(skipped)
       }
     )
   })

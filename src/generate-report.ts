@@ -20,22 +20,8 @@ interface ReporterConfigOptions {
   outputFile: string
   outputDir: string
   minimal: boolean
-  start: boolean
-  stop: boolean
-  suite: boolean
-  message: boolean
-  trace: boolean
-  rawStatus: boolean
-  tags: boolean
-  type: boolean
-  filePath: boolean
-  retry: boolean
-  flake: boolean
-  attempts: boolean
-  browser: boolean
-  device: boolean
   screenshot: boolean
-  customType?: string
+  testType?: string
   appName?: string
   appVersion?: string
   osPlatform?: string
@@ -63,20 +49,6 @@ class GenerateCtrfReport implements Reporter {
       outputFile: this.defaultOutputFile,
       outputDir: this.defaultOutputDir,
       minimal: false,
-      start: true,
-      stop: true,
-      suite: true,
-      message: true,
-      trace: true,
-      rawStatus: true,
-      tags: true,
-      type: true,
-      filePath: true,
-      retry: true,
-      flake: true,
-      attempts: false,
-      browser: true,
-      device: true,
       screenshot: false,
     }
 
@@ -158,42 +130,26 @@ class GenerateCtrfReport implements Reporter {
     }
 
     if (!this.reporterConfigOptions.minimal) {
-      if (this.reporterConfigOptions.start)
-        test.start = this.updateStart(testResult.startTime)
-      if (this.reporterConfigOptions.stop)
-        test.stop = Math.floor(Date.now() / 1000)
-      if (this.reporterConfigOptions.message)
-        test.message = this.extractFailureDetails(testResult).message
-      if (this.reporterConfigOptions.trace)
-        test.trace = this.extractFailureDetails(testResult).trace
-      if (this.reporterConfigOptions.rawStatus)
-        test.rawStatus = testResult.status
-      if (this.reporterConfigOptions.tags)
-        test.tags = this.extractTagsFromTitle(testCase.title)
-      if (
-        this.reporterConfigOptions.type !== undefined ||
-        (this.reporterConfigOptions.customType !== undefined &&
-          this.reporterConfigOptions.customType !== '')
-      )
-        test.type =
-          this.reporterConfigOptions.customType != null &&
-          this.reporterConfigOptions.customType !== ''
-            ? this.reporterConfigOptions.customType
-            : 'e2e'
-      if (this.reporterConfigOptions.filePath)
-        test.filePath = testCase.location.file
-      if (this.reporterConfigOptions.flake)
-        test.flake = testResult.status === 'passed' && testResult.retry > 0
-      if (this.reporterConfigOptions.retry) test.retry = testResult.retry
-      if (this.reporterConfigOptions.screenshot)
+      test.start = this.updateStart(testResult.startTime)
+      test.stop = Math.floor(Date.now() / 1000)
+      test.message = this.extractFailureDetails(testResult).message
+      test.trace = this.extractFailureDetails(testResult).trace
+      test.rawStatus = testResult.status
+      test.tags = this.extractTagsFromTitle(testCase.title)
+      test.type =
+        this.reporterConfigOptions.testType != null &&
+          this.reporterConfigOptions.testType !== ''
+          ? this.reporterConfigOptions.testType
+          : 'e2e'
+      test.filePath = testCase.location.file
+      test.retry = testResult.retry
+      test.flake = testResult.status === 'passed' && testResult.retry > 0
+      if (this.reporterConfigOptions.screenshot) {
         test.screenshot = this.extractScreenshotBase64(testResult)
-      if (this.reporterConfigOptions.suite)
-        test.suite = this.buildSuitePath(testCase)
-      if (this.reporterConfigOptions.browser) {
-        test.browser = `${this.extractMetadata(testResult).name} ${
-          this.extractMetadata(testResult).version
-        }`
       }
+      test.suite = this.buildSuitePath(testCase)
+      test.browser = `${this.extractMetadata(testResult)
+        ?.name} ${this.extractMetadata(testResult)?.version}`
     }
 
     ctrfReport.results.tests.push(test)
