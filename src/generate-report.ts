@@ -6,6 +6,7 @@ import {
   type Reporter,
   type TestCase,
   type TestResult,
+  type FullConfig,
 } from '@playwright/test/reporter'
 
 import {
@@ -37,6 +38,8 @@ class GenerateCtrfReport implements Reporter {
   readonly reporterName = 'playwright-ctrf-json-reporter'
   readonly defaultOutputFile = 'ctrf-report.json'
   readonly defaultOutputDir = '.'
+  private suite: Suite | undefined
+  private startTime: number | undefined
 
   constructor(config?: Partial<ReporterConfigOptions>) {
     this.reporterConfigOptions = {
@@ -45,13 +48,13 @@ class GenerateCtrfReport implements Reporter {
       minimal: config?.minimal ?? false,
       screenshot: config?.screenshot ?? false,
       testType: config?.testType ?? 'e2e',
-      appName: config?.appName ?? '',
-      appVersion: config?.appVersion ?? '',
-      osPlatform: config?.osPlatform ?? '',
-      osRelease: config?.osRelease ?? '',
-      osVersion: config?.osVersion ?? '',
-      buildName: config?.buildName ?? '',
-      buildNumber: config?.buildNumber ?? '',
+      appName: config?.appName ?? undefined,
+      appVersion: config?.appVersion ?? undefined,
+      osPlatform: config?.osPlatform ?? undefined,
+      osRelease: config?.osRelease ?? undefined,
+      osVersion: config?.osVersion ?? undefined,
+      buildName: config?.buildName ?? undefined,
+      buildNumber: config?.buildNumber ?? undefined,
     }
 
     this.ctrfReport = {
@@ -74,8 +77,10 @@ class GenerateCtrfReport implements Reporter {
     this.ctrfEnvironment = {}
   }
 
-  onBegin(): void {
-    this.ctrfReport.results.summary.start = Date.now()
+  onBegin(_config: FullConfig, suite: Suite): void {
+    this.suite = suite
+    this.startTime = Date.now()
+    this.ctrfReport.results.summary.start = this.startTime
 
     if (
       !fs.existsSync(
@@ -93,19 +98,38 @@ class GenerateCtrfReport implements Reporter {
     if (this.hasEnvironmentDetails(this.ctrfEnvironment)) {
       this.ctrfReport.results.environment = this.ctrfEnvironment
     }
+
     this.setFilename(
       this.reporterConfigOptions.outputFile ?? this.defaultOutputFile
     )
   }
 
-  onTestEnd(test: TestCase, result: TestResult): void {
-    this.updateCtrfTestResultsFromTestResult(test, result, this.ctrfReport)
-    this.updateSummaryFromTestResult(result, this.ctrfReport)
-  }
-
   onEnd(): void {
     this.ctrfReport.results.summary.stop = Date.now()
+
+    if (this.suite !== undefined) this.processSuite(this.suite)
+
     this.writeReportToFile(this.ctrfReport)
+  }
+
+  private processSuite(suite: Suite): void {
+    for (const test of suite.tests) {
+      this.processTest(test)
+    }
+
+    for (const childSuite of suite.suites) {
+      this.processSuite(childSuite)
+    }
+  }
+
+  private processTest(testCase: TestCase): void {
+    const latestResult = testCase.results[testCase.results.length - 1]
+    this.updateCtrfTestResultsFromTestResult(
+      testCase,
+      latestResult,
+      this.ctrfReport
+    )
+    this.updateSummaryFromTestResult(latestResult, this.ctrfReport)
   }
 
   setFilename(filename: string): void {
@@ -129,7 +153,10 @@ class GenerateCtrfReport implements Reporter {
 
     if (this.reporterConfigOptions.minimal === false) {
       test.start = this.updateStart(testResult.startTime)
-      test.stop = Math.floor(Date.now() / 1000)
+      test.stop = this.calculateStopTime(
+        testResult.startTime,
+        testResult.duration
+      )
       test.message = this.extractFailureDetails(testResult).message
       test.trace = this.extractFailureDetails(testResult).trace
       test.rawStatus = testResult.status
@@ -182,25 +209,25 @@ class GenerateCtrfReport implements Reporter {
   }
 
   setEnvironmentDetails(reporterConfigOptions: ReporterConfigOptions): void {
-    if (reporterConfigOptions.appName != null) {
+    if (reporterConfigOptions.appName !== undefined) {
       this.ctrfEnvironment.appName = reporterConfigOptions.appName
     }
-    if (reporterConfigOptions.appVersion != null) {
+    if (reporterConfigOptions.appVersion !== undefined) {
       this.ctrfEnvironment.appVersion = reporterConfigOptions.appVersion
     }
-    if (reporterConfigOptions.osPlatform != null) {
+    if (reporterConfigOptions.osPlatform !== undefined) {
       this.ctrfEnvironment.osPlatform = reporterConfigOptions.osPlatform
     }
-    if (reporterConfigOptions.osRelease != null) {
+    if (reporterConfigOptions.osRelease !== undefined) {
       this.ctrfEnvironment.osRelease = reporterConfigOptions.osRelease
     }
-    if (reporterConfigOptions.osVersion != null) {
+    if (reporterConfigOptions.osVersion !== undefined) {
       this.ctrfEnvironment.osVersion = reporterConfigOptions.osVersion
     }
-    if (reporterConfigOptions.buildName != null) {
+    if (reporterConfigOptions.buildName !== undefined) {
       this.ctrfEnvironment.buildName = reporterConfigOptions.buildName
     }
-    if (reporterConfigOptions.buildNumber != null) {
+    if (reporterConfigOptions.buildNumber !== undefined) {
       this.ctrfEnvironment.buildNumber = reporterConfigOptions.buildNumber
     }
   }
@@ -235,6 +262,12 @@ class GenerateCtrfReport implements Reporter {
     const date = new Date(startTime)
     const unixEpochTime = Math.floor(date.getTime() / 1000)
     return unixEpochTime
+  }
+
+  calculateStopTime(startTime: Date, duration: number): number {
+    const startDate = new Date(startTime)
+    const stopDate = new Date(startDate.getTime() + duration)
+    return Math.floor(stopDate.getTime() / 1000)
   }
 
   buildSuitePath(test: TestCase): string {
