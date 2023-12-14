@@ -1,5 +1,5 @@
-import * as fs from 'fs'
-import * as path from 'path'
+import path from 'path'
+import fs from 'fs'
 
 import {
   type Suite,
@@ -69,6 +69,8 @@ class GenerateCtrfReport implements Reporter {
           pending: 0,
           skipped: 0,
           other: 0,
+          start: 0,
+          stop: 0,
         },
         tests: [],
       },
@@ -107,12 +109,15 @@ class GenerateCtrfReport implements Reporter {
   onEnd(): void {
     this.ctrfReport.results.summary.stop = Date.now()
 
-    if (this.suite !== undefined) this.processSuite(this.suite)
+    if (this.suite !== undefined) {
+      this.processSuite(this.suite)
 
+      this.ctrfReport.results.summary.suites = this.countSuites(this.suite)
+    }
     this.writeReportToFile(this.ctrfReport)
   }
 
-  private processSuite(suite: Suite): void {
+  processSuite(suite: Suite): void {
     for (const test of suite.tests) {
       this.processTest(test)
     }
@@ -122,7 +127,7 @@ class GenerateCtrfReport implements Reporter {
     }
   }
 
-  private processTest(testCase: TestCase): void {
+  processTest(testCase: TestCase): void {
     const latestResult = testCase.results[testCase.results.length - 1]
     this.updateCtrfTestResultsFromTestResult(
       testCase,
@@ -169,8 +174,12 @@ class GenerateCtrfReport implements Reporter {
         test.screenshot = this.extractScreenshotBase64(testResult)
       }
       test.suite = this.buildSuitePath(testCase)
-      test.browser = `${this.extractMetadata(testResult)
-        ?.name} ${this.extractMetadata(testResult)?.version}`
+      if (
+        this.extractMetadata(testResult)?.name !== undefined ||
+        this.extractMetadata(testResult)?.version !== undefined
+      )
+        test.browser = `${this.extractMetadata(testResult)
+          ?.name} ${this.extractMetadata(testResult)?.version}`
     }
 
     ctrfReport.results.tests.push(test)
@@ -313,6 +322,17 @@ class GenerateCtrfReport implements Reporter {
       return failureDetails
     }
     return {}
+  }
+
+  countSuites(suite: Suite): number {
+    let count = 0
+
+    suite.suites.forEach((childSuite) => {
+      console.log(childSuite.title)
+      count += this.countSuites(childSuite)
+    })
+
+    return count
   }
 
   writeReportToFile(data: CtrfReport): void {

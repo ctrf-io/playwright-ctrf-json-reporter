@@ -17,8 +17,8 @@ export interface Summary {
   pending: number
   other: number
   suites?: number
-  start?: number
-  stop?: number
+  start: number
+  stop: number
 }
 
 export interface CtrfTest {
