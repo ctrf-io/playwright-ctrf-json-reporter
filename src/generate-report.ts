@@ -138,7 +138,7 @@ class GenerateCtrfReport implements Reporter {
       test.tags = this.extractTagsFromTitle(testCase.title)
       test.type =
         this.reporterConfigOptions.testType != null &&
-          this.reporterConfigOptions.testType !== ''
+        this.reporterConfigOptions.testType !== ''
           ? this.reporterConfigOptions.testType
           : 'e2e'
       test.filePath = testCase.location.file
