@@ -2,7 +2,7 @@
 
 A Playwright test reporter to generate JSON test reports that are [CTRF](https://ctrf.io) compliant.
 
-[Common Test Report Format](https://ctrf.io) helps you generate consistent JSON reports no matter which framework or library you use.
+[Common Test Report Format](https://ctrf.io) helps you generate consistent JSON reports that are agnostic of specific programming languages or test frameworks.
 
 ## Features
 
@@ -13,7 +13,7 @@ A Playwright test reporter to generate JSON test reports that are [CTRF](https:/
 
 ## What is CTRF?
 
-A JSON test report schema that is the same structure, no matter which testing tool is used. It's created to provide consistent test reporting across multiple testing libraries and frameworks. Where many testing libraries exist, each generating JSON reports in their own way, CTRF provides a standardised schema so you can generate the same report anywhere.
+A JSON test report schema that is the same structure, no matter which testing tool is used. It's created to provide consistent test reporting agnostic of specific programming languages or testing frameworks. Where many testing frameworks exist, each generating JSON reports in their own way, CTRF provides a standardised schema helping you generate the same report anywhere.
 
 ## Installation
 
