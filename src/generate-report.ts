@@ -37,7 +37,7 @@ class GenerateCtrfReport implements Reporter {
   readonly reporterConfigOptions: ReporterConfigOptions
   readonly reporterName = 'playwright-ctrf-json-reporter'
   readonly defaultOutputFile = 'ctrf-report.json'
-  readonly defaultOutputDir = '.'
+  readonly defaultOutputDir = 'ctrf'
   private suite: Suite | undefined
   private startTime: number | undefined
 

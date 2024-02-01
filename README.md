@@ -24,10 +24,10 @@ npm install --save-dev playwright-ctrf-json-reporter
 Add the reporter to your playwright.config.ts file:
 
 ```javascript
-  reporter: [
-    ['list'], // You can combine multiple reporters
-    ['playwright-ctrf-json-reporter', {}]
-  ],
+reporter: [
+  ['list'], // You can combine multiple reporters
+  ['playwright-ctrf-json-reporter', {}]
+],
 ```
 
 Run your tests:
@@ -36,7 +36,7 @@ Run your tests:
 npx playwright test
 ```
 
-You'll find a JSON file named `ctrf-report.json` in the root of your project.
+You'll find a JSON file named `ctrf-report.json` in the `ctrf` directory.
 
 ## Reporter Options
 
