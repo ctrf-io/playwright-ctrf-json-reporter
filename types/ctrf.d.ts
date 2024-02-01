@@ -7,6 +7,7 @@ export interface Results {
   summary: Summary
   tests: CtrfTest[]
   environment?: CtrfEnvironment
+  extra?: Record<string, any>
 }
 
 export interface Summary {
@@ -19,6 +20,7 @@ export interface Summary {
   suites?: number
   start: number
   stop: number
+  extra?: Record<string, any>
 }
 
 export interface CtrfTest {
@@ -42,7 +44,7 @@ export interface CtrfTest {
   screenshot?: string
   parameters?: Record<string, any>
   steps?: Step[]
-  extras?: Record<string, any>
+  extra?: Record<string, any>
 }
 
 export interface CtrfEnvironment {
@@ -53,11 +55,13 @@ export interface CtrfEnvironment {
   osVersion?: string
   buildName?: string
   buildNumber?: string
+  extra?: Record<string, any>
 }
 
 export interface Tool {
   name: string
   version?: string
+  extra?: Record<string, any>
 }
 
 export interface Step {
