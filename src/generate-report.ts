@@ -343,7 +343,8 @@ class GenerateCtrfReport implements Reporter {
     try {
       fs.writeFileSync(filePath, str + '\n')
       console.log(
-        `${this.reporterName}: successfully written ctrf json to %s`,
+        `${this.reporterName}: successfully written ctrf json to %s/%s`,
+        this.reporterConfigOptions.outputDir,
         this.reporterConfigOptions.outputFile
       )
     } catch (error) {
