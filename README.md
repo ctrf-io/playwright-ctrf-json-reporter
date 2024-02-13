@@ -1,4 +1,4 @@
-# Playwright JSON Reporter - CTRF
+# Playwright JSON Test Results Report
 
 A Playwright JSON test reporter to create test reports that follow the CTRF standard.
 
