@@ -127,7 +127,6 @@ The test object in the report includes the following [CTRF properties](https://c
 | `browser`    | String           | Optional | The browser used for the test.                                                      |
 | `screenshot` | String           | Optional | A base64 encoded screenshot taken during the test.                                  |
 
-|
 
 ## Advanced usage
 
