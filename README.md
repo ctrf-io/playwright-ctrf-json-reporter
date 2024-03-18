@@ -127,7 +127,6 @@ The test object in the report includes the following [CTRF properties](https://c
 | `browser`    | String           | Optional | The browser used for the test.                                                      |
 | `screenshot` | String           | Optional | A base64 encoded screenshot taken during the test.                                  |
 
-
 ## Advanced usage
 
 Some features require additional setup or usage considerations.
@@ -199,3 +198,7 @@ test('example test', async ({ page }) => {
 ```
 
 The browser metadata file must be called metadata.json and contain properties name and version in the body.
+
+## Support Us
+
+If you find this project useful, consider giving it a GitHub star ⭐ It means a lot to us.
