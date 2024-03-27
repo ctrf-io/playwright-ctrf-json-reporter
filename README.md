@@ -123,7 +123,6 @@ The test object in the report includes the following [CTRF properties](https://c
 | `filepath`   | String           | Optional | The file path where the test is located in the project.                             |
 | `retry`      | Number           | Optional | The number of retries attempted for the test.                                       |
 | `flake`      | Boolean          | Optional | Indicates whether the test result is flaky.                                         |
-| `attempts`   | Array of Test    | Optional | Previous attempts of the test during this run.                                      |
 | `browser`    | String           | Optional | The browser used for the test.                                                      |
 | `screenshot` | String           | Optional | A base64 encoded screenshot taken during the test.                                  |
 
