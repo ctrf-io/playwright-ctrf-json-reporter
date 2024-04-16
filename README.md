@@ -17,7 +17,6 @@ It means a lot to us and helps us grow this open source library.
 - Straightforward integration with Playwright
 - Enhanced test insights with detailed test information, environment details, and more.
 
-
 ```json
 {
   "results": {
