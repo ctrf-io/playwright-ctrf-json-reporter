@@ -125,7 +125,7 @@ The test object in the report includes the following [CTRF properties](https://c
 | `tags`       | Array of Strings | Optional | The tags retrieved from the test name                                               |
 | `type`       | String           | Optional | The type of test (e.g., `api`, `e2e`).                                              |
 | `filepath`   | String           | Optional | The file path where the test is located in the project.                             |
-| `retries`      | Number           | Optional | The number of retries attempted for the test.                                       |
+| `retries`    | Number           | Optional | The number of retries attempted for the test.                                       |
 | `flaky`      | Boolean          | Optional | Indicates whether the test result is flaky.                                         |
 | `browser`    | String           | Optional | The browser used for the test.                                                      |
 | `screenshot` | String           | Optional | A base64 encoded screenshot taken during the test.                                  |
