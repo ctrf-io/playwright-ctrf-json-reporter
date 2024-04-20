@@ -168,8 +168,8 @@ class GenerateCtrfReport implements Reporter {
       test.tags = this.extractTagsFromTitle(testCase.title)
       test.type = this.reporterConfigOptions.testType ?? 'e2e'
       test.filePath = testCase.location.file
-      test.retries = testResult.retries
-      test.flaky = testResult.status === 'passed' && testResult.retries > 0
+      test.retries = testResult.retry
+      test.flaky = testResult.status === 'passed' && testResult.retry > 0
       if (this.reporterConfigOptions.screenshot === true) {
         test.screenshot = this.extractScreenshotBase64(testResult)
       }
