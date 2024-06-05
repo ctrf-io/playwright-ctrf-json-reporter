@@ -55,6 +55,11 @@ export interface CtrfEnvironment {
   osVersion?: string
   buildName?: string
   buildNumber?: string
+  buildUrl?: string
+  repositoryName?: string
+  repositoryUrl?: string
+  branchName?: string
+  testEnvironment?: string
   extra?: Record<string, any>
 }
 

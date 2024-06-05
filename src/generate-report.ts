@@ -29,6 +29,11 @@ interface ReporterConfigOptions {
   osVersion?: string | undefined
   buildName?: string | undefined
   buildNumber?: string | undefined
+  buildUrl?: string | undefined
+  repositoryName?: string | undefined
+  repositoryUrl?: string | undefined
+  branchName?: string | undefined
+  testEnvironment?: string | undefined
 }
 
 class GenerateCtrfReport implements Reporter {
@@ -55,6 +60,11 @@ class GenerateCtrfReport implements Reporter {
       osVersion: config?.osVersion ?? undefined,
       buildName: config?.buildName ?? undefined,
       buildNumber: config?.buildNumber ?? undefined,
+      buildUrl: config?.buildUrl ?? undefined,
+      repositoryName: config?.repositoryName ?? undefined,
+      repositoryUrl: config?.repositoryUrl ?? undefined,
+      branchName: config?.branchName ?? undefined,
+      testEnvironment: config?.testEnvironment ?? undefined,
     }
 
     this.ctrfReport = {
@@ -238,6 +248,22 @@ class GenerateCtrfReport implements Reporter {
     }
     if (reporterConfigOptions.buildNumber !== undefined) {
       this.ctrfEnvironment.buildNumber = reporterConfigOptions.buildNumber
+    }
+    if (reporterConfigOptions.buildUrl !== undefined) {
+      this.ctrfEnvironment.buildUrl = reporterConfigOptions.buildUrl
+    }
+    if (reporterConfigOptions.repositoryName !== undefined) {
+      this.ctrfEnvironment.repositoryName = reporterConfigOptions.repositoryName
+    }
+    if (reporterConfigOptions.repositoryUrl !== undefined) {
+      this.ctrfEnvironment.repositoryUrl = reporterConfigOptions.repositoryUrl
+    }
+    if (reporterConfigOptions.branchName !== undefined) {
+      this.ctrfEnvironment.branchName = reporterConfigOptions.branchName
+    }
+    if (reporterConfigOptions.testEnvironment !== undefined) {
+      this.ctrfEnvironment.testEnvironment =
+        reporterConfigOptions.testEnvironment
     }
   }
 

@@ -119,6 +119,11 @@ reporter: [
         osVersion: '5.4.0',             // Optional: Specify the OS version.
         buildName: 'MyApp Build',       // Optional: Specify the build name.
         buildNumber: '100',             // Optional: Specify the build number.
+        buildUrl: "https://ctrf.io",    // Optional: Specify the build url.
+        repositoryName: "ctrf-json",    // Optional: Specify the repository name.
+        repositoryUrl: "https://gh.io", // Optional: Specify the repository url.
+        branchName: "main",             // Optional: Specify the branch name.
+        testEnvironment: "staging"      // Optional: Specify the test environment (e.g. staging, production).
     }]
   ],
 ```
