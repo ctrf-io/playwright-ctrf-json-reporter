@@ -2,6 +2,12 @@
 
 > Save Playwright test results as a JSON file
 
+![Static Badge](https://img.shields.io/badge/official-red?label=ctrf&labelColor=green)
+[![build](https://github.com/ctrf-io/playwright-ctrf-json-report/actions/workflows/main.yaml/badge.svg)](https://github.com/ctrf-io/playwright-ctrf-json-report/actions/workflows/main.yaml)
+![NPM Downloads](https://img.shields.io/npm/d18m/playwright-ctrf-json-reporter?logo=npm)
+![npm bundle size](https://img.shields.io/bundlephobia/minzip/playwright-ctrf-json-reporter?label=Size)
+![GitHub Repo stars](https://img.shields.io/github/stars/ctrf-io/playwright-ctrf-json-report)
+
 A Playwright JSON test reporter to create test reports that follow the CTRF standard.
 
 [Common Test Report Format](https://ctrf.io) ensures the generation of uniform JSON test reports, independent of programming languages or test framework in use.
@@ -22,7 +28,7 @@ The only way we can grow CTRF is with your help and the support of the software 
 - Give this repository a star ⭐⭐⭐⭐⭐⭐
 - Follow the CTRF [GitHub organisation](https://github.com/ctrf-io)
 - Clap for our medium articles (30 times each) 👏
-- Share, share share! Discord, Reddit, Twitter, LinkedIn, Slack, Teams, whereever! - please share our [libraries](https://github.com/orgs/ctrf-io/repositories), our [homepage](https://www.ctrf.io/), our [Medium articles](https://medium.com/@ma11hewthomas)
+- Share our [libraries](https://github.com/orgs/ctrf-io/repositories), our [homepage](https://www.ctrf.io/), or [Medium articles](https://medium.com/@ma11hewthomas)
 - Maybe even write a blog about us!
 - Try our [tools](https://github.com/orgs/ctrf-io/repositories)
 
