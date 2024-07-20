@@ -120,9 +120,11 @@ class GenerateCtrfReport implements Reporter {
     this.ctrfReport.results.summary.stop = Date.now()
 
     if (this.suite !== undefined) {
-      this.processSuite(this.suite)
+      if (this.suite.allTests().length > 0) {
+        this.processSuite(this.suite)
 
-      this.ctrfReport.results.summary.suites = this.countSuites(this.suite)
+        this.ctrfReport.results.summary.suites = this.countSuites(this.suite)
+      }
     }
     this.writeReportToFile(this.ctrfReport)
   }
@@ -138,13 +140,18 @@ class GenerateCtrfReport implements Reporter {
   }
 
   processTest(testCase: TestCase): void {
+    if (testCase.results.length === 0) {
+      return
+    }
     const latestResult = testCase.results[testCase.results.length - 1]
-    this.updateCtrfTestResultsFromTestResult(
-      testCase,
-      latestResult,
-      this.ctrfReport
-    )
-    this.updateSummaryFromTestResult(latestResult, this.ctrfReport)
+    if (latestResult !== undefined) {
+      this.updateCtrfTestResultsFromTestResult(
+        testCase,
+        latestResult,
+        this.ctrfReport
+      )
+      this.updateSummaryFromTestResult(latestResult, this.ctrfReport)
+    }
   }
 
   setFilename(filename: string): void {
