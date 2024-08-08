@@ -12,6 +12,8 @@ A Playwright JSON test reporter to create test reports that follow the CTRF stan
 
 [Common Test Report Format](https://ctrf.io) ensures the generation of uniform JSON test reports, independent of programming languages or test framework in use.
 
+# **⭐⭐ If you find this project useful, consider giving it a GitHub star ⭐⭐**
+
 ## Help us get featured on the Playwright Reporter showcase
 
 **We'd love to be featured but we need more followers and stars to be [considered](https://github.com/microsoft/playwright/pull/31470)**
