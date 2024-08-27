@@ -187,6 +187,20 @@ class GenerateCtrfReport implements Reporter {
       test.filePath = testCase.location.file
       test.retries = testResult.retry
       test.flaky = testResult.status === 'passed' && testResult.retry > 0
+      test.steps = []
+      if (testResult.steps.length > 0) {
+        testResult.steps.forEach((step) => {
+          const stepStatus =
+            step.error !== undefined
+              ? this.mapPlaywrightStatusToCtrf('failed')
+              : this.mapPlaywrightStatusToCtrf('passed')
+          const currentStep = {
+            name: step.title,
+            status: stepStatus,
+          }
+          test.steps?.push(currentStep)
+        })
+      }
       if (this.reporterConfigOptions.screenshot === true) {
         test.screenshot = this.extractScreenshotBase64(testResult)
       }
