@@ -189,11 +189,14 @@ class GenerateCtrfReport implements Reporter {
       test.flaky = testResult.status === 'passed' && testResult.retry > 0
       test.steps = []
       if (testResult.steps.length > 0) {
-        testResult.steps.forEach((step) => {
+        const testSteps = testResult.steps.filter(
+          (step) => step.category === 'test.step'
+        )
+        testSteps.forEach((step) => {
           const stepStatus =
-            step.error !== undefined
-              ? this.mapPlaywrightStatusToCtrf('failed')
-              : this.mapPlaywrightStatusToCtrf('passed')
+            step.error === undefined
+              ? this.mapPlaywrightStatusToCtrf('passed')
+              : this.mapPlaywrightStatusToCtrf('failed')
           const currentStep = {
             name: step.title,
             status: stepStatus,
