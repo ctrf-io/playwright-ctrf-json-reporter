@@ -407,7 +407,7 @@ class GenerateCtrfReport implements Reporter {
 
     const childSteps = step.steps
 
-    if (step.category === 'hook' && childSteps.length > 0) {
+    if (childSteps.length > 0) {
       childSteps.forEach((cStep) => {
         this.processStep(test, cStep)
       })

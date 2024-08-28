@@ -150,6 +150,7 @@ The test object in the report includes the following [CTRF properties](https://c
 | `flaky`      | Boolean          | Optional | Indicates whether the test result is flaky.                                         |
 | `browser`    | String           | Optional | The browser used for the test.                                                      |
 | `screenshot` | String           | Optional | A base64 encoded screenshot taken during the test.                                  |
+| `steps`      | Array of Objects | Optional | Individual steps in the test, especially for BDD-style testing.                     |
 
 ## Advanced usage
 
