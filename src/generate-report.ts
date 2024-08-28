@@ -7,6 +7,7 @@ import {
   type TestCase,
   type TestResult,
   type FullConfig,
+  type TestStep,
 } from '@playwright/test/reporter'
 
 import {
@@ -189,19 +190,8 @@ class GenerateCtrfReport implements Reporter {
       test.flaky = testResult.status === 'passed' && testResult.retry > 0
       test.steps = []
       if (testResult.steps.length > 0) {
-        const testSteps = testResult.steps.filter(
-          (step) => step.category === 'test.step'
-        )
-        testSteps.forEach((step) => {
-          const stepStatus =
-            step.error === undefined
-              ? this.mapPlaywrightStatusToCtrf('passed')
-              : this.mapPlaywrightStatusToCtrf('failed')
-          const currentStep = {
-            name: step.title,
-            status: stepStatus,
-          }
-          test.steps?.push(currentStep)
+        testResult.steps.forEach((step) => {
+          this.processStep(test, step)
         })
       }
       if (this.reporterConfigOptions.screenshot === true) {
@@ -399,6 +389,28 @@ class GenerateCtrfReport implements Reporter {
       )
     } catch (error) {
       console.error(`Error writing ctrf json report:, ${String(error)}`)
+    }
+  }
+
+  processStep(test: CtrfTest, step: TestStep): void {
+    if (step.category === 'test.step') {
+      const stepStatus =
+        step.error === undefined
+          ? this.mapPlaywrightStatusToCtrf('passed')
+          : this.mapPlaywrightStatusToCtrf('failed')
+      const currentStep = {
+        name: step.title,
+        status: stepStatus,
+      }
+      test.steps?.push(currentStep)
+    }
+
+    const childSteps = step.steps
+
+    if (step.category === 'hook' && childSteps.length > 0) {
+      childSteps.forEach((cStep) => {
+        this.processStep(test, cStep)
+      })
     }
   }
 }
