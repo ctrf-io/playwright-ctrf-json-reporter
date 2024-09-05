@@ -351,7 +351,12 @@ class GenerateCtrfReport implements Reporter {
   }
 
   extractFailureDetails(testResult: TestResult): Partial<CtrfTest> {
-    if (testResult.status === 'failed' && testResult.error !== undefined) {
+    if (
+      (testResult.status === 'failed' ||
+        testResult.status === 'timedOut' ||
+        testResult.status === 'interrupted') &&
+      testResult.error !== undefined
+    ) {
       const failureDetails: Partial<CtrfTest> = {}
       if (testResult.error.message !== undefined) {
         failureDetails.message = testResult.error.message
