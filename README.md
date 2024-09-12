@@ -98,6 +98,7 @@ reporter: [
         outputDir: 'custom-directory',  // Optional: Output directory path. Defaults to '.' (project root).
         minimal: true,                  // Optional: Generate a minimal report. Defaults to 'false'. Overrides screenshot and testType when set to true
         screenshot: false,              // Optional: Include screenshots in the report. Defaults to 'false'.
+        annotations: false,             // Optional: Include annotations in the report. Defaults to 'false'.
         testType: 'e2e',                // Optional: Specify the test type (e.g., 'api', 'e2e'). Defaults to 'e2e'.
         appName: 'MyApp',               // Optional: Specify the name of the application under test.
         appVersion: '1.0.0',            // Optional: Specify the version of the application under test.
@@ -158,6 +159,10 @@ The test object in the report includes the following [CTRF properties](https://c
 ## Advanced usage
 
 Some features require additional setup or usage considerations.
+
+### Annotations
+
+By setting `annotations: true` you can include annotations in the test extra property.
 
 ### Screenshots
 
