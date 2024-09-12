@@ -22,6 +22,7 @@ interface ReporterConfigOptions {
   outputDir?: string
   minimal?: boolean
   screenshot?: boolean
+  annotations?: boolean
   testType?: string
   appName?: string | undefined
   appVersion?: string | undefined
@@ -53,6 +54,7 @@ class GenerateCtrfReport implements Reporter {
       outputDir: config?.outputDir ?? this.defaultOutputDir,
       minimal: config?.minimal ?? false,
       screenshot: config?.screenshot ?? false,
+      annotations: config?.annotations ?? false,
       testType: config?.testType ?? 'e2e',
       appName: config?.appName ?? undefined,
       appVersion: config?.appVersion ?? undefined,
@@ -204,6 +206,9 @@ class GenerateCtrfReport implements Reporter {
       )
         test.browser = `${this.extractMetadata(testResult)
           ?.name} ${this.extractMetadata(testResult)?.version}`
+      if (this.reporterConfigOptions.annotations) {
+        test.extra = { annotations: testCase.annotations }
+      }
     }
 
     ctrfReport.results.tests.push(test)
