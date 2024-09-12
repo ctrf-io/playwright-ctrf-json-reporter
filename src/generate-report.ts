@@ -206,7 +206,7 @@ class GenerateCtrfReport implements Reporter {
       )
         test.browser = `${this.extractMetadata(testResult)
           ?.name} ${this.extractMetadata(testResult)?.version}`
-      if (this.reporterConfigOptions.annotations) {
+      if (this.reporterConfigOptions.annotations !== undefined) {
         test.extra = { annotations: testCase.annotations }
       }
     }
