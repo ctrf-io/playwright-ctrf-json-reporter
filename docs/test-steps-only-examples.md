@@ -15,11 +15,11 @@ Below are some examples of how the report will look based on the `testStepsOnly`
 ### Simple test - No `test.step()` used.
 
 ```typescript
-test("has title @title", async ({ page }) => {
-  await page.goto("https://playwright.dev/");
+test('has title @title', async ({ page }) => {
+  await page.goto('https://playwright.dev/')
 
-  await expect(page).toHaveTitle(/Playwright/);
-});
+  await expect(page).toHaveTitle(/Playwright/)
+})
 ```
 
 A simple test like above, will be reported as:
@@ -176,22 +176,27 @@ A simple test like above, will be reported as:
 ```ts
 // beforeEach hook, will be included in CTRF report.
 test.beforeEach(async ({ page }) => {
-  await page.goto("https://playwright.dev/");
-});
+  await page.goto('https://playwright.dev/')
+})
 
-test("with nested steps", { tag: [ "@steps", "@nested-steps" ] }, async ({ page }) => {
+test(
+  'with nested steps',
+  { tag: ['@steps', '@nested-steps'] },
+  async ({ page }) => {
+    await test.step('Verify page title contains Playwright', async () => {
+      await expect.soft(page).toHaveTitle(/Playwright/)
+    })
 
-  await test.step("Verify page title contains Playwright", async () => {
-    await expect.soft(page).toHaveTitle(/Playwright/);
-  });
+    // No test.step() usage for this step, but it will be included in CTRF report.
+    await page.getByRole('link', { name: 'Get started' }).click()
 
-  // No test.step() usage for this step, but it will be included in CTRF report.
-  await page.getByRole("link", { name: "Get started" }).click();
-
-  await test.step("Verify Installation heading is visible", async () => {
-    await expect.soft(page.getByRole("heading", { name: "Installation" })).toBeVisible();
-  });
-});
+    await test.step('Verify Installation heading is visible', async () => {
+      await expect
+        .soft(page.getByRole('heading', { name: 'Installation' }))
+        .toBeVisible()
+    })
+  }
+)
 ```
 
 A test having `test.step()` as steps, will be reported as:
@@ -416,6 +421,7 @@ A test having `test.step()` as steps, will be reported as:
 ```
 
 ### BDD Style test - using [Playwright-bdd](https://vitalets.github.io/playwright-bdd/#/)
+
 ```gherkin
 @login
 Feature: User Login
@@ -727,11 +733,11 @@ A BDD styled test like the one above, will be reported as:
 ### Simple test - No `test.step()` used.
 
 ```ts
-test("has title @title", async ({ page }) => {
-  await page.goto("https://playwright.dev/");
+test('has title @title', async ({ page }) => {
+  await page.goto('https://playwright.dev/')
 
-  await expect(page).toHaveTitle(/Playwright/);
-});
+  await expect(page).toHaveTitle(/Playwright/)
+})
 ```
 
 Simple test above will be reported as:
@@ -766,25 +772,31 @@ Simple test above will be reported as:
 ```ts
 // beforeEach hook, will NOT be included in CTRF report.
 test.beforeEach(async ({ page }) => {
-  await page.goto("https://playwright.dev/");
-});
+  await page.goto('https://playwright.dev/')
+})
 
-test("with nested steps", { tag: [ "@steps", "@nested-steps" ] }, async ({ page }) => {
-  await test.step("Navigate to Playwright homepage", async () => {
-    await page.goto("https://playwright.dev/");
-  });
+test(
+  'with nested steps',
+  { tag: ['@steps', '@nested-steps'] },
+  async ({ page }) => {
+    await test.step('Navigate to Playwright homepage', async () => {
+      await page.goto('https://playwright.dev/')
+    })
 
-  await test.step("Verify page title contains Playwright", async () => {
-    await expect(page).toHaveTitle(/Playwright/);
-  });
+    await test.step('Verify page title contains Playwright', async () => {
+      await expect(page).toHaveTitle(/Playwright/)
+    })
 
-  // No test.step() used for this step, it will NOT be included in CTRF report.
-  await page.getByRole("link", { name: "Get started" }).click();
+    // No test.step() used for this step, it will NOT be included in CTRF report.
+    await page.getByRole('link', { name: 'Get started' }).click()
 
-  await test.step("Verify Installation heading is visible", async () => {
-    await expect(page.getByRole("heading", { name: "Installation" })).toBeVisible();
-  });
-});
+    await test.step('Verify Installation heading is visible', async () => {
+      await expect(
+        page.getByRole('heading', { name: 'Installation' })
+      ).toBeVisible()
+    })
+  }
+)
 ```
 
 A test with `test.step()` usage, will be reported as:
@@ -855,6 +867,7 @@ Feature: User Login
       When the User tries to login with "locked_out_user" as username and "secret_sauce" as password
       Then the User should see a locked out error message
 ```
+
 A BDD styled test like the one above, is reported as shown below.
 
 > ⚠️ Notice that the step in the 'Background' hook is not included. Similarly, any steps or fixtures executed as part of 'After' hooks will be omitted as well.
@@ -908,5 +921,7 @@ A BDD styled test like the one above, is reported as shown below.
   }
 }
 ```
+
 ## BDD styled tests with [Cucumber](https://cucumber.io/docs/guides/overview/)
+
 BDD styled tests that use cucumber as test runner are not supported. Only [playwright-bdd](https://vitalets.github.io/playwright-bdd/#/) is supported because it uses [Playwright Test](https://playwright.dev/docs/test-configuration) as a test runner to execute the tests.
