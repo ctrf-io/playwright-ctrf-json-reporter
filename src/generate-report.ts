@@ -15,12 +15,14 @@ import {
   type CtrfReport,
   type CtrfTest,
   type CtrfEnvironment,
+  type Step,
 } from '../types/ctrf'
 
 interface ReporterConfigOptions {
   outputFile?: string
   outputDir?: string
   minimal?: boolean
+  testStepsOnly?: boolean
   screenshot?: boolean
   annotations?: boolean
   testType?: string
@@ -53,6 +55,7 @@ class GenerateCtrfReport implements Reporter {
       outputFile: config?.outputFile ?? this.defaultOutputFile,
       outputDir: config?.outputDir ?? this.defaultOutputDir,
       minimal: config?.minimal ?? false,
+      testStepsOnly: config?.testStepsOnly ?? false,
       screenshot: config?.screenshot ?? false,
       annotations: config?.annotations ?? false,
       testType: config?.testType ?? 'e2e',
@@ -403,15 +406,26 @@ class GenerateCtrfReport implements Reporter {
   }
 
   processStep(test: CtrfTest, step: TestStep): void {
-    if (step.category === 'test.step') {
-      const stepStatus =
-        step.error === undefined
-          ? this.mapPlaywrightStatusToCtrf('passed')
-          : this.mapPlaywrightStatusToCtrf('failed')
-      const currentStep = {
-        name: step.title,
-        status: stepStatus,
+    const stepStatus =
+      step.error === undefined
+        ? this.mapPlaywrightStatusToCtrf('passed')
+        : this.mapPlaywrightStatusToCtrf('failed')
+    const currentStep = {
+      name: step.title,
+      status: stepStatus,
+      extra: {
+        category: step.category,
+        duration: step.duration,
+        location: step.location,
+        childSteps: [],
+      },
+    }
+
+    if (this.reporterConfigOptions.testStepsOnly ?? false) {
+      if (step.category === 'test.step') {
+        test.steps?.push(currentStep)
       }
+    } else {
       test.steps?.push(currentStep)
     }
 
@@ -419,7 +433,39 @@ class GenerateCtrfReport implements Reporter {
 
     if (childSteps.length > 0) {
       childSteps.forEach((cStep) => {
-        this.processStep(test, cStep)
+        this.processChildSteps(cStep, currentStep)
+      })
+    }
+  }
+
+  processChildSteps(step: TestStep, parentStep: Step): void {
+    const stepStatus =
+      step.error === undefined
+        ? this.mapPlaywrightStatusToCtrf('passed')
+        : this.mapPlaywrightStatusToCtrf('failed')
+    const currentStep = {
+      name: step.title,
+      status: stepStatus,
+      extra: {
+        category: step.category,
+        duration: step.duration,
+        location: step.location,
+        childSteps: [],
+      },
+    }
+
+    if (this.reporterConfigOptions.testStepsOnly ?? false) {
+      if (step.category === 'test.step') {
+        parentStep.extra?.childSteps.push(currentStep)
+      }
+    } else {
+      parentStep.extra?.childSteps.push(currentStep)
+    }
+
+    if (step.steps.length > 0) {
+      const childSteps = step.steps
+      childSteps.forEach((cStep) => {
+        this.processChildSteps(cStep, currentStep)
       })
     }
   }

@@ -72,6 +72,7 @@ export interface Tool {
 export interface Step {
   name: string
   status: CtrfTestState
+  extra?: Record<string, any>
 }
 
 export type CtrfTestState =
