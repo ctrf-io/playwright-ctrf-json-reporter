@@ -15,6 +15,7 @@ import {
   type CtrfReport,
   type CtrfTest,
   type CtrfEnvironment,
+  type CtrfAttachment,
 } from '../types/ctrf'
 
 interface ReporterConfigOptions {
@@ -206,6 +207,13 @@ class GenerateCtrfReport implements Reporter {
       )
         test.browser = `${this.extractMetadata(testResult)
           ?.name} ${this.extractMetadata(testResult)?.version}`
+      test.attachments = this.filterValidAttachments(testResult.attachments)
+      test.stdout = testResult.stdout.map((item) =>
+        Buffer.isBuffer(item) ? item.toString() : String(item)
+      )
+      test.stderr = testResult.stderr.map((item) =>
+        Buffer.isBuffer(item) ? item.toString() : String(item)
+      )
       if (this.reporterConfigOptions.annotations !== undefined) {
         test.extra = { annotations: testCase.annotations }
       }
@@ -422,6 +430,18 @@ class GenerateCtrfReport implements Reporter {
         this.processStep(test, cStep)
       })
     }
+  }
+
+  filterValidAttachments(
+    attachments: TestResult['attachments']
+  ): CtrfAttachment[] {
+    return attachments
+      .filter((attachment) => attachment.path !== undefined)
+      .map((attachment) => ({
+        name: attachment.name,
+        contentType: attachment.contentType,
+        path: attachment.path ?? '',
+      }))
   }
 }
 
