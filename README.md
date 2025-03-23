@@ -2,7 +2,6 @@
 
 > Save Playwright test results as a JSON file
 
-
 A Playwright JSON test reporter to create test reports that follow the CTRF standard.
 
 [Common Test Report Format](https://ctrf.io) ensures the generation of uniform JSON test reports, independent of programming languages or test framework in use.
@@ -31,6 +30,7 @@ Explore more <a href="https://www.ctrf.io/integrations">integrations</a>
 </div>
 
 ## Features
+
 ![Static Badge](https://img.shields.io/badge/official-red?label=ctrf&labelColor=green)
 [![build](https://github.com/ctrf-io/playwright-ctrf-json-report/actions/workflows/main.yaml/badge.svg)](https://github.com/ctrf-io/playwright-ctrf-json-report/actions/workflows/main.yaml)
 ![NPM Downloads](https://img.shields.io/npm/d18m/playwright-ctrf-json-reporter?logo=npm)
