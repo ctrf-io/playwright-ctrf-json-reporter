@@ -38,7 +38,9 @@ export interface CtrfTest {
   filePath?: string
   retries?: number
   flaky?: boolean
-  attempts?: CtrfTest[]
+  attachments?: CtrfAttachment[]
+  stdout?: string[]
+  stderr?: string[]
   browser?: string
   device?: string
   screenshot?: string
@@ -72,6 +74,12 @@ export interface Tool {
 export interface Step {
   name: string
   status: CtrfTestState
+}
+
+export interface CtrfAttachment {
+  name: string
+  contentType: string
+  path: string
 }
 
 export type CtrfTestState =
