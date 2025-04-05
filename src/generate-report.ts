@@ -133,6 +133,10 @@ class GenerateCtrfReport implements Reporter {
     this.writeReportToFile(this.ctrfReport)
   }
 
+  printsToStdio(): boolean {
+    return false
+  }
+
   processSuite(suite: Suite): void {
     for (const test of suite.tests) {
       this.processTest(test)
