@@ -189,6 +189,7 @@ class GenerateCtrfReport implements Reporter {
       )
       test.message = this.extractFailureDetails(testResult).message
       test.trace = this.extractFailureDetails(testResult).trace
+      test.snippet = this.extractFailureDetails(testResult).snippet
       test.rawStatus = testResult.status
       test.tags = this.extractTagsFromTitle(testCase.title)
       test.type = this.reporterConfigOptions.testType ?? 'e2e'
@@ -380,6 +381,9 @@ class GenerateCtrfReport implements Reporter {
       }
       if (testResult.error.stack !== undefined) {
         failureDetails.trace = testResult.error.stack
+      }
+      if (testResult.error.snippet !== undefined) {
+        failureDetails.snippet = testResult.error.snippet
       }
       return failureDetails
     }
