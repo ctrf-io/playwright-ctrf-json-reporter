@@ -158,6 +158,7 @@ The test object in the report includes the following [CTRF properties](https://c
 | `suite`       | String           | Optional | The suite or group to which the test belongs.                                       |
 | `message`     | String           | Optional | The failure message if the test failed.                                             |
 | `trace`       | String           | Optional | The stack trace captured if the test failed.                                        |
+| `snippet`     | String           | Optional | The code snippet that was executed during the test if the test failed.              |
 | `rawStatus`   | String           | Optional | The original playwright status of the test before mapping to CTRF status.           |
 | `tags`        | Array of Strings | Optional | The tags retrieved from the test name                                               |
 | `type`        | String           | Optional | The type of test (e.g., `api`, `e2e`).                                              |
@@ -168,7 +169,6 @@ The test object in the report includes the following [CTRF properties](https://c
 | `attachments` | Array of Objects | Optional | The attachments attached to the test.                                               |
 | `stdout`      | Array of Strings | Optional | The standard output of the test.                                                    |
 | `stderr`      | Array of Strings | Optional | The standard error of the test.                                                     |
-| `screenshot`  | String           | Optional | A base64 encoded screenshot taken during the test.                                  |
 | `screenshot`  | String           | Optional | A base64 encoded screenshot taken during the test.                                  |
 | `steps`       | Array of Objects | Optional | Individual steps in the test, especially for BDD-style testing.                     |
 
