@@ -1,4 +1,9 @@
 export interface CtrfReport {
+  reportFormat: string
+  specVersion: string
+  reportId: string
+  timestamp: string
+  generatedBy: string
   results: Results
 }
 
