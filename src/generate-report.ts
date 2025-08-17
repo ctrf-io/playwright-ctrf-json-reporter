@@ -1,5 +1,6 @@
 import path from 'path'
 import fs from 'fs'
+import crypto from 'crypto'
 
 import {
   type Suite,
@@ -73,6 +74,11 @@ class GenerateCtrfReport implements Reporter {
     }
 
     this.ctrfReport = {
+      reportFormat: 'CTRF',
+      specVersion: '0.0.0',
+      reportId: crypto.randomUUID(),
+      timestamp: new Date().toISOString(),
+      generatedBy: 'playwright-ctrf-json-reporter',
       results: {
         tool: {
           name: 'playwright',

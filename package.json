@@ -1,6 +1,6 @@
 {
   "name": "playwright-ctrf-json-reporter",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "description": "A Playwright JSON test reporter to create test results reports",
   "main": "dist/index.js",
   "scripts": {
