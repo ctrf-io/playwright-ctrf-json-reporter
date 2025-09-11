@@ -198,7 +198,7 @@ class GenerateCtrfReport implements Reporter {
       test.trace = this.extractFailureDetails(testResult).trace
       test.snippet = this.extractFailureDetails(testResult).snippet
       test.rawStatus = testResult.status
-      test.tags = this.extractTagsFromTitle(testCase.title)
+      test.tags = testCase.tags
       test.type = this.reporterConfigOptions.testType ?? 'e2e'
       test.filePath = testCase.location.file
       test.retries = testResult.retry
@@ -372,12 +372,6 @@ class GenerateCtrfReport implements Reporter {
     }
 
     return pathComponents.join(' > ')
-  }
-
-  extractTagsFromTitle(title: string): string[] {
-    const tagPattern = /@\w+/g
-    const tags = title.match(tagPattern)
-    return tags ?? []
   }
 
   extractScreenshotBase64(testResult: TestResult): string | undefined {
