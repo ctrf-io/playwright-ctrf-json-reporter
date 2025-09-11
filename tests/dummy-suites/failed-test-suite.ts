@@ -29,12 +29,15 @@ export const createFailedTestSuite = (): Suite => {
     steps: [],
     stdout: [],
     stderr: [],
+    annotations: []
   }
 
   const testCase: TestCase = {
     title: 'should validate the expected condition',
     id: 'test-id-123',
     annotations: [],
+    tags: [],
+    type: 'test',
     expectedStatus: 'passed',
     timeout: 30000,
     results: [testResult],
@@ -57,6 +60,8 @@ export const createFailedTestSuite = (): Suite => {
   const suite: Suite = {
     title: 'Failed Test Suite',
     titlePath: () => ['Failed Test Suite'],
+    entries: () => [testCase],
+    type: 'project',
     location: {
       file: 'test-file.spec.ts',
       line: 10,
