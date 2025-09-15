@@ -30,7 +30,7 @@ export const createFlakyTestSuite = (): Suite => {
     steps: [],
     stdout: [],
     stderr: [],
-    annotations: []
+    annotations: [],
   }
 
   const testError2: TestError = {
@@ -52,7 +52,7 @@ export const createFlakyTestSuite = (): Suite => {
     steps: [],
     stdout: [],
     stderr: [],
-    annotations: []
+    annotations: [],
   }
 
   const passedTestResult: TestResult = {
@@ -67,7 +67,7 @@ export const createFlakyTestSuite = (): Suite => {
     steps: [],
     stdout: [],
     stderr: [],
-    annotations: []
+    annotations: [],
   }
 
   const testCase: TestCase = {

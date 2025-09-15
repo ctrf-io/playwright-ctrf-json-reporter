@@ -29,7 +29,7 @@ export const createFailedTestSuite = (): Suite => {
     steps: [],
     stdout: [],
     stderr: [],
-    annotations: []
+    annotations: [],
   }
 
   const testCase: TestCase = {
