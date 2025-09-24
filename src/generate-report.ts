@@ -198,7 +198,7 @@ class GenerateCtrfReport implements Reporter {
       test.trace = this.extractFailureDetails(testResult).trace
       test.snippet = this.extractFailureDetails(testResult).snippet
       test.rawStatus = testResult.status
-      test.tags = testCase.tags
+      test.tags = testCase.tags ?? []
       test.type = this.reporterConfigOptions.testType ?? 'e2e'
       test.filePath = testCase.location.file
       test.retries = testResult.retry
