@@ -184,7 +184,10 @@ class GenerateCtrfReport implements Reporter {
   ): void {
     const test: CtrfTest = {
       name: testCase.title,
-      status: this.mapPlaywrightStatusToCtrf(testResult.status),
+      status:
+        testResult.status === testCase.expectedStatus
+          ? 'passed'
+          : this.mapPlaywrightStatusToCtrf(testResult.status),
       duration: testResult.duration,
     }
 
@@ -217,8 +220,9 @@ class GenerateCtrfReport implements Reporter {
         this.extractMetadata(testResult)?.name !== undefined ||
         this.extractMetadata(testResult)?.version !== undefined
       )
-        test.browser = `${this.extractMetadata(testResult)
-          ?.name} ${this.extractMetadata(testResult)?.version}`
+        test.browser = `${
+          this.extractMetadata(testResult)?.name
+        } ${this.extractMetadata(testResult)?.version}`
       test.attachments = this.filterValidAttachments(testResult.attachments)
       test.stdout = testResult.stdout.map((item) =>
         Buffer.isBuffer(item) ? item.toString() : String(item)

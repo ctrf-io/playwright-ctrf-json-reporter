@@ -31,9 +31,9 @@ export const createFailedTestSuite = (): Suite => {
     stderr: [],
   }
 
-  const testCase: TestCase = {
+  const failedTestCase: TestCase = {
     title: 'should validate the expected condition',
-    id: 'test-id-123',
+    id: 'test-id-1',
     annotations: [],
     expectedStatus: 'passed',
     timeout: 30000,
@@ -50,6 +50,26 @@ export const createFailedTestSuite = (): Suite => {
       'Failed Test Suite',
       'should validate the expected condition',
     ],
+    repeatEachIndex: 0,
+    retries: 0,
+  }
+
+  const passedTestCase: TestCase = {
+    title: 'should fail as expected',
+    id: 'test-id-2',
+    annotations: [],
+    expectedStatus: 'failed',
+    timeout: 30000,
+    results: [testResult],
+    location: {
+      file: 'test-file.spec.ts',
+      line: 42,
+      column: 3,
+    },
+    parent: undefined as any, // Will be set later
+    outcome: () => 'expected',
+    ok: () => true,
+    titlePath: () => ['Failed Test Suite', 'should fail as expected'],
     repeatEachIndex: 0,
     retries: 0,
   }
@@ -78,12 +98,13 @@ export const createFailedTestSuite = (): Suite => {
       testMatch: [],
       snapshotDir: './snapshots',
     }),
-    allTests: () => [testCase],
-    tests: [testCase],
+    allTests: () => [failedTestCase, passedTestCase],
+    tests: [failedTestCase, passedTestCase],
     suites: [],
   }
 
-  testCase.parent = suite
+  failedTestCase.parent = suite
+  passedTestCase.parent = suite
 
   return suite
 }
