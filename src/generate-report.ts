@@ -220,9 +220,8 @@ class GenerateCtrfReport implements Reporter {
         this.extractMetadata(testResult)?.name !== undefined ||
         this.extractMetadata(testResult)?.version !== undefined
       )
-        test.browser = `${
-          this.extractMetadata(testResult)?.name
-        } ${this.extractMetadata(testResult)?.version}`
+        test.browser = `${this.extractMetadata(testResult)
+          ?.name} ${this.extractMetadata(testResult)?.version}`
       test.attachments = this.filterValidAttachments(testResult.attachments)
       test.stdout = testResult.stdout.map((item) =>
         Buffer.isBuffer(item) ? item.toString() : String(item)
