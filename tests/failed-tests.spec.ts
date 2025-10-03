@@ -28,10 +28,17 @@ describe('Failed Tests', () => {
     const reportJsonContent = mockedFs.writeFileSync.mock.calls[0][1] as string
     const parsedReport: CtrfReport = JSON.parse(reportJsonContent)
 
-    expect(parsedReport.results.tests).toHaveLength(1)
+    expect(parsedReport.results.tests).toHaveLength(2)
+    expect(parsedReport.results.tests[0].status).toBe('failed')
+    expect(parsedReport.results.tests[0].rawStatus).toBe('failed')
     expect(parsedReport.results.tests[0].status).toBe('failed')
     expect(parsedReport.results.tests[0].message).toBe('test-error-message')
     expect(parsedReport.results.tests[0].trace).toBe('test-error-stack')
     expect(parsedReport.results.tests[0].snippet).toBe('test-error-snippet')
+    expect(parsedReport.results.tests[1].status).toBe('passed')
+    expect(parsedReport.results.tests[1].rawStatus).toBe('failed')
+    expect(parsedReport.results.tests[1].message).toBe('test-error-message')
+    expect(parsedReport.results.tests[1].trace).toBe('test-error-stack')
+    expect(parsedReport.results.tests[1].snippet).toBe('test-error-snippet')
   })
 })
