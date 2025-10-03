@@ -30,6 +30,7 @@ export const createFlakyTestSuite = (): Suite => {
     steps: [],
     stdout: [],
     stderr: [],
+    annotations: [],
   }
 
   const testError2: TestError = {
@@ -51,6 +52,7 @@ export const createFlakyTestSuite = (): Suite => {
     steps: [],
     stdout: [],
     stderr: [],
+    annotations: [],
   }
 
   const passedTestResult: TestResult = {
@@ -65,12 +67,15 @@ export const createFlakyTestSuite = (): Suite => {
     steps: [],
     stdout: [],
     stderr: [],
+    annotations: [],
   }
 
   const testCase: TestCase = {
     title: 'should validate the expected condition',
     id: 'test-id-123',
     annotations: [],
+    tags: [],
+    type: 'test',
     expectedStatus: 'passed',
     timeout: 30000,
     results: [failedTestResult, failedTestResult2, passedTestResult],
@@ -90,6 +95,8 @@ export const createFlakyTestSuite = (): Suite => {
   const suite: Suite = {
     title: 'Flaky Test Suite',
     titlePath: () => ['Flaky Test Suite'],
+    entries: () => [testCase],
+    type: 'project',
     location: {
       file: 'flaky-test.spec.ts',
       line: 10,
