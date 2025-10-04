@@ -64,6 +64,8 @@ export const createFailedTestSuite = (): Suite => {
     expectedStatus: 'failed',
     timeout: 30000,
     results: [testResult],
+    tags: [],
+    type: 'test',
     location: {
       file: 'test-file.spec.ts',
       line: 42,
@@ -80,7 +82,7 @@ export const createFailedTestSuite = (): Suite => {
   const suite: Suite = {
     title: 'Failed Test Suite',
     titlePath: () => ['Failed Test Suite'],
-    entries: () => [testCase],
+    entries: () => [failedTestCase],
     type: 'project',
     location: {
       file: 'test-file.spec.ts',
