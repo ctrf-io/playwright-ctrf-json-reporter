@@ -1,1 +1,1 @@
-export { default } from './generate-report'
+export { default } from './generate-report.js'

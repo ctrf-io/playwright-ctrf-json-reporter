@@ -18,7 +18,7 @@ import {
   type CtrfEnvironment,
   type CtrfAttachment,
   type CtrfTestAttempt,
-} from '../types/ctrf'
+} from '../types/ctrf.js'
 
 interface ReporterConfigOptions {
   outputFile?: string
@@ -208,7 +208,7 @@ class GenerateCtrfReport implements Reporter {
       test.flaky = testResult.status === 'passed' && testResult.retry > 0
       test.steps = []
       if (testResult.steps.length > 0) {
-        testResult.steps.forEach((step) => {
+        testResult.steps.forEach(step => {
           this.processStep(test, step)
         })
       }
@@ -220,13 +220,14 @@ class GenerateCtrfReport implements Reporter {
         this.extractMetadata(testResult)?.name !== undefined ||
         this.extractMetadata(testResult)?.version !== undefined
       )
-        test.browser = `${this.extractMetadata(testResult)
-          ?.name} ${this.extractMetadata(testResult)?.version}`
+        test.browser = `${
+          this.extractMetadata(testResult)?.name
+        } ${this.extractMetadata(testResult)?.version}`
       test.attachments = this.filterValidAttachments(testResult.attachments)
-      test.stdout = testResult.stdout.map((item) =>
+      test.stdout = testResult.stdout.map(item =>
         Buffer.isBuffer(item) ? item.toString() : String(item)
       )
-      test.stderr = testResult.stderr.map((item) =>
+      test.stderr = testResult.stderr.map(item =>
         Buffer.isBuffer(item) ? item.toString() : String(item)
       )
       if (this.reporterConfigOptions.annotations !== undefined) {
@@ -331,7 +332,7 @@ class GenerateCtrfReport implements Reporter {
 
   extractMetadata(testResult: TestResult): any {
     const metadataAttachment = testResult.attachments.find(
-      (attachment) => attachment.name === 'metadata.json'
+      attachment => attachment.name === 'metadata.json'
     )
     if (
       metadataAttachment?.body !== null &&
@@ -379,7 +380,7 @@ class GenerateCtrfReport implements Reporter {
 
   extractScreenshotBase64(testResult: TestResult): string | undefined {
     const screenshotAttachment = testResult.attachments.find(
-      (attachment) =>
+      attachment =>
         attachment.name === 'screenshot' &&
         (attachment.contentType === 'image/jpeg' ||
           attachment.contentType === 'image/png')
@@ -413,7 +414,7 @@ class GenerateCtrfReport implements Reporter {
   countSuites(suite: Suite): number {
     let count = 0
 
-    suite.suites.forEach((childSuite) => {
+    suite.suites.forEach(childSuite => {
       count += this.countSuites(childSuite)
     })
 
@@ -454,7 +455,7 @@ class GenerateCtrfReport implements Reporter {
     const childSteps = step.steps
 
     if (childSteps.length > 0) {
-      childSteps.forEach((cStep) => {
+      childSteps.forEach(cStep => {
         this.processStep(test, cStep)
       })
     }
@@ -464,8 +465,8 @@ class GenerateCtrfReport implements Reporter {
     attachments: TestResult['attachments']
   ): CtrfAttachment[] {
     return attachments
-      .filter((attachment) => attachment.path !== undefined)
-      .map((attachment) => ({
+      .filter(attachment => attachment.path !== undefined)
+      .map(attachment => ({
         name: attachment.name,
         contentType: attachment.contentType,
         path: attachment.path ?? '',

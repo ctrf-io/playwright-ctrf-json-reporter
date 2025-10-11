@@ -1,18 +1,31 @@
 import { createFailedTestSuite } from './dummy-suites/failed-test-suite'
 import GenerateCtrfReport from '../src/generate-report'
-import fs from 'fs'
 import { CtrfReport } from '../types/ctrf'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import fs from 'fs'
 
-jest.mock('fs', () => ({
-  writeFileSync: jest.fn(),
-  existsSync: jest.fn(() => true),
+vi.mock('fs', () => ({
+  default: {
+    writeFileSync: vi.fn(),
+    existsSync: vi.fn(() => true),
+    mkdirSync: vi.fn(),
+  },
+  writeFileSync: vi.fn(),
+  existsSync: vi.fn(() => true),
+  mkdirSync: vi.fn(),
 }))
-const nowDateMock = new Date('2023-01-01T00:00:00.000Z')
-jest.useFakeTimers().setSystemTime(nowDateMock)
 
-const mockedFs = fs as jest.Mocked<typeof fs>
+const nowDateMock = new Date('2023-01-01T00:00:00.000Z')
+vi.useFakeTimers()
+vi.setSystemTime(nowDateMock)
+
+const mockedFs = vi.mocked(fs)
 
 describe('Failed Tests', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
   it('should generate report with error details correctly', async () => {
     // Arrange
     const testSuite = createFailedTestSuite()
