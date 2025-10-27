@@ -25,7 +25,7 @@ A Playwright JSON test reporter to create test reports that follow the CTRF stan
 
 Contributions are very welcome! <br/>
 Explore more <a href="https://www.ctrf.io/integrations">integrations</a> <br/>
-We’d love your feedback, share it anonymously <a href="https://app.formbricks.com/s/cmefs524mhlh1tl01gkpvefrb">here</a>.
+<a href="https://app.formbricks.com/s/cmefs524mhlh1tl01gkpvefrb">Let us know your thoughts</a>.
 
 </p>
 </div>

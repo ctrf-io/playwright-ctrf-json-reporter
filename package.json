@@ -1,6 +1,6 @@
 {
   "name": "playwright-ctrf-json-reporter",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "description": "A Playwright JSON test reporter to create test results reports",
   "main": "dist/index.js",
   "scripts": {
@@ -9,9 +9,17 @@
     "lint": "eslint . --ext .ts --fix",
     "lint-check": "eslint . --ext .ts",
     "format": "prettier --write .",
-    "format-check": "prettier --check ."
+    "format-check": "prettier --check .",
+    "all": "npm run lint && npm run format-check && npm run test && npm run build"
   },
-  "repository": "github:ctrf-io/playwright-ctrf-json-report",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ctrf-io/playwright-ctrf-json-reporter.git"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "homepage": "https://ctrf.io",
   "files": [
     "dist/",
