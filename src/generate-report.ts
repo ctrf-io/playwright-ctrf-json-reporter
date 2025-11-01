@@ -185,7 +185,8 @@ class GenerateCtrfReport implements Reporter {
     const test: CtrfTest = {
       name: testCase.title,
       status:
-        testResult.status === testCase.expectedStatus
+        testResult.status === testCase.expectedStatus &&
+        testResult.status !== 'skipped'
           ? 'passed'
           : this.mapPlaywrightStatusToCtrf(testResult.status),
       duration: testResult.duration,
