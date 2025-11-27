@@ -76,6 +76,7 @@ export interface CtrfEnvironment {
   repositoryName?: string
   repositoryUrl?: string
   branchName?: string
+  commit?: string
   testEnvironment?: string
   extra?: Record<string, any>
 }

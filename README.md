@@ -122,6 +122,7 @@ reporter: [
         repositoryName: "ctrf-json",    // Optional: Specify the repository name.
         repositoryUrl: "https://gh.io", // Optional: Specify the repository url.
         branchName: "main",             // Optional: Specify the branch name.
+        commit: "abc123",               // Optional: Specify the commit id.
         testEnvironment: "staging"      // Optional: Specify the test environment (e.g. staging, production).
     }]
   ],
