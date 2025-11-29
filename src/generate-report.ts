@@ -38,6 +38,7 @@ interface ReporterConfigOptions {
   repositoryName?: string | undefined
   repositoryUrl?: string | undefined
   branchName?: string | undefined
+  commit?: string | undefined
   testEnvironment?: string | undefined
 }
 
@@ -70,6 +71,7 @@ class GenerateCtrfReport implements Reporter {
       repositoryName: config?.repositoryName ?? undefined,
       repositoryUrl: config?.repositoryUrl ?? undefined,
       branchName: config?.branchName ?? undefined,
+      commit: config?.commit ?? undefined,
       testEnvironment: config?.testEnvironment ?? undefined,
     }
 
@@ -319,6 +321,9 @@ class GenerateCtrfReport implements Reporter {
     }
     if (reporterConfigOptions.branchName !== undefined) {
       this.ctrfEnvironment.branchName = reporterConfigOptions.branchName
+    }
+    if (reporterConfigOptions.commit !== undefined) {
+      this.ctrfEnvironment.commit = reporterConfigOptions.commit
     }
     if (reporterConfigOptions.testEnvironment !== undefined) {
       this.ctrfEnvironment.testEnvironment =
