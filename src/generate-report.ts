@@ -20,6 +20,9 @@ import {
   type CtrfTestAttempt,
 } from '../types/ctrf'
 
+import { CTRF_RUNTIME_MESSAGE_CONTENT_TYPE } from './adapter'
+import type { CtrfRuntimeMessage } from './adapter'
+
 interface ReporterConfigOptions {
   outputFile?: string
   outputDir?: string
@@ -236,6 +239,11 @@ class GenerateCtrfReport implements Reporter {
         test.extra = { annotations: testCase.annotations }
       }
 
+      const runtimeData = this.extractRuntimeData(testResult)
+      if (runtimeData !== null) {
+        test.extra = { ...test.extra, ...runtimeData }
+      }
+
       if (testCase.results.length > 1) {
         const retryResults = testCase.results.slice(0, -1)
         test.retryAttempts = []
@@ -357,6 +365,55 @@ class GenerateCtrfReport implements Reporter {
     return null
   }
 
+  /**
+   * Extract and merge runtime data from CTRF message attachments.
+   *
+   * Runtime messages are internal transport artifacts used to send data from
+   * test code to the reporter via test.info().attach(). They are identified
+   * by the CTRF_RUNTIME_MESSAGE_CONTENT_TYPE content type.
+   *
+   * ## Merge Semantics (shallow merge)
+   *
+   * Messages are processed in attachment order and merged using Object.assign:
+   * - Later messages overwrite earlier keys with the same name
+   * - Non-overlapping keys are preserved
+   * - Arrays and objects are replaced wholesale, not deep-merged
+   *
+   * @param testResult - The test result containing attachments
+   * @returns Merged runtime data or null if no CTRF messages found
+   */
+  extractRuntimeData(testResult: TestResult): Record<string, unknown> | null {
+    const runtimeData: Record<string, unknown> = {}
+    let hasData = false
+
+    for (const attachment of testResult.attachments) {
+      if (attachment.contentType !== CTRF_RUNTIME_MESSAGE_CONTENT_TYPE) {
+        continue
+      }
+
+      if (attachment.body === undefined) {
+        continue
+      }
+
+      try {
+        const message = JSON.parse(
+          attachment.body.toString('utf-8')
+        ) as CtrfRuntimeMessage
+
+        if (message.type === 'metadata' && message.data !== null) {
+          Object.assign(runtimeData, message.data)
+          hasData = true
+        }
+      } catch (e) {
+        if (e instanceof Error) {
+          console.error(`Error parsing CTRF runtime message: ${e.message}`)
+        }
+      }
+    }
+
+    return hasData ? runtimeData : null
+  }
+
   updateStart(startTime: Date): number {
     const date = new Date(startTime)
     const unixEpochTime = Math.floor(date.getTime() / 1000)
@@ -466,11 +523,29 @@ class GenerateCtrfReport implements Reporter {
     }
   }
 
+  /**
+   * Filter attachments to include in CTRF output.
+   *
+   * Excludes:
+   * - Attachments without a file path (body-only attachments)
+   * - CTRF runtime message attachments (internal transport artifacts)
+   *
+   * Runtime messages exist only to transmit data from test → reporter and
+   * are not user-facing attachments.
+   */
   filterValidAttachments(
     attachments: TestResult['attachments']
   ): CtrfAttachment[] {
     return attachments
-      .filter((attachment) => attachment.path !== undefined)
+      .filter((attachment) => {
+        if (attachment.path === undefined) {
+          return false
+        }
+        if (attachment.contentType === CTRF_RUNTIME_MESSAGE_CONTENT_TYPE) {
+          return false
+        }
+        return true
+      })
       .map((attachment) => ({
         name: attachment.name,
         contentType: attachment.contentType,
