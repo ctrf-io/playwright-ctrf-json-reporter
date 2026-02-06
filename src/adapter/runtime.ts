@@ -26,7 +26,7 @@
  * - Call multiple times; all data is collected and merged
  * - Works from any function in the call stack during test execution
  * - Silently ignored when called outside test context
- * - Shallow merge: keys from later calls overwrite earlier ones
+ * - Deep merge: arrays concatenate, objects merge recursively, primitives overwrite
  */
 
 import { test } from '@playwright/test'
@@ -114,13 +114,27 @@ const resolveTransport = (): MetadataTransport => {
  * @returns Promise (can be ignored; completes when attachment is written)
  *
  * @remarks
- * - Multiple calls accumulate; later keys overwrite earlier ones (shallow merge)
+ * - **Arrays**: Concatenated across calls (duplicates allowed)
+ * - **Objects**: Deep merged (nested keys preserved)
+ * - **Primitives**: Later calls overwrite earlier ones
  * - Safe to call from helper functions - binds to the active test automatically
  * - No-op outside test context (e.g., in global setup)
  *
  * @example
+ * // Arrays concatenate
+ * ctrf.extra({ tags: ['smoke'] })
+ * ctrf.extra({ tags: ['e2e'] })
+ * // → { tags: ['smoke', 'e2e'] }
+ *
+ * // Objects merge deeply
+ * ctrf.extra({ build: { id: 'abc' } })
+ * ctrf.extra({ build: { url: 'https://...' } })
+ * // → { build: { id: 'abc', url: 'https://...' } }
+ *
+ * // Primitives overwrite
  * ctrf.extra({ owner: 'platform-team' })
- * ctrf.extra({ executionId: uuid(), retryable: true })
+ * ctrf.extra({ owner: 'checkout-team' })
+ * // → { owner: 'checkout-team' }
  */
 export async function extra(data: Record<string, unknown>): Promise<void> {
   await resolveTransport().send({ type: 'metadata', data })

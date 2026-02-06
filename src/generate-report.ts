@@ -366,18 +366,57 @@ class GenerateCtrfReport implements Reporter {
   }
 
   /**
+   * Deep merge with array concatenation.
+   * Arrays are concatenated, objects are recursively merged, primitives overwrite.
+   */
+  private deepMerge(
+    target: Record<string, unknown>,
+    source: Record<string, unknown>
+  ): Record<string, unknown> {
+    const result = { ...target }
+
+    for (const [key, sourceValue] of Object.entries(source)) {
+      const targetValue = result[key]
+
+      if (Array.isArray(sourceValue)) {
+        result[key] = Array.isArray(targetValue)
+          ? [...targetValue, ...sourceValue]
+          : [...sourceValue]
+      } else if (
+        sourceValue !== null &&
+        typeof sourceValue === 'object' &&
+        !Array.isArray(sourceValue)
+      ) {
+        result[key] =
+          targetValue !== null &&
+          typeof targetValue === 'object' &&
+          !Array.isArray(targetValue)
+            ? this.deepMerge(
+                targetValue as Record<string, unknown>,
+                sourceValue as Record<string, unknown>
+              )
+            : { ...sourceValue }
+      } else {
+        result[key] = sourceValue
+      }
+    }
+
+    return result
+  }
+
+  /**
    * Extract and merge runtime data from CTRF message attachments.
    *
    * Runtime messages are internal transport artifacts used to send data from
    * test code to the reporter via test.info().attach(). They are identified
    * by the CTRF_RUNTIME_MESSAGE_CONTENT_TYPE content type.
    *
-   * ## Merge Semantics (shallow merge)
+   * ## Merge Semantics (deep merge with array concatenation)
    *
-   * Messages are processed in attachment order and merged using Object.assign:
-   * - Later messages overwrite earlier keys with the same name
-   * - Non-overlapping keys are preserved
-   * - Arrays and objects are replaced wholesale, not deep-merged
+   * Messages are processed in attachment order with intelligent merging:
+   * - Arrays: Concatenated across calls (duplicates allowed)
+   * - Objects: Deep merged (nested keys preserved)
+   * - Primitives: Later values overwrite earlier ones
    *
    * @param testResult - The test result containing attachments
    * @returns Merged runtime data or null if no CTRF messages found
@@ -401,7 +440,7 @@ class GenerateCtrfReport implements Reporter {
         ) as CtrfRuntimeMessage
 
         if (message.type === 'metadata' && message.data !== null) {
-          Object.assign(runtimeData, message.data)
+          Object.assign(runtimeData, this.deepMerge(runtimeData, message.data))
           hasData = true
         }
       } catch (e) {
