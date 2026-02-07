@@ -2,6 +2,12 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  reporters: ['default'],
+  reporters: [
+    'default',
+    [
+      'jest-ctrf-json-reporter',
+      {},
+    ],
+  ],
   testPathIgnorePatterns: ['/node_modules/', '/__mocks__/'],
 }
