@@ -7,11 +7,10 @@
     "build": "tsc",
     "test": "jest",
     "lint": "eslint . --ext .ts --fix",
-    "lint-check": "eslint . --ext .ts",
+    "lint:check": "eslint . --ext .ts",
     "format": "prettier --write .",
-    "format-check": "prettier --check .",
-    "format:check": "npm run format-check",
-    "all": "npm run lint && npm run format-check && npm run test && npm run build"
+    "format:check": "prettier --check .",
+    "all": "npm run lint && npm run format:check && npm run test && npm run build"
   },
   "repository": {
     "type": "git",
