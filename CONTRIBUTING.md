@@ -39,13 +39,13 @@ To set up the project for local development:
 2. **Run linting checks**:
 
    ```bash
-   npm run lint-check
+   npm run lint:check
    ```
 
 3. **Run formatting checks**:
 
    ```bash
-   npm run format-check
+   npm run format:check
    ```
 
 4. **Run tests**:
