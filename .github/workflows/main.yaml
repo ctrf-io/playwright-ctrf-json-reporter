@@ -81,7 +81,7 @@ jobs:
           artifact-name: ctrf-playwright-test-report-node-${{ matrix.node }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: always()
+        if: always() && hashFiles('ctrf/*.json') != ''
 
       - name: Build
         run: npm run build --if-present
