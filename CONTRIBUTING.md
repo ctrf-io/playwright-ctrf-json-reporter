@@ -48,3 +48,13 @@ Your contributions are sincerely appreciated. We want to make contributing to th
 - Proposing new features
 
 Thank you for your interest in contributing
+
+## Contributing to the CTRF Specification
+
+This repository contains an implementation of CTRF.
+
+If you are interested in contributing to the **CTRF specification itself**
+(including the schema or written standard), please refer to the
+CTRF specification contribution guidelines:
+
+https://github.com/ctrf-io/ctrf/blob/main/CONTRIBUTING.md

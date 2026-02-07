@@ -25,8 +25,12 @@
     "dist/",
     "README.md"
   ],
-  "author": "Matthew Thomas",
+  "author": "Matthew Poulton-White",
   "license": "MIT",
+  "security": {
+    "email": "security@ctrf.io",
+    "url": "https://github.com/ctrf-io/.github/blob/main/SECURITY.md"
+  },
   "devDependencies": {
     "@playwright/test": "^1.55.0",
     "@types/jest": "^29.5.6",

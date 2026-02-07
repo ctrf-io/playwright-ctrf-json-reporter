@@ -1,2 +1,13 @@
 dist
 node_modules
+
+# Agent / AI tool artifacts
+agent
+agent.*
+skills
+skills.*
+instructions
+instructions.*
+
+# OS
+.DS_Store
