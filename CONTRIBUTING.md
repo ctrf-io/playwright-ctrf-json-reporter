@@ -26,6 +26,37 @@ If you don't see your idea listed, and you think it fits into the goals of this 
 
 Write meaningful commit messages that provide insight into the changes made.
 
+## Local Development
+
+To set up the project for local development:
+
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+2. **Run linting checks**:
+   ```bash
+   npm run lint-check
+   ```
+
+3. **Run formatting checks**:
+   ```bash
+   npm run format-check
+   ```
+
+4. **Run tests**:
+   ```bash
+   npm test
+   ```
+
+5. **Build the package**:
+   ```bash
+   npm run build
+   ```
+
+Make sure all checks pass before submitting a pull request.
+
 ## Finding Bugs
 
 If you find a bug, please report it in the issue tracker with a detailed description.
