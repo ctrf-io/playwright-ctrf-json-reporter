@@ -27,6 +27,17 @@
   ],
   "author": "Matthew Poulton-White",
   "license": "MIT",
+  "keywords": [
+    "ctrf",
+    "common-test-report-format",
+    "test-reporting",
+    "test-results",
+    "testing",
+    "json",
+    "ci",
+    "playwright",
+    "playwright-reporter"
+  ],
   "security": {
     "email": "security@ctrf.io",
     "url": "https://github.com/ctrf-io/.github/blob/main/SECURITY.md"
