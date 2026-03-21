@@ -588,9 +588,7 @@ class GenerateCtrfReport implements Reporter {
    * Runtime messages exist only to transmit data from test → reporter and
    * are not user-facing attachments.
    */
-  filterValidAttachments(
-    attachments: TestResult['attachments']
-  ): Attachment[] {
+  filterValidAttachments(attachments: TestResult['attachments']): Attachment[] {
     return attachments
       .filter((attachment) => {
         if (attachment.path === undefined) {
