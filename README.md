@@ -169,6 +169,84 @@ The test object in the report includes the following [CTRF properties](https://c
 
 Some features require additional setup or usage considerations.
 
+### Extra
+
+The `extra` field lets you attach custom metadata to individual test results at runtime. This data is merged into the `extra` field of each test in the CTRF report.
+
+#### Usage
+
+Import `ctrf` from the reporter and call `ctrf.extra()` inside any test:
+
+```typescript
+import { test, expect } from '@playwright/test'
+import { ctrf } from 'playwright-ctrf-json-reporter'
+
+test('checkout flow', async ({ page }) => {
+  ctrf.extra({ owner: 'checkout-team', priority: 'P1' })
+
+  await page.goto('https://example.com/checkout')
+  // ... test logic ...
+})
+```
+
+You can call it multiple times in a single test — all data is collected and merged:
+
+```typescript
+test('search results', async ({ page }) => {
+  ctrf.extra({ owner: 'search-team' })
+  ctrf.extra({ feature: 'search', environment: 'staging' })
+
+  // ... test logic ...
+
+  ctrf.extra({ customMetric: 'some-value' })
+})
+```
+
+The resulting `extra` field in the CTRF report:
+
+```json
+{
+  "name": "search results",
+  "status": "passed",
+  "duration": 300,
+  "extra": {
+    "owner": "search-team",
+    "feature": "search",
+    "environment": "staging",
+    "customMetric": "some-value"
+  }
+}
+```
+
+#### Merge behaviour
+
+| Data type  | Behaviour                                      | Example |
+| ---------- | ---------------------------------------------- | ------- |
+| Primitives | Later call overwrites earlier                  | `extra({ owner: 'a' })` then `extra({ owner: 'b' })` → `{ owner: 'b' }` |
+| Objects    | Deep merged — nested keys preserved            | `extra({ build: { id: '1' } })` then `extra({ build: { url: '...' } })` → `{ build: { id: '1', url: '...' } }` |
+| Arrays     | Concatenated across calls                      | `extra({ tags: ['smoke'] })` then `extra({ tags: ['e2e'] })` → `{ tags: ['smoke', 'e2e'] }` |
+
+#### Helper functions
+
+`ctrf.extra()` can be called from any helper function during a test — it automatically binds to the currently active test:
+
+```typescript
+async function loginAs(page: Page, role: string) {
+  ctrf.extra({ authenticatedAs: role })
+  // ... login logic ...
+}
+
+test('admin dashboard', async ({ page }) => {
+  await loginAs(page, 'admin')
+  // ...
+})
+```
+
+#### Notes
+
+- Safe to call from global setup/teardown — silently no-ops outside a test context
+- `extra()` is also available as a named export if you prefer: `import { extra } from 'playwright-ctrf-json-reporter'`
+
 ### Annotations
 
 By setting `annotations: true` you can include annotations in the test extra property.
