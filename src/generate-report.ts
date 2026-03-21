@@ -12,17 +12,25 @@ import {
 } from '@playwright/test/reporter'
 
 import {
-  type CtrfTestState,
-  type CtrfReport,
-  type CtrfTest,
-  type CtrfEnvironment,
-  type CtrfAttachment,
-  type CtrfTestAttempt,
-} from '../types/ctrf'
+  type TestStatus,
+  type CTRFReport,
+  type Test,
+  type Results,
+  type Environment,
+  type Attachment,
+  type RetryAttempt,
+} from 'ctrf'
 
 import { CTRF_RUNTIME_MESSAGE_CONTENT_TYPE } from './adapter'
 import type { CtrfRuntimeMessage } from './adapter'
 
+type PlaywrightTest = Omit<Test, 'suite'> & { suite?: string | string[] }
+type PlaywrightResults = Omit<Results, 'tests'> & { tests: PlaywrightTest[] }
+type PlaywrightCTRFReport = Omit<CTRFReport, 'results'> & {
+  results: PlaywrightResults
+}
+
+// TODO(v1): change buildNumber to `number | undefined` to align with ctrf Environment type.
 interface ReporterConfigOptions {
   outputFile?: string
   outputDir?: string
@@ -36,6 +44,7 @@ interface ReporterConfigOptions {
   osRelease?: string | undefined
   osVersion?: string | undefined
   buildName?: string | undefined
+  /** Accepted as a string for backwards compatibility. Canonical type is `number`. Resolved at v1. */
   buildNumber?: string | undefined
   buildUrl?: string | undefined
   repositoryName?: string | undefined
@@ -46,8 +55,8 @@ interface ReporterConfigOptions {
 }
 
 class GenerateCtrfReport implements Reporter {
-  readonly ctrfReport: CtrfReport
-  readonly ctrfEnvironment: CtrfEnvironment
+  readonly ctrfReport: PlaywrightCTRFReport
+  readonly ctrfEnvironment: Environment
   readonly reporterConfigOptions: ReporterConfigOptions
   readonly reporterName = 'playwright-ctrf-json-reporter'
   readonly defaultOutputFile = 'ctrf-report.json'
@@ -185,9 +194,9 @@ class GenerateCtrfReport implements Reporter {
   updateCtrfTestResultsFromTestResult(
     testCase: TestCase,
     testResult: TestResult,
-    ctrfReport: CtrfReport
+    ctrfReport: PlaywrightCTRFReport
   ): void {
-    const test: CtrfTest = {
+    const test: PlaywrightTest = {
       name: testCase.title,
       status:
         testResult.status === testCase.expectedStatus &&
@@ -249,8 +258,10 @@ class GenerateCtrfReport implements Reporter {
         const retryResults = testCase.results.slice(0, -1)
         test.retryAttempts = []
 
-        for (const retryResult of retryResults) {
-          const retryAttempt: CtrfTestAttempt = {
+        for (let i = 0; i < retryResults.length; i++) {
+          const retryResult = retryResults[i]
+          const retryAttempt: RetryAttempt = {
+            attempt: i + 1,
             status: this.mapPlaywrightStatusToCtrf(retryResult.status),
             duration: retryResult.duration,
             message: this.extractFailureDetails(retryResult).message,
@@ -267,7 +278,7 @@ class GenerateCtrfReport implements Reporter {
 
   updateSummaryFromTestResult(
     testResult: TestResult,
-    ctrfReport: CtrfReport
+    ctrfReport: PlaywrightCTRFReport
   ): void {
     ctrfReport.results.summary.tests++
 
@@ -280,7 +291,7 @@ class GenerateCtrfReport implements Reporter {
     }
   }
 
-  mapPlaywrightStatusToCtrf(testStatus: string): CtrfTestState {
+  mapPlaywrightStatusToCtrf(testStatus: string): TestStatus {
     switch (testStatus) {
       case 'passed':
         return 'passed'
@@ -317,7 +328,10 @@ class GenerateCtrfReport implements Reporter {
       this.ctrfEnvironment.buildName = reporterConfigOptions.buildName
     }
     if (reporterConfigOptions.buildNumber !== undefined) {
-      this.ctrfEnvironment.buildNumber = reporterConfigOptions.buildNumber
+      // TODO(v1): remove cast once buildNumber config type is changed to number.
+      this.ctrfEnvironment.buildNumber = Number(
+        reporterConfigOptions.buildNumber
+      )
     }
     if (reporterConfigOptions.buildUrl !== undefined) {
       this.ctrfEnvironment.buildUrl = reporterConfigOptions.buildUrl
@@ -340,7 +354,7 @@ class GenerateCtrfReport implements Reporter {
     }
   }
 
-  hasEnvironmentDetails(environment: CtrfEnvironment): boolean {
+  hasEnvironmentDetails(environment: Environment): boolean {
     return Object.keys(environment).length > 0
   }
 
@@ -466,6 +480,7 @@ class GenerateCtrfReport implements Reporter {
     return Math.floor(stopDate.getTime() / 1000)
   }
 
+  // TODO(v1): change return type to string[] and update Test.suite to match canonical ctrf type.
   buildSuitePath(test: TestCase): string {
     const pathComponents = []
     let currentSuite: Suite | undefined = test.parent
@@ -491,14 +506,14 @@ class GenerateCtrfReport implements Reporter {
     return screenshotAttachment?.body?.toString('base64')
   }
 
-  extractFailureDetails(testResult: TestResult): Partial<CtrfTest> {
+  extractFailureDetails(testResult: TestResult): Partial<Test> {
     if (
       (testResult.status === 'failed' ||
         testResult.status === 'timedOut' ||
         testResult.status === 'interrupted') &&
       testResult.error !== undefined
     ) {
-      const failureDetails: Partial<CtrfTest> = {}
+      const failureDetails: Partial<Test> = {}
       if (testResult.error.message !== undefined) {
         failureDetails.message = testResult.error.message
       }
@@ -523,7 +538,7 @@ class GenerateCtrfReport implements Reporter {
     return count
   }
 
-  writeReportToFile(data: CtrfReport): void {
+  writeReportToFile(data: PlaywrightCTRFReport): void {
     const filePath = path.join(
       this.reporterConfigOptions.outputDir ?? this.defaultOutputDir,
       this.reporterConfigOptions.outputFile ?? this.defaultOutputFile
@@ -541,7 +556,7 @@ class GenerateCtrfReport implements Reporter {
     }
   }
 
-  processStep(test: CtrfTest, step: TestStep): void {
+  processStep(test: PlaywrightTest, step: TestStep): void {
     if (step.category === 'test.step') {
       const stepStatus =
         step.error === undefined
@@ -575,7 +590,7 @@ class GenerateCtrfReport implements Reporter {
    */
   filterValidAttachments(
     attachments: TestResult['attachments']
-  ): CtrfAttachment[] {
+  ): Attachment[] {
     return attachments
       .filter((attachment) => {
         if (attachment.path === undefined) {
