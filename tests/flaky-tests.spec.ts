@@ -1,7 +1,7 @@
 import { createFlakyTestSuite } from './dummy-suites/flaky-test-suite'
 import GenerateCtrfReport from '../src/generate-report'
 import fs from 'fs'
-import { CtrfReport } from '../types/ctrf'
+import { type CTRFReport } from 'ctrf'
 
 jest.mock('fs', () => ({
   writeFileSync: jest.fn(),
@@ -26,7 +26,7 @@ describe('Flaky Tests', () => {
     expect(mockedFs.writeFileSync).toHaveBeenCalledTimes(1)
 
     const reportJsonContent = mockedFs.writeFileSync.mock.calls[0][1] as string
-    const parsedReport: CtrfReport = JSON.parse(reportJsonContent)
+    const parsedReport: CTRFReport = JSON.parse(reportJsonContent)
 
     expect(parsedReport.results.tests).toHaveLength(1)
 
