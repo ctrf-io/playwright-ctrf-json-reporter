@@ -1,6 +1,7 @@
 dist
 node_modules
 ctrf
+coverage
 
 # Agent / AI tool artifacts
 agent
