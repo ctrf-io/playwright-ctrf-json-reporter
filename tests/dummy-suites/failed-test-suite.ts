@@ -1,117 +1,118 @@
-import {
-  type Suite,
-  type TestCase,
-  type Location,
-  type TestResult,
-  type TestError,
-} from '@playwright/test/reporter'
+import type {
+	Suite,
+	TestCase,
+	Location,
+	TestResult,
+	TestError,
+} from "@playwright/test/reporter";
 
 /**
  * Creates a minimal Suite object with a single failed test
  */
 export const createFailedTestSuite = (): Suite => {
-  const testError: TestError = {
-    message: 'test-error-message',
-    stack: 'test-error-stack',
-    snippet: 'test-error-snippet',
-  }
+	const testError: TestError = {
+		message: "test-error-message",
+		stack: "test-error-stack",
+		snippet: "test-error-snippet",
+	};
 
-  const testResult: TestResult = {
-    retry: 0,
-    duration: 120,
-    status: 'failed',
-    startTime: new Date('2023-01-01T00:00:00.000Z'),
-    parallelIndex: 0,
-    workerIndex: 0,
-    attachments: [],
-    errors: [testError],
-    error: testError,
-    steps: [],
-    stdout: [],
-    stderr: [],
-    annotations: [],
-  }
+	const testResult: TestResult = {
+		retry: 0,
+		duration: 120,
+		status: "failed",
+		startTime: new Date("2023-01-01T00:00:00.000Z"),
+		parallelIndex: 0,
+		workerIndex: 0,
+		attachments: [],
+		errors: [testError],
+		error: testError,
+		steps: [],
+		stdout: [],
+		stderr: [],
+		annotations: [],
+	};
 
-  const failedTestCase: TestCase = {
-    title: 'should validate the expected condition',
-    id: 'test-id-1',
-    annotations: [],
-    tags: [],
-    type: 'test',
-    expectedStatus: 'passed',
-    timeout: 30000,
-    results: [testResult],
-    location: {
-      file: 'test-file.spec.ts',
-      line: 42,
-      column: 3,
-    },
-    parent: undefined as any, // Will be set later
-    outcome: () => 'unexpected',
-    ok: () => false,
-    titlePath: () => [
-      'Failed Test Suite',
-      'should validate the expected condition',
-    ],
-    repeatEachIndex: 0,
-    retries: 0,
-  }
+	const failedTestCase: TestCase = {
+		title: "should validate the expected condition",
+		id: "test-id-1",
+		annotations: [],
+		tags: [],
+		type: "test",
+		expectedStatus: "passed",
+		timeout: 30000,
+		results: [testResult],
+		location: {
+			file: "test-file.spec.ts",
+			line: 42,
+			column: 3,
+		},
+		parent: undefined as any, // Will be set later
+		outcome: () => "unexpected",
+		ok: () => false,
+		titlePath: () => [
+			"Failed Test Suite",
+			"should validate the expected condition",
+		],
+		repeatEachIndex: 0,
+		retries: 0,
+	};
 
-  const passedTestCase: TestCase = {
-    title: 'should fail as expected',
-    id: 'test-id-2',
-    annotations: [],
-    expectedStatus: 'failed',
-    timeout: 30000,
-    results: [testResult],
-    tags: [],
-    type: 'test',
-    location: {
-      file: 'test-file.spec.ts',
-      line: 42,
-      column: 3,
-    },
-    parent: undefined as any, // Will be set later
-    outcome: () => 'expected',
-    ok: () => true,
-    titlePath: () => ['Failed Test Suite', 'should fail as expected'],
-    repeatEachIndex: 0,
-    retries: 0,
-  }
+	const passedTestCase: TestCase = {
+		title: "should fail as expected",
+		id: "test-id-2",
+		annotations: [],
+		expectedStatus: "failed",
+		timeout: 30000,
+		results: [testResult],
+		tags: [],
+		type: "test",
+		location: {
+			file: "test-file.spec.ts",
+			line: 42,
+			column: 3,
+		},
+		parent: undefined as any, // Will be set later
+		outcome: () => "expected",
+		ok: () => true,
+		titlePath: () => ["Failed Test Suite", "should fail as expected"],
+		repeatEachIndex: 0,
+		retries: 0,
+	};
 
-  const suite: Suite = {
-    title: 'Failed Test Suite',
-    titlePath: () => ['Failed Test Suite'],
-    entries: () => [failedTestCase],
-    type: 'project',
-    location: {
-      file: 'test-file.spec.ts',
-      line: 10,
-      column: 1,
-    } as Location,
-    project: () => ({
-      name: 'Test Project',
-      outputDir: './test-results',
-      grep: /.*/,
-      grepInvert: null,
-      metadata: {},
-      dependencies: [],
-      repeatEach: 1,
-      retries: 0,
-      timeout: 30000,
-      use: {},
-      testDir: './tests',
-      testIgnore: [],
-      testMatch: [],
-      snapshotDir: './snapshots',
-    }),
-    allTests: () => [failedTestCase, passedTestCase],
-    tests: [failedTestCase, passedTestCase],
-    suites: [],
-  }
+	const suite: Suite = {
+		title: "Failed Test Suite",
+		titlePath: () => ["Failed Test Suite"],
+		entries: () => [failedTestCase],
+		type: "project",
+		location: {
+			file: "test-file.spec.ts",
+			line: 10,
+			column: 1,
+		} as Location,
+		project: () => ({
+			name: "Test Project",
+			outputDir: "./test-results",
+			grep: /.*/,
+			grepInvert: null,
+			ignoreSnapshots: false,
+			metadata: {},
+			dependencies: [],
+			repeatEach: 1,
+			retries: 0,
+			timeout: 30000,
+			use: {},
+			testDir: "./tests",
+			testIgnore: [],
+			testMatch: [],
+			snapshotDir: "./snapshots",
+		}),
+		allTests: () => [failedTestCase, passedTestCase],
+		tests: [failedTestCase, passedTestCase],
+		suites: [],
+	};
 
-  failedTestCase.parent = suite
-  passedTestCase.parent = suite
+	failedTestCase.parent = suite;
+	passedTestCase.parent = suite;
 
-  return suite
-}
+	return suite;
+};

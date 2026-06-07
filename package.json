@@ -1,67 +1,59 @@
 {
-  "name": "playwright-ctrf-json-reporter",
-  "version": "0.0.29",
-  "description": "A Playwright JSON test reporter to create test results reports",
-  "main": "dist/index.js",
-  "scripts": {
-    "build": "tsc",
-    "test": "jest",
-    "lint": "eslint . --fix",
-    "lint:check": "eslint .",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "all": "npm run lint && npm run format:check && npm run test && npm run build"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ctrf-io/playwright-ctrf-json-reporter.git"
-  },
-  "publishConfig": {
-    "access": "public",
-    "provenance": true
-  },
-  "homepage": "https://ctrf.io",
-  "files": [
-    "dist/",
-    "README.md"
-  ],
-  "author": "Matthew Poulton-White",
-  "license": "MIT",
-  "keywords": [
-    "ctrf",
-    "common-test-report-format",
-    "test-reporting",
-    "test-results",
-    "testing",
-    "json",
-    "ci",
-    "playwright",
-    "playwright-reporter"
-  ],
-  "security": {
-    "email": "security@ctrf.io",
-    "url": "https://github.com/ctrf-io/.github/blob/main/SECURITY.md"
-  },
-  "devDependencies": {
-    "@playwright/test": "^1.58.2",
-    "@types/jest": "^30.0.0",
-    "@types/node": "^25.2.2",
-    "@typescript-eslint/eslint-plugin": "^8.55.0",
-    "@typescript-eslint/parser": "^8.55.0",
-    "eslint": "^9.39.2",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-n": "^17.23.2",
-    "eslint-plugin-prettier": "^5.5.5",
-    "eslint-plugin-promise": "^7.2.1",
-    "jest": "^30.2.0",
-    "jest-ctrf-json-reporter": "^0.0.10",
-    "prettier": "^3.8.1",
-    "ts-jest": "^29.4.6",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.55.0"
-  },
-  "dependencies": {
-    "ctrf": "^0.2.0"
-  }
+	"name": "playwright-ctrf-json-reporter",
+	"version": "0.0.29",
+	"description": "A Playwright JSON test reporter to create test results reports",
+	"main": "dist/index.js",
+	"scripts": {
+		"build": "tsc",
+		"test": "jest",
+		"lint": "biome lint --write . --unsafe",
+		"lint:check": "biome lint .",
+		"format": "biome format --write .",
+		"format:check": "biome format .",
+		"all": "npm run lint && npm run format:check && npm run test && npm run build && npm run check",
+		"check": "biome check ."
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ctrf-io/playwright-ctrf-json-reporter.git"
+	},
+	"publishConfig": {
+		"access": "public",
+		"provenance": true
+	},
+	"homepage": "https://ctrf.io",
+	"files": [
+		"dist/",
+		"README.md"
+	],
+	"author": "Matthew Poulton-White",
+	"license": "MIT",
+	"keywords": [
+		"ctrf",
+		"common-test-report-format",
+		"test-reporting",
+		"test-results",
+		"testing",
+		"json",
+		"ci",
+		"playwright",
+		"playwright-reporter"
+	],
+	"security": {
+		"email": "security@ctrf.io",
+		"url": "https://github.com/ctrf-io/.github/blob/main/SECURITY.md"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.4.16",
+		"@playwright/test": "1.60.0",
+		"@types/jest": "30.0.0",
+		"@types/node": "25.9.2",
+		"jest": "30.4.2",
+		"jest-ctrf-json-reporter": "0.0.10",
+		"ts-jest": "29.4.11",
+		"typescript": "5.9.3"
+	},
+	"dependencies": {
+		"ctrf": "0.2.1"
+	}
 }
