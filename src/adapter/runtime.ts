@@ -29,26 +29,26 @@
  * - Deep merge: arrays concatenate, objects merge recursively, primitives overwrite
  */
 
-import { test } from '@playwright/test'
+import { test } from "@playwright/test";
 
 /**
  * Content type used to identify CTRF runtime messages in attachments.
  * The reporter will look for attachments with this content type.
  */
 export const CTRF_RUNTIME_MESSAGE_CONTENT_TYPE =
-  'application/vnd.ctrf.message+json'
+	"application/vnd.ctrf.message+json";
 
 /**
  * Runtime message types
  */
-export type CtrfRuntimeMessageType = 'metadata'
+export type CtrfRuntimeMessageType = "metadata";
 
 /**
  * A runtime message sent from test code to the reporter
  */
 export interface CtrfRuntimeMessage {
-  type: CtrfRuntimeMessageType
-  data: Record<string, unknown>
+	type: CtrfRuntimeMessageType;
+	data: Record<string, unknown>;
 }
 
 /**
@@ -56,52 +56,52 @@ export interface CtrfRuntimeMessage {
  * Different test frameworks would implement this differently.
  */
 interface MetadataTransport {
-  send: (payload: CtrfRuntimeMessage) => Promise<void>
+	send: (payload: CtrfRuntimeMessage) => Promise<void>;
 }
 
 /**
  * Silent fallback when no test is active - prevents errors in setup/teardown code.
  */
 const nullTransport: MetadataTransport = {
-  send: async () => {
-    /* intentionally empty */
-  },
-}
+	send: async () => {
+		/* intentionally empty */
+	},
+};
 
 /**
  * Attaches metadata payloads to the current Playwright test as hidden attachments.
  * The reporter extracts these by content type during report generation.
  */
 function createPlaywrightTransport(): MetadataTransport {
-  let sequence = 0
+	let sequence = 0;
 
-  return {
-    async send(payload: CtrfRuntimeMessage): Promise<void> {
-      const tag = `__ctrf_${++sequence}_${Date.now()}`
-      const data = JSON.stringify(payload)
+	return {
+		async send(payload: CtrfRuntimeMessage): Promise<void> {
+			const tag = `__ctrf_${++sequence}_${Date.now()}`;
+			const data = JSON.stringify(payload);
 
-      await test.info().attach(tag, {
-        contentType: CTRF_RUNTIME_MESSAGE_CONTENT_TYPE,
-        body: Buffer.from(data),
-      })
-    },
-  }
+			await test.info().attach(tag, {
+				contentType: CTRF_RUNTIME_MESSAGE_CONTENT_TYPE,
+				body: Buffer.from(data),
+			});
+		},
+	};
 }
 
-const activeTransport = createPlaywrightTransport()
+const activeTransport = createPlaywrightTransport();
 
 /**
  * Resolves the active transport, or a null transport if outside a test.
  */
 const resolveTransport = (): MetadataTransport => {
-  try {
-    test.info()
-    return activeTransport
-  } catch {
-    // Outside test context
-  }
-  return nullTransport
-}
+	try {
+		test.info();
+		return activeTransport;
+	} catch {
+		// Outside test context
+	}
+	return nullTransport;
+};
 
 /* ═══════════════════════════════════════════════════════════════════════════
  * Public API
@@ -137,8 +137,8 @@ const resolveTransport = (): MetadataTransport => {
  * // → { owner: 'checkout-team' }
  */
 export async function extra(data: Record<string, unknown>): Promise<void> {
-  await resolveTransport().send({ type: 'metadata', data })
+	await resolveTransport().send({ type: "metadata", data });
 }
 
 /** CTRF runtime API namespace */
-export const ctrf = { extra } as const
+export const ctrf = { extra } as const;

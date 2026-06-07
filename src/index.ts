@@ -1,2 +1,2 @@
-export { default } from './generate-report'
-export { ctrf, extra } from './adapter'
+export { default } from "./generate-report";
+export { ctrf, extra } from "./adapter";

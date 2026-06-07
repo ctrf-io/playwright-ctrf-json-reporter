@@ -1,7 +1,8 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "rootDirs": ["src", "tests"],
-    "noEmit": true
-  }
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"rootDirs": ["src", "tests"],
+		"noEmit": true,
+		"types": ["node", "jest"]
+	}
 }
