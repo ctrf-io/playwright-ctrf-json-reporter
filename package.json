@@ -2,9 +2,22 @@
 	"name": "playwright-ctrf-json-reporter",
 	"version": "0.0.29",
 	"description": "A Playwright JSON test reporter to create test results reports",
-	"main": "dist/index.js",
+	"type": "module",
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs"
+		}
+	},
 	"scripts": {
-		"build": "tsc",
+		"build": "tsup",
+		"build:check": "tsc -p . --noEmit",
+		"build:watch": "tsup --watch",
+		"clean": "rm -rf dist && rm -rf coverage && rm -rf ctrf",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"test:coverage": "vitest run --coverage",
@@ -12,7 +25,7 @@
 		"lint:check": "biome lint .",
 		"format": "biome format --write .",
 		"format:check": "biome format .",
-		"all": "npm run lint:check && npm run format:check && npm run test:coverage && npm run build",
+		"all": "npm run lint:check && npm run format:check && npm run build:check && npm run test:coverage && npm run build",
 		"check": "biome check ."
 	},
 	"repository": {
@@ -46,11 +59,12 @@
 		"url": "https://github.com/ctrf-io/.github/blob/main/SECURITY.md"
 	},
 	"devDependencies": {
-		"@d2t/vitest-ctrf-json-reporter": "1.3.0",
 		"@biomejs/biome": "2.4.16",
+		"@d2t/vitest-ctrf-json-reporter": "1.3.0",
 		"@playwright/test": "1.60.0",
 		"@types/node": "25.9.2",
 		"@vitest/coverage-v8": "4.1.8",
+		"tsup": "8.5.1",
 		"typescript": "6.0.3",
 		"vitest": "4.1.8"
 	},
