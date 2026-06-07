@@ -10,6 +10,7 @@
 			"**",
 			"!dist",
 			"!coverage",
+			"!ctrf",
 			"!reports",
 			"!community-reports",
 			"!templates",
