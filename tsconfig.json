@@ -9,7 +9,16 @@
 		"declaration": true,
 		"forceConsistentCasingInFileNames": true,
 		"skipLibCheck": true,
-		"types": ["node", "jest"]
+		"types": ["node"]
 	},
-	"include": ["src/**/*"]
+	"include": ["src/**/*"],
+	"exclude": [
+		"src/**/*.test.ts",
+		"tests/**/*",
+		"node_modules",
+		"dist",
+		"coverage",
+		"ctrf",
+		"vitest.config.ts"
+	]
 }

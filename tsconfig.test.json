@@ -3,6 +3,6 @@
 	"compilerOptions": {
 		"rootDirs": ["src", "tests"],
 		"noEmit": true,
-		"types": ["node", "jest"]
+		"types": ["node", "vitest/globals"]
 	}
 }

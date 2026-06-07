@@ -2,15 +2,20 @@ import { createFlakyTestSuite } from "./dummy-suites/flaky-test-suite";
 import GenerateCtrfReport from "../src/generate-report";
 import fs from "node:fs";
 import type { CTRFReport } from "ctrf";
+import { vi } from "vitest";
 
-jest.mock("fs", () => ({
-	writeFileSync: jest.fn(),
-	existsSync: jest.fn(() => true),
+vi.mock("node:fs", () => ({
+	default: {
+		writeFileSync: vi.fn(),
+		existsSync: vi.fn(() => true),
+	},
+	writeFileSync: vi.fn(),
+	existsSync: vi.fn(() => true),
 }));
 const nowDateMock = new Date("2023-01-01T00:00:00.000Z");
-jest.useFakeTimers().setSystemTime(nowDateMock);
+vi.useFakeTimers().setSystemTime(nowDateMock);
 
-const mockedFs = fs as jest.Mocked<typeof fs>;
+const mockedFs = vi.mocked(fs);
 
 describe("Flaky Tests", () => {
 	it("should generate report with retry attempts correctly", async () => {
