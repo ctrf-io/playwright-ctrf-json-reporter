@@ -62,7 +62,7 @@
 		"@biomejs/biome": "2.5.2",
 		"@d2t/vitest-ctrf-json-reporter": "1.3.0",
 		"@playwright/test": "1.60.0",
-		"@types/node": "25.9.2",
+		"@types/node": "26.1.0",
 		"@vitest/coverage-v8": "4.1.8",
 		"tsup": "8.5.1",
 		"typescript": "6.0.3",
