@@ -8,7 +8,9 @@ import type {
 	TestCase,
 	TestResult,
 	FullConfig,
+	TestError,
 	TestStep,
+	WorkerInfo,
 } from "@playwright/test/reporter";
 
 import type {
@@ -63,6 +65,7 @@ class GenerateCtrfReport implements Reporter {
 	readonly defaultOutputDir = "ctrf";
 	private suite: Suite | undefined;
 	private startTime: number | undefined;
+	private readonly globalErrors: Record<string, unknown>[] = [];
 
 	constructor(config?: Partial<ReporterConfigOptions>) {
 		this.reporterConfigOptions = {
@@ -141,8 +144,34 @@ class GenerateCtrfReport implements Reporter {
 		);
 	}
 
+	/**
+	 * Collect run-level ("global") errors.
+	 *
+	 * Playwright reports failures that belong to the run rather than to a single
+	 * test through this hook: unhandled exceptions in a worker, global
+	 * setup/teardown failures and config errors. They are surfaced in the CTRF
+	 * report under `results.extra.errors`, because the CTRF schema has no
+	 * dedicated field for them.
+	 */
+	onError(error: TestError, workerInfo?: WorkerInfo): void {
+		const serialized = this.serializeGlobalError(error);
+
+		if (workerInfo !== undefined) {
+			serialized.workerIndex = workerInfo.workerIndex;
+		}
+
+		this.globalErrors.push(serialized);
+	}
+
 	onEnd(): void {
 		this.ctrfReport.results.summary.stop = Date.now();
+
+		if (this.globalErrors.length > 0) {
+			this.ctrfReport.results.extra = {
+				...this.ctrfReport.results.extra,
+				errors: this.globalErrors,
+			};
+		}
 
 		if (this.suite !== undefined) {
 			if (this.suite.allTests().length > 0) {
@@ -152,6 +181,36 @@ class GenerateCtrfReport implements Reporter {
 			}
 		}
 		this.writeReportToFile(this.ctrfReport);
+	}
+
+	/**
+	 * Serialize a global error into a JSON-safe object, omitting absent fields
+	 * rather than emitting explicit `undefined` values.
+	 */
+	serializeGlobalError(error: TestError): Record<string, unknown> {
+		const serialized: Record<string, unknown> = {};
+
+		if (error.message !== undefined) {
+			serialized.message = error.message;
+		}
+		if (error.stack !== undefined) {
+			serialized.stack = error.stack;
+		}
+		if (error.location !== undefined) {
+			serialized.location = error.location;
+		}
+		if (error.snippet !== undefined) {
+			serialized.snippet = error.snippet;
+		}
+		if (
+			typeof error.value === "string" ||
+			typeof error.value === "number" ||
+			typeof error.value === "boolean"
+		) {
+			serialized.value = error.value;
+		}
+
+		return serialized;
 	}
 
 	printsToStdio(): boolean {
