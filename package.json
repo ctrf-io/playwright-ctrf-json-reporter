@@ -69,6 +69,6 @@
 		"vitest": "4.1.10"
 	},
 	"dependencies": {
-		"ctrf": "0.2.1"
+		"ctrf": "0.3.0"
 	}
 }
