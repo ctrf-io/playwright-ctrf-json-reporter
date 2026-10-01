@@ -6,6 +6,19 @@ import GenerateCtrfReport from "./generate-report";
 import type { TestError, WorkerInfo } from "@playwright/test/reporter";
 
 describe("GenerateCtrfReport", () => {
+	describe("test timestamps", () => {
+		it("should express start and stop as Unix epoch milliseconds", () => {
+			const reporter = new GenerateCtrfReport();
+			const startTime = new Date("2026-09-29T16:10:04.789Z");
+			const duration = 4321;
+
+			expect(reporter.updateStart(startTime)).toBe(startTime.getTime());
+			expect(reporter.calculateStopTime(startTime, duration)).toBe(
+				startTime.getTime() + duration,
+			);
+		});
+	});
+
 	describe("deepMerge", () => {
 		let reporter: GenerateCtrfReport;
 
