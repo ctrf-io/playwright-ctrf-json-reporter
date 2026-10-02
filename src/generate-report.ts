@@ -588,12 +588,24 @@ class GenerateCtrfReport implements Reporter {
 		return {};
 	}
 
+	/**
+	 * Count the descendants of `suite`, excluding `suite` itself. Suites with an
+	 * empty title (such as an unnamed project) are skipped but their children
+	 * are still counted, so the result matches the hierarchy reported in
+	 * `tests[].suite`. A file run by several projects is counted once per
+	 * project.
+	 *
+	 * @see [CTRF §8.8: Suites](https://github.com/ctrf-io/ctrf/blob/main/spec/ctrf.md#88-suites)
+	 */
 	countSuites(suite: Suite): number {
 		let count = 0;
 
-		suite.suites.forEach((childSuite) => {
+		for (const childSuite of suite.suites) {
+			if (childSuite.title !== "") {
+				count += 1;
+			}
 			count += this.countSuites(childSuite);
-		});
+		}
 
 		return count;
 	}
