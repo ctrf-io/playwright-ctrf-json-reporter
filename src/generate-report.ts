@@ -530,16 +530,14 @@ class GenerateCtrfReport implements Reporter {
 		return hasData ? runtimeData : null;
 	}
 
+	/** Convert a Playwright test start time to Unix epoch milliseconds. */
 	updateStart(startTime: Date): number {
-		const date = new Date(startTime);
-		const unixEpochTime = Math.floor(date.getTime() / 1000);
-		return unixEpochTime;
+		return startTime.getTime();
 	}
 
+	/** Calculate a Playwright test stop time in Unix epoch milliseconds. */
 	calculateStopTime(startTime: Date, duration: number): number {
-		const startDate = new Date(startTime);
-		const stopDate = new Date(startDate.getTime() + duration);
-		return Math.floor(stopDate.getTime() / 1000);
+		return startTime.getTime() + duration;
 	}
 
 	// TODO(v1): change return type to string[] and update Test.suite to match canonical ctrf type.
