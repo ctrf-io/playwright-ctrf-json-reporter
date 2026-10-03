@@ -9,6 +9,7 @@ import type {
 	TestError,
 	WorkerInfo,
 } from "@playwright/test/reporter";
+import { CURRENT_SPEC_VERSION, validateStrict } from "ctrf";
 
 const fakeSuite = (
 	title: string,
@@ -32,6 +33,53 @@ const fakeSuite = (
 const fakeTest = (): TestCase => ({ results: [] }) as unknown as TestCase;
 
 describe("GenerateCtrfReport", () => {
+	describe("CTRF conformance", () => {
+		it("emits and validates against the current CTRF specification", () => {
+			const reporter = new GenerateCtrfReport();
+
+			expect(reporter.ctrfReport.specVersion).toBe(CURRENT_SPEC_VERSION);
+			expect(() =>
+				validateStrict(reporter.ctrfReport, {
+					specVersion: CURRENT_SPEC_VERSION,
+				}),
+			).not.toThrow();
+		});
+
+		it("emits suite hierarchy as an ordered array", () => {
+			const root = { title: "", parent: undefined } as unknown as Suite;
+			const file = {
+				title: "sample.spec.ts",
+				parent: root,
+			} as unknown as Suite;
+			const describeSuite = {
+				title: "checkout",
+				parent: file,
+			} as unknown as Suite;
+			const test = { parent: describeSuite } as unknown as TestCase;
+
+			const reporter = new GenerateCtrfReport();
+
+			expect(reporter.buildSuitePath(test)).toEqual([
+				"sample.spec.ts",
+				"checkout",
+			]);
+		});
+
+		it("emits buildNumber as an integer", () => {
+			const reporter = new GenerateCtrfReport({ buildNumber: 100 });
+
+			reporter.setEnvironmentDetails(reporter.reporterConfigOptions);
+			reporter.ctrfReport.results.environment = reporter.ctrfEnvironment;
+
+			expect(reporter.ctrfEnvironment.buildNumber).toBe(100);
+			expect(() =>
+				validateStrict(reporter.ctrfReport, {
+					specVersion: CURRENT_SPEC_VERSION,
+				}),
+			).not.toThrow();
+		});
+	});
+
 	describe("countSuites", () => {
 		let reporter: GenerateCtrfReport;
 

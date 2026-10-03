@@ -17,22 +17,15 @@ import type {
 	TestStatus,
 	CTRFReport,
 	Test,
-	Results,
 	Environment,
 	Attachment,
 	RetryAttempt,
 } from "ctrf";
+import { CURRENT_SPEC_VERSION } from "ctrf";
 
 import { CTRF_RUNTIME_MESSAGE_CONTENT_TYPE } from "./adapter";
 import type { CtrfRuntimeMessage } from "./adapter";
 
-type PlaywrightTest = Omit<Test, "suite"> & { suite?: string | string[] };
-type PlaywrightResults = Omit<Results, "tests"> & { tests: PlaywrightTest[] };
-type PlaywrightCTRFReport = Omit<CTRFReport, "results"> & {
-	results: PlaywrightResults;
-};
-
-// TODO(v1): change buildNumber to `number | undefined` to align with ctrf Environment type.
 interface ReporterConfigOptions {
 	outputFile?: string;
 	outputDir?: string;
@@ -46,8 +39,7 @@ interface ReporterConfigOptions {
 	osRelease?: string | undefined;
 	osVersion?: string | undefined;
 	buildName?: string | undefined;
-	/** Accepted as a string for backwards compatibility. Canonical type is `number`. Resolved at v1. */
-	buildNumber?: string | undefined;
+	buildNumber?: number | undefined;
 	buildUrl?: string | undefined;
 	repositoryName?: string | undefined;
 	repositoryUrl?: string | undefined;
@@ -57,7 +49,7 @@ interface ReporterConfigOptions {
 }
 
 class GenerateCtrfReport implements Reporter {
-	readonly ctrfReport: PlaywrightCTRFReport;
+	readonly ctrfReport: CTRFReport;
 	readonly ctrfEnvironment: Environment;
 	readonly reporterConfigOptions: ReporterConfigOptions;
 	readonly reporterName = "playwright-ctrf-json-reporter";
@@ -92,7 +84,7 @@ class GenerateCtrfReport implements Reporter {
 
 		this.ctrfReport = {
 			reportFormat: "CTRF",
-			specVersion: "0.0.0",
+			specVersion: CURRENT_SPEC_VERSION,
 			reportId: crypto.randomUUID(),
 			timestamp: new Date().toISOString(),
 			generatedBy: "playwright-ctrf-json-reporter",
@@ -253,9 +245,9 @@ class GenerateCtrfReport implements Reporter {
 	updateCtrfTestResultsFromTestResult(
 		testCase: TestCase,
 		testResult: TestResult,
-		ctrfReport: PlaywrightCTRFReport,
+		ctrfReport: CTRFReport,
 	): void {
-		const test: PlaywrightTest = {
+		const test: Test = {
 			name: testCase.title,
 			status:
 				testResult.status === testCase.expectedStatus &&
@@ -337,7 +329,7 @@ class GenerateCtrfReport implements Reporter {
 
 	updateSummaryFromTestResult(
 		testResult: TestResult,
-		ctrfReport: PlaywrightCTRFReport,
+		ctrfReport: CTRFReport,
 	): void {
 		ctrfReport.results.summary.tests++;
 
@@ -387,10 +379,7 @@ class GenerateCtrfReport implements Reporter {
 			this.ctrfEnvironment.buildName = reporterConfigOptions.buildName;
 		}
 		if (reporterConfigOptions.buildNumber !== undefined) {
-			// TODO(v1): remove cast once buildNumber config type is changed to number.
-			this.ctrfEnvironment.buildNumber = Number(
-				reporterConfigOptions.buildNumber,
-			);
+			this.ctrfEnvironment.buildNumber = reporterConfigOptions.buildNumber;
 		}
 		if (reporterConfigOptions.buildUrl !== undefined) {
 			this.ctrfEnvironment.buildUrl = reporterConfigOptions.buildUrl;
@@ -540,9 +529,8 @@ class GenerateCtrfReport implements Reporter {
 		return startTime.getTime() + duration;
 	}
 
-	// TODO(v1): change return type to string[] and update Test.suite to match canonical ctrf type.
-	buildSuitePath(test: TestCase): string {
-		const pathComponents = [];
+	buildSuitePath(test: TestCase): string[] {
+		const pathComponents: string[] = [];
 		let currentSuite: Suite | undefined = test.parent;
 
 		while (currentSuite !== undefined) {
@@ -552,7 +540,7 @@ class GenerateCtrfReport implements Reporter {
 			currentSuite = currentSuite.parent;
 		}
 
-		return pathComponents.join(" > ");
+		return pathComponents;
 	}
 
 	extractScreenshotBase64(testResult: TestResult): string | undefined {
@@ -610,7 +598,7 @@ class GenerateCtrfReport implements Reporter {
 		return count;
 	}
 
-	writeReportToFile(data: PlaywrightCTRFReport): void {
+	writeReportToFile(data: CTRFReport): void {
 		const filePath = path.join(
 			this.reporterConfigOptions.outputDir ?? this.defaultOutputDir,
 			this.reporterConfigOptions.outputFile ?? this.defaultOutputFile,
@@ -628,7 +616,7 @@ class GenerateCtrfReport implements Reporter {
 		}
 	}
 
-	processStep(test: PlaywrightTest, step: TestStep): void {
+	processStep(test: Test, step: TestStep): void {
 		if (step.category === "test.step") {
 			const stepStatus =
 				step.error === undefined
