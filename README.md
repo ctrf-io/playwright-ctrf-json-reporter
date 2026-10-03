@@ -23,7 +23,7 @@ By standardizing test results, reports can be validated, merged, compared, and a
 
 ## Features
 
-![Static Badge](https://img.shields.io/badge/official-red?label=ctrf&labelColor=green)
+![CTRF 0.1.0](https://img.shields.io/badge/0.1.0-red?label=ctrf&labelColor=green)
 [![build](https://github.com/ctrf-io/playwright-ctrf-json-report/actions/workflows/main.yaml/badge.svg)](https://github.com/ctrf-io/playwright-ctrf-json-report/actions/workflows/main.yaml)
 ![NPM Downloads](https://img.shields.io/npm/d18m/playwright-ctrf-json-reporter?logo=npm)
 ![npm bundle size](https://img.shields.io/bundlephobia/minzip/playwright-ctrf-json-reporter?label=Size)
