@@ -60,7 +60,7 @@ By standardizing test results, reports can be validated, merged, compared, and a
     "environment": {
       "appName": "MyApp",
       "buildName": "MyBuild",
-      "buildNumber": "1"
+      "buildNumber": 1
     }
   }
 }
@@ -108,7 +108,7 @@ reporter: [
         osRelease: '18.04',             // Optional: Specify the OS release version.
         osVersion: '5.4.0',             // Optional: Specify the OS version.
         buildName: 'MyApp Build',       // Optional: Specify the build name.
-        buildNumber: '100',             // Optional: Specify the build number.
+        buildNumber: 100,               // Optional: Specify the numeric build number.
         buildUrl: "https://ctrf.io",    // Optional: Specify the build url.
         repositoryName: "ctrf-json",    // Optional: Specify the repository name.
         repositoryUrl: "https://gh.io", // Optional: Specify the repository url.
@@ -148,7 +148,7 @@ The test object in the report includes the following [CTRF properties](https://c
 | `duration`    | Number           | Required | The time taken for the test execution, in milliseconds.                             |
 | `start`       | Number           | Optional | The start time of the test as a Unix epoch timestamp.                               |
 | `stop`        | Number           | Optional | The end time of the test as a Unix epoch timestamp.                                 |
-| `suite`       | String           | Optional | The suite or group to which the test belongs.                                       |
+| `suite`       | Array of Strings | Optional | The ordered suite hierarchy from top-level suite to immediate parent.               |
 | `message`     | String           | Optional | The failure message if the test failed.                                             |
 | `trace`       | String           | Optional | The stack trace captured if the test failed.                                        |
 | `snippet`     | String           | Optional | The code snippet that was executed during the test if the test failed.              |

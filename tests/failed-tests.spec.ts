@@ -1,7 +1,7 @@
 import { createFailedTestSuite } from "./dummy-suites/failed-test-suite";
 import GenerateCtrfReport from "../src/generate-report";
 import fs from "node:fs";
-import type { CTRFReport } from "ctrf";
+import { CURRENT_SPEC_VERSION, validateStrict, type CTRFReport } from "ctrf";
 import { vi } from "vitest";
 
 vi.mock("node:fs", () => ({
@@ -32,8 +32,11 @@ describe("Failed Tests", () => {
 
 		const reportJsonContent = mockedFs.writeFileSync.mock.calls[0][1] as string;
 		const parsedReport: CTRFReport = JSON.parse(reportJsonContent);
+		validateStrict(parsedReport, { specVersion: CURRENT_SPEC_VERSION });
 
+		expect(parsedReport.specVersion).toBe(CURRENT_SPEC_VERSION);
 		expect(parsedReport.results.tests).toHaveLength(2);
+		expect(parsedReport.results.tests[0].suite).toEqual(["Failed Test Suite"]);
 		expect(parsedReport.results.tests[0].status).toBe("failed");
 		expect(parsedReport.results.tests[0].rawStatus).toBe("failed");
 		expect(parsedReport.results.tests[0].status).toBe("failed");
