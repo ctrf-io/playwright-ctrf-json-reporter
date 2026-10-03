@@ -3,9 +3,97 @@
  */
 
 import GenerateCtrfReport from "./generate-report";
-import type { TestError, WorkerInfo } from "@playwright/test/reporter";
+import type {
+	Suite,
+	TestCase,
+	TestError,
+	WorkerInfo,
+} from "@playwright/test/reporter";
+
+const fakeSuite = (
+	title: string,
+	type: Suite["type"],
+	suites: Suite[] = [],
+	tests: TestCase[] = [],
+): Suite => {
+	const suite = {
+		title,
+		type,
+		suites,
+		tests,
+		allTests: (): TestCase[] => [
+			...tests,
+			...suites.flatMap((child) => child.allTests()),
+		],
+	} as unknown as Suite;
+	return suite;
+};
+
+const fakeTest = (): TestCase => ({ results: [] }) as unknown as TestCase;
 
 describe("GenerateCtrfReport", () => {
+	describe("countSuites", () => {
+		let reporter: GenerateCtrfReport;
+
+		beforeEach(() => {
+			reporter = new GenerateCtrfReport();
+		});
+
+		it("returns 0 for a root suite with no children", () => {
+			expect(reporter.countSuites(fakeSuite("", "root"))).toBe(0);
+		});
+
+		it("counts nested describe blocks and the file that contains them", () => {
+			const inner = fakeSuite("inner", "describe", [], [fakeTest()]);
+			const outer = fakeSuite("outer", "describe", [inner]);
+			const file = fakeSuite("sample.spec.ts", "file", [outer]);
+			const root = fakeSuite("", "root", [file]);
+
+			expect(reporter.countSuites(root)).toBe(3);
+		});
+
+		it("does not count the suite it is called on", () => {
+			const describeSuite = fakeSuite("outer", "describe");
+			const root = fakeSuite("", "root", [describeSuite]);
+
+			expect(reporter.countSuites(root)).toBe(1);
+			expect(reporter.countSuites(describeSuite)).toBe(0);
+		});
+
+		it("does not count suites with an empty title", () => {
+			const project = fakeSuite("", "project", [
+				fakeSuite("sample.spec.ts", "file"),
+			]);
+			const root = fakeSuite("", "root", [project]);
+
+			expect(reporter.countSuites(root)).toBe(1);
+		});
+
+		it("counts a suite once per project that runs it", () => {
+			const projects = ["chromium", "firefox"].map((name) =>
+				fakeSuite(name, "project", [fakeSuite("sample.spec.ts", "file")]),
+			);
+			const root = fakeSuite("", "root", projects);
+
+			expect(reporter.countSuites(root)).toBe(4);
+		});
+	});
+
+	describe("onEnd summary.suites", () => {
+		it("reports the number of suites in the run", () => {
+			const reporter = new GenerateCtrfReport();
+			const inner = fakeSuite("inner", "describe", [], [fakeTest()]);
+			const outer = fakeSuite("outer", "describe", [inner]);
+			const file = fakeSuite("sample.spec.ts", "file", [outer]);
+			const root = fakeSuite("", "root", [file]);
+
+			reporter.onBegin(undefined as never, root);
+			reporter.onEnd();
+
+			expect(reporter.ctrfReport.results.summary.suites).toBe(3);
+		});
+	});
+
 	describe("test timestamps", () => {
 		it("should express start and stop as Unix epoch milliseconds", () => {
 			const reporter = new GenerateCtrfReport();
