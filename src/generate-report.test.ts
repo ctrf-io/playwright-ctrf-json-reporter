@@ -7,6 +7,7 @@ import type {
 	Suite,
 	TestCase,
 	TestError,
+	TestResult,
 	WorkerInfo,
 } from "@playwright/test/reporter";
 import { CURRENT_SPEC_VERSION, validateStrict } from "ctrf";
@@ -31,6 +32,30 @@ const fakeSuite = (
 };
 
 const fakeTest = (): TestCase => ({ results: [] }) as unknown as TestCase;
+
+const fakeAnnotatedTestCase = (): TestCase => {
+	const annotations = [{ type: "issue", description: "CTR-101" }];
+	const result = {
+		retry: 0,
+		duration: 120,
+		status: "passed",
+		startTime: new Date("2026-10-05T00:00:00.000Z"),
+		attachments: [],
+		steps: [],
+		stdout: [],
+		stderr: [],
+	} as unknown as TestResult;
+
+	return {
+		title: "includes an annotation",
+		annotations,
+		tags: [],
+		expectedStatus: "passed",
+		location: { file: "annotations.spec.ts", line: 1, column: 1 },
+		parent: undefined,
+		results: [result],
+	} as unknown as TestCase;
+};
 
 describe("GenerateCtrfReport", () => {
 	describe("CTRF conformance", () => {
@@ -152,6 +177,37 @@ describe("GenerateCtrfReport", () => {
 			expect(reporter.calculateStopTime(startTime, duration)).toBe(
 				startTime.getTime() + duration,
 			);
+		});
+	});
+
+	describe("annotations", () => {
+		it("omits annotations by default", () => {
+			const reporter = new GenerateCtrfReport();
+			const testCase = fakeAnnotatedTestCase();
+
+			reporter.processTest(testCase);
+
+			expect(reporter.ctrfReport.results.tests[0]?.extra).toBeUndefined();
+		});
+
+		it("omits annotations when disabled", () => {
+			const reporter = new GenerateCtrfReport({ annotations: false });
+			const testCase = fakeAnnotatedTestCase();
+
+			reporter.processTest(testCase);
+
+			expect(reporter.ctrfReport.results.tests[0]?.extra).toBeUndefined();
+		});
+
+		it("includes annotations when enabled", () => {
+			const reporter = new GenerateCtrfReport({ annotations: true });
+			const testCase = fakeAnnotatedTestCase();
+
+			reporter.processTest(testCase);
+
+			expect(reporter.ctrfReport.results.tests[0]?.extra).toEqual({
+				annotations: testCase.annotations,
+			});
 		});
 	});
 
