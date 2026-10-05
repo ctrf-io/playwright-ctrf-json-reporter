@@ -48,5 +48,13 @@ describe("Failed Tests", () => {
 		expect(parsedReport.results.tests[1].message).toBe("test-error-message");
 		expect(parsedReport.results.tests[1].trace).toBe("test-error-stack");
 		expect(parsedReport.results.tests[1].snippet).toBe("test-error-snippet");
+		expect(parsedReport.results.summary).toMatchObject({
+			tests: 2,
+			passed: 1,
+			failed: 1,
+			pending: 0,
+			skipped: 0,
+			other: 0,
+		});
 	});
 });

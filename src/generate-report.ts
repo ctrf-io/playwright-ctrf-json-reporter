@@ -225,12 +225,14 @@ class GenerateCtrfReport implements Reporter {
 		}
 		const latestResult = testCase.results[testCase.results.length - 1];
 		if (latestResult !== undefined) {
+			const status = this.getCtrfTestStatus(testCase, latestResult);
 			this.updateCtrfTestResultsFromTestResult(
 				testCase,
 				latestResult,
 				this.ctrfReport,
+				status,
 			);
-			this.updateSummaryFromTestResult(latestResult, this.ctrfReport);
+			this.updateSummaryFromTestStatus(status, this.ctrfReport);
 		}
 	}
 
@@ -246,14 +248,11 @@ class GenerateCtrfReport implements Reporter {
 		testCase: TestCase,
 		testResult: TestResult,
 		ctrfReport: CTRFReport,
+		status: TestStatus,
 	): void {
 		const test: Test = {
 			name: testCase.title,
-			status:
-				testResult.status === testCase.expectedStatus &&
-				testResult.status !== "skipped"
-					? "passed"
-					: this.mapPlaywrightStatusToCtrf(testResult.status),
+			status,
 			duration: testResult.duration,
 		};
 
@@ -327,19 +326,24 @@ class GenerateCtrfReport implements Reporter {
 		ctrfReport.results.tests.push(test);
 	}
 
-	updateSummaryFromTestResult(
-		testResult: TestResult,
+	updateSummaryFromTestStatus(
+		status: TestStatus,
 		ctrfReport: CTRFReport,
 	): void {
 		ctrfReport.results.summary.tests++;
 
-		const ctrfStatus = this.mapPlaywrightStatusToCtrf(testResult.status);
-
-		if (ctrfStatus in ctrfReport.results.summary) {
-			ctrfReport.results.summary[ctrfStatus]++;
+		if (status in ctrfReport.results.summary) {
+			ctrfReport.results.summary[status]++;
 		} else {
 			ctrfReport.results.summary.other++;
 		}
+	}
+
+	getCtrfTestStatus(testCase: TestCase, testResult: TestResult): TestStatus {
+		return testResult.status === testCase.expectedStatus &&
+			testResult.status !== "skipped"
+			? "passed"
+			: this.mapPlaywrightStatusToCtrf(testResult.status);
 	}
 
 	mapPlaywrightStatusToCtrf(testStatus: string): TestStatus {
