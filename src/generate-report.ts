@@ -295,7 +295,7 @@ class GenerateCtrfReport implements Reporter {
 			test.stderr = testResult.stderr.map((item) =>
 				Buffer.isBuffer(item) ? item.toString() : String(item),
 			);
-			if (this.reporterConfigOptions.annotations !== undefined) {
+			if (this.reporterConfigOptions.annotations === true) {
 				test.extra = { annotations: testCase.annotations };
 			}
 
