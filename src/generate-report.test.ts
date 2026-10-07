@@ -447,6 +447,28 @@ describe("onError global errors", () => {
 		expect(Object.keys(errors[0])).not.toContain("value");
 	});
 
+	it("strips ANSI escape sequences from error text", () => {
+		const reporter = new GenerateCtrfReport();
+		reporter.onError(
+			globalError({
+				message: "\u001b[31mglobal setup failed\u001b[39m",
+				stack: "Error: \u001b[1;31mglobal setup failed\u001b[0m\n    at setup",
+				snippet: "\u001b[90m 1 |\u001b[39m throw \u001b[38;5;204mboom\u001b[0m",
+				value: "\u001b[33mboom\u001b[39m",
+			}),
+		);
+		reporter.onEnd();
+		const errors = (
+			reporter.ctrfReport.results.extra as { errors: Record<string, unknown>[] }
+		).errors;
+		expect(errors[0]).toMatchObject({
+			message: "global setup failed",
+			stack: "Error: global setup failed\n    at setup",
+			snippet: " 1 | throw boom",
+			value: "boom",
+		});
+	});
+
 	it("omits message when the error carries none", () => {
 		const reporter = new GenerateCtrfReport();
 		reporter.onError(

@@ -25,6 +25,7 @@ import { CURRENT_SPEC_VERSION } from "ctrf";
 
 import { CTRF_RUNTIME_MESSAGE_CONTENT_TYPE } from "./adapter";
 import type { CtrfRuntimeMessage } from "./adapter";
+import { stripAnsi } from "./strip-ansi";
 
 interface ReporterConfigOptions {
 	outputFile?: string;
@@ -183,19 +184,20 @@ class GenerateCtrfReport implements Reporter {
 		const serialized: Record<string, unknown> = {};
 
 		if (error.message !== undefined) {
-			serialized.message = error.message;
+			serialized.message = stripAnsi(error.message);
 		}
 		if (error.stack !== undefined) {
-			serialized.stack = error.stack;
+			serialized.stack = stripAnsi(error.stack);
 		}
 		if (error.location !== undefined) {
 			serialized.location = error.location;
 		}
 		if (error.snippet !== undefined) {
-			serialized.snippet = error.snippet;
+			serialized.snippet = stripAnsi(error.snippet);
 		}
-		if (
-			typeof error.value === "string" ||
+		if (typeof error.value === "string") {
+			serialized.value = stripAnsi(error.value);
+		} else if (
 			typeof error.value === "number" ||
 			typeof error.value === "boolean"
 		) {
@@ -567,13 +569,13 @@ class GenerateCtrfReport implements Reporter {
 		) {
 			const failureDetails: Partial<Test> = {};
 			if (testResult.error.message !== undefined) {
-				failureDetails.message = testResult.error.message;
+				failureDetails.message = stripAnsi(testResult.error.message);
 			}
 			if (testResult.error.stack !== undefined) {
-				failureDetails.trace = testResult.error.stack;
+				failureDetails.trace = stripAnsi(testResult.error.stack);
 			}
 			if (testResult.error.snippet !== undefined) {
-				failureDetails.snippet = testResult.error.snippet;
+				failureDetails.snippet = stripAnsi(testResult.error.snippet);
 			}
 			return failureDetails;
 		}
