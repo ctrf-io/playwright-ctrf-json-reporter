@@ -34,6 +34,7 @@ interface ReporterConfigOptions {
 	screenshot?: boolean;
 	annotations?: boolean;
 	testType?: string;
+	runId?: string | undefined;
 	appName?: string | undefined;
 	appVersion?: string | undefined;
 	osPlatform?: string | undefined;
@@ -68,6 +69,7 @@ class GenerateCtrfReport implements Reporter {
 			screenshot: config?.screenshot ?? false,
 			annotations: config?.annotations ?? false,
 			testType: config?.testType ?? "e2e",
+			runId: config?.runId ?? undefined,
 			appName: config?.appName ?? undefined,
 			appVersion: config?.appVersion ?? undefined,
 			osPlatform: config?.osPlatform ?? undefined,
@@ -87,6 +89,9 @@ class GenerateCtrfReport implements Reporter {
 			reportFormat: "CTRF",
 			specVersion: CURRENT_SPEC_VERSION,
 			reportId: crypto.randomUUID(),
+			...(this.reporterConfigOptions.runId
+				? { runId: this.reporterConfigOptions.runId }
+				: {}),
 			timestamp: new Date().toISOString(),
 			generatedBy: "playwright-ctrf-json-reporter",
 			results: {
@@ -110,10 +115,11 @@ class GenerateCtrfReport implements Reporter {
 		this.ctrfEnvironment = {};
 	}
 
-	onBegin(_config: FullConfig, suite: Suite): void {
+	onBegin(config: FullConfig, suite: Suite): void {
 		this.suite = suite;
 		this.startTime = Date.now();
 		this.ctrfReport.results.summary.start = this.startTime;
+		this.ctrfReport.results.tool.version = config.version;
 
 		if (
 			!fs.existsSync(
@@ -157,7 +163,11 @@ class GenerateCtrfReport implements Reporter {
 	}
 
 	onEnd(): void {
-		this.ctrfReport.results.summary.stop = Date.now();
+		const stop = Date.now();
+		this.ctrfReport.results.summary.stop = stop;
+		if (this.startTime !== undefined) {
+			this.ctrfReport.results.summary.duration = stop - this.startTime;
+		}
 
 		if (this.globalErrors.length > 0) {
 			this.ctrfReport.results.extra = {
@@ -252,7 +262,11 @@ class GenerateCtrfReport implements Reporter {
 		ctrfReport: CTRFReport,
 		status: TestStatus,
 	): void {
+		// Identity and outcome are always emitted, even in minimal reports.
+		// Playwright's `testCase.id` is stable across runs and machines and
+		// distinct per project, matching one `tests[]` entry per project.
 		const test: Test = {
+			testId: testCase.id,
 			name: testCase.title,
 			status,
 			duration: testResult.duration,
