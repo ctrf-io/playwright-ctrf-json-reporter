@@ -38,7 +38,8 @@ By standardizing test results, reports can be validated, merged, compared, and a
 {
   "results": {
     "tool": {
-      "name": "playwright"
+      "name": "playwright",
+      "version": "1.63.0"
     },
     "summary": {
       "tests": 1,
@@ -48,10 +49,12 @@ By standardizing test results, reports can be validated, merged, compared, and a
       "skipped": 0,
       "other": 0,
       "start": 1706828654274,
-      "stop": 1706828655782
+      "stop": 1706828655782,
+      "duration": 1508
     },
     "tests": [
       {
+        "testId": "5a6f2a3e1c9d4b7e8f01-a1b2c3d4e5f6a7b8c9d0",
         "name": "ctrf should generate the same report with any tool",
         "status": "passed",
         "duration": 100
@@ -102,6 +105,7 @@ reporter: [
         screenshot: false,              // Optional: Include screenshots in the report. Defaults to 'false'.
         annotations: false,             // Optional: Include annotations in the report. Defaults to 'false'.
         testType: 'e2e',                // Optional: Specify the test type (e.g., 'api', 'e2e'). Defaults to 'e2e'.
+        runId: process.env.GITHUB_RUN_ID, // Optional: Identify the logical run. Use the same value for every shard of one run.
         appName: 'MyApp',               // Optional: Specify the name of the application under test.
         appVersion: '1.0.0',            // Optional: Specify the version of the application under test.
         osPlatform: 'linux',            // Optional: Specify the OS platform.

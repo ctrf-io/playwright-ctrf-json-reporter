@@ -4,6 +4,9 @@ import GenerateCtrfReport from "../src/generate-report";
 import fs from "node:fs";
 import { CURRENT_SPEC_VERSION, validateStrict, type CTRFReport } from "ctrf";
 import { vi } from "vitest";
+import type { FullConfig } from "@playwright/test/reporter";
+
+const fakeConfig = { version: "1.63.0" } as FullConfig;
 
 vi.mock("node:fs", () => ({
 	default: {
@@ -25,7 +28,7 @@ describe("Failed Tests", () => {
 		const report = new GenerateCtrfReport();
 
 		// Act
-		report.onBegin(undefined as any, testSuite);
+		report.onBegin(fakeConfig, testSuite);
 		report.onEnd();
 
 		// Assert
@@ -36,7 +39,12 @@ describe("Failed Tests", () => {
 		validateStrict(parsedReport, { specVersion: CURRENT_SPEC_VERSION });
 
 		expect(parsedReport.specVersion).toBe(CURRENT_SPEC_VERSION);
+		expect(parsedReport.results.tool.version).toBe("1.63.0");
 		expect(parsedReport.results.tests).toHaveLength(2);
+		expect(parsedReport.results.tests.map((test) => test.testId)).toEqual([
+			"test-id-1",
+			"test-id-2",
+		]);
 		expect(parsedReport.results.tests[0].suite).toEqual(["Failed Test Suite"]);
 		expect(parsedReport.results.tests[0].status).toBe("failed");
 		expect(parsedReport.results.tests[0].rawStatus).toBe("failed");
@@ -63,7 +71,7 @@ describe("Failed Tests", () => {
 		const testSuite = createFailedTestSuite(ansiTestError);
 		const report = new GenerateCtrfReport();
 
-		report.onBegin(undefined as any, testSuite);
+		report.onBegin(fakeConfig, testSuite);
 		report.onEnd();
 
 		const reportJsonContent = mockedFs.writeFileSync.mock

@@ -4,6 +4,7 @@
 
 import GenerateCtrfReport from "./generate-report";
 import type {
+	FullConfig,
 	Suite,
 	TestCase,
 	TestError,
@@ -31,6 +32,8 @@ const fakeSuite = (
 	return suite;
 };
 
+const fakeConfig = { version: "1.63.0" } as unknown as FullConfig;
+
 const fakeTest = (): TestCase => ({ results: [] }) as unknown as TestCase;
 
 const fakeAnnotatedTestCase = (): TestCase => {
@@ -47,6 +50,7 @@ const fakeAnnotatedTestCase = (): TestCase => {
 	} as unknown as TestResult;
 
 	return {
+		id: "0b9f6a1c2d3e4f5a6b7c-chromium",
 		title: "includes an annotation",
 		annotations,
 		tags: [],
@@ -160,10 +164,50 @@ describe("GenerateCtrfReport", () => {
 			const file = fakeSuite("sample.spec.ts", "file", [outer]);
 			const root = fakeSuite("", "root", [file]);
 
-			reporter.onBegin(undefined as never, root);
+			reporter.onBegin(fakeConfig, root);
 			reporter.onEnd();
 
 			expect(reporter.ctrfReport.results.summary.suites).toBe(3);
+		});
+	});
+
+	describe("tool.version", () => {
+		it("reports the Playwright version", () => {
+			const reporter = new GenerateCtrfReport();
+
+			reporter.onBegin(fakeConfig, fakeSuite("", "root"));
+
+			expect(reporter.ctrfReport.results.tool).toEqual({
+				name: "playwright",
+				version: "1.63.0",
+			});
+		});
+	});
+
+	describe("summary.duration", () => {
+		afterEach(() => {
+			vi.useRealTimers();
+		});
+
+		it("reports the run duration as stop minus start", () => {
+			vi.useFakeTimers({ now: 1_790_000_000_000 });
+			const reporter = new GenerateCtrfReport();
+
+			reporter.onBegin(fakeConfig, fakeSuite("", "root"));
+			vi.advanceTimersByTime(1234);
+			reporter.onEnd();
+
+			const { summary } = reporter.ctrfReport.results;
+			expect(summary.duration).toBe(1234);
+			expect(summary.stop - summary.start).toBe(1234);
+		});
+
+		it("omits duration when the run never began", () => {
+			const reporter = new GenerateCtrfReport();
+
+			reporter.onEnd();
+
+			expect(reporter.ctrfReport.results.summary.duration).toBeUndefined();
 		});
 	});
 
@@ -177,6 +221,64 @@ describe("GenerateCtrfReport", () => {
 			expect(reporter.calculateStopTime(startTime, duration)).toBe(
 				startTime.getTime() + duration,
 			);
+		});
+	});
+
+	describe("runId", () => {
+		it("is omitted by default", () => {
+			const reporter = new GenerateCtrfReport();
+
+			expect(reporter.ctrfReport).not.toHaveProperty("runId");
+		});
+
+		it("is emitted when configured", () => {
+			const reporter = new GenerateCtrfReport({ runId: "12345-1" });
+
+			expect(reporter.ctrfReport.runId).toBe("12345-1");
+			expect(() =>
+				validateStrict(reporter.ctrfReport, {
+					specVersion: CURRENT_SPEC_VERSION,
+				}),
+			).not.toThrow();
+		});
+
+		it("is omitted when configured as an empty string", () => {
+			const reporter = new GenerateCtrfReport({ runId: "" });
+
+			expect(reporter.ctrfReport).not.toHaveProperty("runId");
+		});
+	});
+
+	describe("testId", () => {
+		it("uses Playwright's test case id", () => {
+			const reporter = new GenerateCtrfReport();
+			const testCase = fakeAnnotatedTestCase();
+
+			reporter.processTest(testCase);
+
+			expect(reporter.ctrfReport.results.tests[0]?.testId).toBe(testCase.id);
+		});
+
+		it("is emitted in minimal reports", () => {
+			const reporter = new GenerateCtrfReport({ minimal: true });
+			const testCase = fakeAnnotatedTestCase();
+
+			reporter.processTest(testCase);
+
+			expect(reporter.ctrfReport.results.tests[0]).toEqual({
+				testId: testCase.id,
+				name: testCase.title,
+				status: "passed",
+				duration: 120,
+			});
+		});
+
+		it("does not emit the legacy id", () => {
+			const reporter = new GenerateCtrfReport();
+
+			reporter.processTest(fakeAnnotatedTestCase());
+
+			expect(reporter.ctrfReport.results.tests[0]).not.toHaveProperty("id");
 		});
 	});
 

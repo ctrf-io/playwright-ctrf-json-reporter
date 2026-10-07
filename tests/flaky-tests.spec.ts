@@ -4,6 +4,9 @@ import GenerateCtrfReport from "../src/generate-report";
 import fs from "node:fs";
 import { CURRENT_SPEC_VERSION, validateStrict, type CTRFReport } from "ctrf";
 import { vi } from "vitest";
+import type { FullConfig } from "@playwright/test/reporter";
+
+const fakeConfig = { version: "1.63.0" } as FullConfig;
 
 vi.mock("node:fs", () => ({
 	default: {
@@ -25,7 +28,7 @@ describe("Flaky Tests", () => {
 		const report = new GenerateCtrfReport();
 
 		// Act
-		report.onBegin(undefined as any, testSuite);
+		report.onBegin(fakeConfig, testSuite);
 		report.onEnd();
 
 		// Assert
@@ -72,7 +75,7 @@ describe("Flaky Tests", () => {
 		const testSuite = createFlakyTestSuite(ansiTestError);
 		const report = new GenerateCtrfReport();
 
-		report.onBegin(undefined as any, testSuite);
+		report.onBegin(fakeConfig, testSuite);
 		report.onEnd();
 
 		const reportJsonContent = mockedFs.writeFileSync.mock
