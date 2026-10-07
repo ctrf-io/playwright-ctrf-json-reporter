@@ -1,4 +1,5 @@
 import { createFlakyTestSuite } from "./dummy-suites/flaky-test-suite";
+import { ansiTestError, plainTestError } from "./dummy-suites/ansi-error";
 import GenerateCtrfReport from "../src/generate-report";
 import fs from "node:fs";
 import { CURRENT_SPEC_VERSION, validateStrict, type CTRFReport } from "ctrf";
@@ -65,5 +66,22 @@ describe("Flaky Tests", () => {
 		expect(failedAttempt2.message).toBe("test-error-message2");
 		expect(failedAttempt2.trace).toBe("test-error-stack2");
 		expect(failedAttempt2.snippet).toBe("test-error-snippet2");
+	});
+
+	it("should strip ANSI escape sequences from retry attempt error details", async () => {
+		const testSuite = createFlakyTestSuite(ansiTestError);
+		const report = new GenerateCtrfReport();
+
+		report.onBegin(undefined as any, testSuite);
+		report.onEnd();
+
+		const reportJsonContent = mockedFs.writeFileSync.mock
+			.lastCall?.[1] as string;
+		const parsedReport: CTRFReport = JSON.parse(reportJsonContent);
+
+		const failedAttempt = parsedReport.results.tests[0].retryAttempts?.[0];
+		expect(failedAttempt?.message).toBe(plainTestError.message);
+		expect(failedAttempt?.trace).toBe(plainTestError.stack);
+		expect(failedAttempt?.snippet).toBe(plainTestError.snippet);
 	});
 });

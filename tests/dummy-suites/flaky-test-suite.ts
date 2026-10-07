@@ -10,13 +10,13 @@ import type {
  * Creates a minimal Suite object with a single flaky test
  * with 2 failed attempts and one passed attempt
  */
-export const createFlakyTestSuite = (): Suite => {
-	const testError: TestError = {
+export const createFlakyTestSuite = (
+	testError: TestError = {
 		message: "test-error-message",
 		stack: "test-error-stack",
 		snippet: "test-error-snippet",
-	};
-
+	},
+): Suite => {
 	const failedTestResult: TestResult = {
 		retry: 0,
 		duration: 4444,

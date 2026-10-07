@@ -9,13 +9,13 @@ import type {
 /**
  * Creates a minimal Suite object with a single failed test
  */
-export const createFailedTestSuite = (): Suite => {
-	const testError: TestError = {
+export const createFailedTestSuite = (
+	testError: TestError = {
 		message: "test-error-message",
 		stack: "test-error-stack",
 		snippet: "test-error-snippet",
-	};
-
+	},
+): Suite => {
 	const testResult: TestResult = {
 		retry: 0,
 		duration: 120,

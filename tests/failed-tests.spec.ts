@@ -1,4 +1,5 @@
 import { createFailedTestSuite } from "./dummy-suites/failed-test-suite";
+import { ansiTestError, plainTestError } from "./dummy-suites/ansi-error";
 import GenerateCtrfReport from "../src/generate-report";
 import fs from "node:fs";
 import { CURRENT_SPEC_VERSION, validateStrict, type CTRFReport } from "ctrf";
@@ -56,5 +57,24 @@ describe("Failed Tests", () => {
 			skipped: 0,
 			other: 0,
 		});
+	});
+
+	it("should strip ANSI escape sequences from error details", async () => {
+		const testSuite = createFailedTestSuite(ansiTestError);
+		const report = new GenerateCtrfReport();
+
+		report.onBegin(undefined as any, testSuite);
+		report.onEnd();
+
+		const reportJsonContent = mockedFs.writeFileSync.mock
+			.lastCall?.[1] as string;
+		const parsedReport: CTRFReport = JSON.parse(reportJsonContent);
+
+		expect(parsedReport.results.tests).toHaveLength(2);
+		for (const test of parsedReport.results.tests) {
+			expect(test.message).toBe(plainTestError.message);
+			expect(test.trace).toBe(plainTestError.stack);
+			expect(test.snippet).toBe(plainTestError.snippet);
+		}
 	});
 });
