@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { identityValue, runIdentity, testIdentity } from "../src/identity";
+import { identityValue, testIdentity } from "../src/identity";
 
 describe("identity semantics", () => {
 	it("normalizes paths but preserves suite component boundaries", () => {
@@ -18,9 +18,7 @@ describe("identity semantics", () => {
 			testIdentity("runner", { ...a, filePath: "tests/other.ts" }),
 		);
 	});
-	it("shares configured run identity and creates independent standalone runs", () => {
-		expect(runIdentity("coordinated-run")).toBe("coordinated-run");
-		expect(runIdentity()).not.toBe(runIdentity());
+	it("rejects an empty shard identity", () => {
 		expect(() => identityValue(" ", "shardId")).toThrow();
 	});
 	it("supports an explicit case resolver without allowing empty identity", () => {

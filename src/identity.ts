@@ -1,4 +1,4 @@
-import { createHash, randomUUID } from "node:crypto";
+import { createHash } from "node:crypto";
 import path from "node:path";
 
 export interface TestIdentity {
@@ -28,10 +28,6 @@ export function identityValue(
 		throw new Error(`${field} must be a non-empty string`);
 	}
 	return value;
-}
-
-export function runIdentity(value?: string): string {
-	return identityValue(value, "runId") ?? randomUUID();
 }
 
 export function testIdentity(

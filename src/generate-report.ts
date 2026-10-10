@@ -1,9 +1,4 @@
-import {
-	identityValue,
-	runIdentity,
-	testIdentity,
-	type IdentityOptions,
-} from "./identity";
+import { identityValue, testIdentity, type IdentityOptions } from "./identity";
 import path from "node:path";
 import fs from "node:fs";
 import crypto from "node:crypto";
@@ -69,7 +64,7 @@ class GenerateCtrfReport implements Reporter {
 
 	constructor(config?: Partial<ReporterConfigOptions>) {
 		this.reporterConfigOptions = {
-			runId: config?.runId,
+			runId: config?.runId ?? undefined,
 			shardId: identityValue(config?.shardId, "shardId"),
 			testIdResolver: config?.testIdResolver,
 			outputFile: config?.outputFile ?? this.defaultOutputFile,
@@ -97,7 +92,9 @@ class GenerateCtrfReport implements Reporter {
 			reportFormat: "CTRF",
 			specVersion: CURRENT_SPEC_VERSION,
 			reportId: crypto.randomUUID(),
-			runId: runIdentity(this.reporterConfigOptions.runId),
+			...(this.reporterConfigOptions.runId
+				? { runId: this.reporterConfigOptions.runId }
+				: {}),
 			timestamp: new Date().toISOString(),
 			generatedBy: "playwright-ctrf-json-reporter",
 			results: {
