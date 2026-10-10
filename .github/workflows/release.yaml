@@ -31,6 +31,18 @@ jobs:
       - name: Run all checks and build
         run: npm run all
 
+      - name: Verify packed reporter with real Playwright
+        run: npm run test:integration
+
+      - name: Upload integration reports and logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-integration-release
+          path: .integration-artifacts/
+          include-hidden-files: true
+          if-no-files-found: warn
+
       - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
         run: npm audit signatures
 

@@ -61,6 +61,31 @@ To set up the project for local development:
 
 Make sure all checks pass before submitting a pull request.
 
+### Real Playwright integration smoke
+
+Run `npm run test:integration` to build and pack the reporter, install it into
+an isolated temporary consumer, and run real Playwright tests. This command
+needs npm registry access to install the exact Playwright and CTRF versions
+declared in this repository. It does not publish a package or install browsers.
+
+The fixture suite uses plain assertions and covers passing, failing, skipped,
+expected-failure and retried tests. It runs in full, annotations-enabled and
+minimal modes. A harness requires the expected failing runner exit code and
+then validates the actual report files against CTRF specification 0.2.0, the
+expected outcomes, retry history, timestamps, failure text, runtime metadata
+and supported identities. The checker also has to reject deliberately
+corrupted reports, including schema-valid semantic errors.
+
+Reports and command logs are retained in `.integration-artifacts/`; temporary
+consumer installations are removed. CI runs this check on Node 22, 24 and 26,
+uploads diagnostics, and runs it again before staging a release. Validation
+scripts and fixtures are excluded from the published package and runtime.
+
+Keep fixture expectations in `tests/integration/expectations.json` explicit.
+When adding a scenario, preserve the distinction between final test outcomes
+and prior attempts. Do not ignore unexpected runner failures or reuse output
+from a previous run. Browser-specific behavior needs separate browser tests.
+
 ## Finding Bugs
 
 If you find a bug, please report it in the issue tracker with a detailed description.
