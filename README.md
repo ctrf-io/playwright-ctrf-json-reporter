@@ -23,7 +23,7 @@ By standardizing test results, reports can be validated, merged, compared, and a
 
 ## Features
 
-![CTRF 0.2.0](https://img.shields.io/badge/0.1.0-red?label=ctrf&labelColor=green)
+![CTRF 0.2.0](https://img.shields.io/badge/0.2.0-red?label=ctrf&labelColor=green)
 [![build](https://github.com/ctrf-io/playwright-ctrf-json-report/actions/workflows/main.yaml/badge.svg)](https://github.com/ctrf-io/playwright-ctrf-json-report/actions/workflows/main.yaml)
 ![NPM Downloads](https://img.shields.io/npm/d18m/playwright-ctrf-json-reporter?logo=npm)
 ![npm bundle size](https://img.shields.io/bundlephobia/minzip/playwright-ctrf-json-reporter?label=Size)
@@ -312,13 +312,3 @@ CTRF is a universal JSON test report schema that addresses the lack of a standar
 **Language and Framework Agnostic:** It provides a universal reporting schema that works seamlessly with any programming language and testing framework.
 
 **Facilitates Better Analysis:** With a standardized format, programatically analyzing test outcomes across multiple platforms becomes more straightforward.
-
-## Identity and lineage
-
-Reports include a UUID `reportId` for the emitted document, `runId` for the logical run, a stable `testId` for each logical test, and an `executionId` for each execution lifecycle. The final test result and each retry history entry have distinct `attemptId` values. Display names and runtime `extra` metadata remain independent of identity. Identity is included in minimal output.
-
-Set reporter options `runId` and `shardId` to coordinate distributed runs: all shards of one run should share the same non-empty `runId` and have distinct `shardId` values. Otherwise a standalone run ID is generated. Generic identity values are opaque strings, not necessarily UUIDs.
-
-Where the framework does not provide a stable logical identifier, IDs are derived from the available file, suite, test name and variant. For custom stability requirements, set `testIdResolver: (test) => "your-stable-id"`; its input exposes `name`, optional `filePath`, `suite` and `variant`. Choose an ID stable across runs and unique within your test namespace. Renaming or moving a test can change the default ID.
-
-Playwright native test IDs remain the default. Shard labels default to Playwright’s current/total shard configuration. Final and retry attachment references have distinct `attachmentId` values.
