@@ -19,6 +19,7 @@
 		"build:watch": "tsup --watch",
 		"clean": "rm -rf dist && rm -rf coverage && rm -rf ctrf",
 		"test": "vitest run",
+		"test:integration": "npm run build && node tests/integration/run.mjs",
 		"test:watch": "vitest",
 		"test:coverage": "vitest run --coverage",
 		"lint": "biome lint --write . --unsafe",

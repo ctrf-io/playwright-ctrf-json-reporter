@@ -4,7 +4,13 @@ export default defineConfig({
 	test: {
 		environment: "node",
 		globals: true,
-		exclude: [...configDefaults.exclude, "dist/**", "coverage/**", "ctrf/**"],
+		exclude: [
+			...configDefaults.exclude,
+			"dist/**",
+			"coverage/**",
+			"ctrf/**",
+			"tests/integration/**",
+		],
 		reporters: ["default", "@d2t/vitest-ctrf-json-reporter"],
 		coverage: {
 			provider: "v8",
