@@ -11,8 +11,7 @@
 		"declaration": true,
 		"declarationDir": "./dist",
 		"forceConsistentCasingInFileNames": true,
-		"types": ["node"],
-		"ignoreDeprecations": "6.0"
+		"types": ["node"]
 	},
 	"include": ["src/**/*"],
 	"exclude": [

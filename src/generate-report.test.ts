@@ -267,6 +267,8 @@ describe("GenerateCtrfReport", () => {
 
 			expect(reporter.ctrfReport.results.tests[0]).toEqual({
 				testId: testCase.id,
+				executionId: expect.any(String),
+				attemptId: expect.any(String),
 				name: testCase.title,
 				status: "passed",
 				duration: 120,

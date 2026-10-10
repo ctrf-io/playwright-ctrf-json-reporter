@@ -46,7 +46,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: ['20', '22', '24', '26']
+        node: ['22', '24', '26']
 
     permissions:
       contents: read
@@ -64,6 +64,9 @@ jobs:
 
       - name: Install
         run: npm ci
+
+      - name: Type check (TypeScript 7)
+        run: npm run build:check
 
       - name: Test
         run: npm test
