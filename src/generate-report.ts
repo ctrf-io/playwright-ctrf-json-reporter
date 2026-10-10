@@ -1,3 +1,9 @@
+import {
+	identityValue,
+	runIdentity,
+	testIdentity,
+	type IdentityOptions,
+} from "./identity";
 import path from "node:path";
 import fs from "node:fs";
 import crypto from "node:crypto";
@@ -27,7 +33,7 @@ import { CTRF_RUNTIME_MESSAGE_CONTENT_TYPE } from "./adapter";
 import type { CtrfRuntimeMessage } from "./adapter";
 import { stripAnsi } from "./strip-ansi";
 
-interface ReporterConfigOptions {
+interface ReporterConfigOptions extends IdentityOptions {
 	outputFile?: string;
 	outputDir?: string;
 	minimal?: boolean;
@@ -63,13 +69,15 @@ class GenerateCtrfReport implements Reporter {
 
 	constructor(config?: Partial<ReporterConfigOptions>) {
 		this.reporterConfigOptions = {
+			runId: config?.runId,
+			shardId: identityValue(config?.shardId, "shardId"),
+			testIdResolver: config?.testIdResolver,
 			outputFile: config?.outputFile ?? this.defaultOutputFile,
 			outputDir: config?.outputDir ?? this.defaultOutputDir,
 			minimal: config?.minimal ?? false,
 			screenshot: config?.screenshot ?? false,
 			annotations: config?.annotations ?? false,
 			testType: config?.testType ?? "e2e",
-			runId: config?.runId ?? undefined,
 			appName: config?.appName ?? undefined,
 			appVersion: config?.appVersion ?? undefined,
 			osPlatform: config?.osPlatform ?? undefined,
@@ -89,9 +97,7 @@ class GenerateCtrfReport implements Reporter {
 			reportFormat: "CTRF",
 			specVersion: CURRENT_SPEC_VERSION,
 			reportId: crypto.randomUUID(),
-			...(this.reporterConfigOptions.runId
-				? { runId: this.reporterConfigOptions.runId }
-				: {}),
+			runId: runIdentity(this.reporterConfigOptions.runId),
 			timestamp: new Date().toISOString(),
 			generatedBy: "playwright-ctrf-json-reporter",
 			results: {
@@ -133,6 +139,8 @@ class GenerateCtrfReport implements Reporter {
 		}
 
 		this.setEnvironmentDetails(this.reporterConfigOptions);
+		if (!this.ctrfEnvironment.shardId && config.shard)
+			this.ctrfEnvironment.shardId = `${config.shard.current}-of-${config.shard.total}`;
 
 		if (this.hasEnvironmentDetails(this.ctrfEnvironment)) {
 			this.ctrfReport.results.environment = this.ctrfEnvironment;
@@ -266,7 +274,19 @@ class GenerateCtrfReport implements Reporter {
 		// Playwright's `testCase.id` is stable across runs and machines and
 		// distinct per project, matching one `tests[]` entry per project.
 		const test: Test = {
-			testId: testCase.id,
+			testId: this.reporterConfigOptions.testIdResolver
+				? testIdentity(
+						"playwright",
+						{
+							name: testCase.title,
+							filePath: testCase.location.file,
+							suite: this.buildSuitePath(testCase),
+						},
+						this.reporterConfigOptions,
+					)
+				: testCase.id,
+			executionId: crypto.randomUUID(),
+			attemptId: crypto.randomUUID(),
 			name: testCase.title,
 			status,
 			duration: testResult.duration,
@@ -328,11 +348,15 @@ class GenerateCtrfReport implements Reporter {
 					const retryResult = retryResults[i];
 					const retryAttempt: RetryAttempt = {
 						attempt: i + 1,
+						attemptId: crypto.randomUUID(),
 						status: this.mapPlaywrightStatusToCtrf(retryResult.status),
 						duration: retryResult.duration,
 						message: this.extractFailureDetails(retryResult).message,
 						trace: this.extractFailureDetails(retryResult).trace,
 						snippet: this.extractFailureDetails(retryResult).snippet,
+						attachments: this.filterValidAttachments(
+							retryResult.attachments ?? [],
+						),
 					};
 					test.retryAttempts.push(retryAttempt);
 				}
@@ -380,6 +404,11 @@ class GenerateCtrfReport implements Reporter {
 	}
 
 	setEnvironmentDetails(reporterConfigOptions: ReporterConfigOptions): void {
+		if (reporterConfigOptions.shardId !== undefined)
+			this.ctrfEnvironment.shardId = identityValue(
+				reporterConfigOptions.shardId,
+				"shardId",
+			);
 		if (reporterConfigOptions.appName !== undefined) {
 			this.ctrfEnvironment.appName = reporterConfigOptions.appName;
 		}
@@ -680,6 +709,7 @@ class GenerateCtrfReport implements Reporter {
 				return true;
 			})
 			.map((attachment) => ({
+				attachmentId: crypto.randomUUID(),
 				name: attachment.name,
 				contentType: attachment.contentType,
 				path: attachment.path ?? "",

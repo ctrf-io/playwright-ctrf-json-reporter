@@ -93,3 +93,15 @@ If you are interested in contributing to the **CTRF specification itself**
 CTRF specification contribution guidelines:
 
 https://github.com/ctrf-io/ctrf/blob/main/CONTRIBUTING.md
+
+## TypeScript compiler tooling
+
+The native TypeScript 7.0.2 compiler is installed through the exact
+`@typescript/native` alias and provides `tsc` for compilation and type checks.
+The `typescript` alias points to `@typescript/typescript6@6.0.2` so tools that
+import the compiler API remain compatible. Keep both development dependencies.
+
+Run `npm run build:check` to check source types with TypeScript 7, and
+`npm run all` for the repository checks and build.
+The tsup declaration build uses the TypeScript 6 API; its deprecation option
+is scoped to `tsup.config.ts` rather than the native compiler configuration.
