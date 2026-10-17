@@ -10,6 +10,7 @@ export default defineConfig({
 			"coverage/**",
 			"ctrf/**",
 			"tests/integration/**",
+			"tests/standard/**",
 		],
 		reporters: ["default", "@d2t/vitest-ctrf-json-reporter"],
 		coverage: {

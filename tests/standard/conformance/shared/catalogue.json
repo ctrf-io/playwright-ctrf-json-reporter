@@ -1,0 +1,1096 @@
+{
+	"version": 1,
+	"specVersion": "0.2.0",
+	"entries": [
+		{
+			"id": "conformance/property/reportFormat",
+			"kind": "property",
+			"path": "reportFormat",
+			"required": true
+		},
+		{
+			"id": "conformance/property/specVersion",
+			"kind": "property",
+			"path": "specVersion",
+			"required": true
+		},
+		{
+			"id": "conformance/property/reportId",
+			"kind": "property",
+			"path": "reportId",
+			"required": false
+		},
+		{
+			"id": "conformance/property/runId",
+			"kind": "property",
+			"path": "runId",
+			"required": false
+		},
+		{
+			"id": "conformance/property/timestamp",
+			"kind": "property",
+			"path": "timestamp",
+			"required": false
+		},
+		{
+			"id": "conformance/property/generatedBy",
+			"kind": "property",
+			"path": "generatedBy",
+			"required": false
+		},
+		{
+			"id": "conformance/property/extra",
+			"kind": "property",
+			"path": "extra",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results",
+			"kind": "property",
+			"path": "results",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.tool",
+			"kind": "property",
+			"path": "results.tool",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.tool.name",
+			"kind": "property",
+			"path": "results.tool.name",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.tool.version",
+			"kind": "property",
+			"path": "results.tool.version",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tool.extra",
+			"kind": "property",
+			"path": "results.tool.extra",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.summary",
+			"kind": "property",
+			"path": "results.summary",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.summary.tests",
+			"kind": "property",
+			"path": "results.summary.tests",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.summary.passed",
+			"kind": "property",
+			"path": "results.summary.passed",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.summary.failed",
+			"kind": "property",
+			"path": "results.summary.failed",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.summary.skipped",
+			"kind": "property",
+			"path": "results.summary.skipped",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.summary.pending",
+			"kind": "property",
+			"path": "results.summary.pending",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.summary.other",
+			"kind": "property",
+			"path": "results.summary.other",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.summary.flaky",
+			"kind": "property",
+			"path": "results.summary.flaky",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.summary.suites",
+			"kind": "property",
+			"path": "results.summary.suites",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.summary.start",
+			"kind": "property",
+			"path": "results.summary.start",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.summary.stop",
+			"kind": "property",
+			"path": "results.summary.stop",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.summary.duration",
+			"kind": "property",
+			"path": "results.summary.duration",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.summary.extra",
+			"kind": "property",
+			"path": "results.summary.extra",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests",
+			"kind": "property",
+			"path": "results.tests",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.tests[].id",
+			"kind": "property",
+			"path": "results.tests[].id",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].testId",
+			"kind": "property",
+			"path": "results.tests[].testId",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].executionId",
+			"kind": "property",
+			"path": "results.tests[].executionId",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].attemptId",
+			"kind": "property",
+			"path": "results.tests[].attemptId",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].name",
+			"kind": "property",
+			"path": "results.tests[].name",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.tests[].status",
+			"kind": "property",
+			"path": "results.tests[].status",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.tests[].duration",
+			"kind": "property",
+			"path": "results.tests[].duration",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.tests[].start",
+			"kind": "property",
+			"path": "results.tests[].start",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].stop",
+			"kind": "property",
+			"path": "results.tests[].stop",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].suite",
+			"kind": "property",
+			"path": "results.tests[].suite",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].message",
+			"kind": "property",
+			"path": "results.tests[].message",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].trace",
+			"kind": "property",
+			"path": "results.tests[].trace",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].snippet",
+			"kind": "property",
+			"path": "results.tests[].snippet",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].ai",
+			"kind": "property",
+			"path": "results.tests[].ai",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].line",
+			"kind": "property",
+			"path": "results.tests[].line",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].rawStatus",
+			"kind": "property",
+			"path": "results.tests[].rawStatus",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].tags",
+			"kind": "property",
+			"path": "results.tests[].tags",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].labels",
+			"kind": "property",
+			"path": "results.tests[].labels",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].type",
+			"kind": "property",
+			"path": "results.tests[].type",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].filePath",
+			"kind": "property",
+			"path": "results.tests[].filePath",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retries",
+			"kind": "property",
+			"path": "results.tests[].retries",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].attempt",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].attempt",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].attemptId",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].attemptId",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].status",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].status",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].duration",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].duration",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].message",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].message",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].trace",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].trace",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].line",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].line",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].snippet",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].snippet",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].stdout",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].stdout",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].stderr",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].stderr",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].start",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].start",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].stop",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].stop",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].attachments",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].attachments",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].attachments[].attachmentId",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].attachments[].attachmentId",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].attachments[].name",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].attachments[].name",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].attachments[].contentType",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].attachments[].contentType",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].attachments[].path",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].attachments[].path",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].attachments[].extra",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].attachments[].extra",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].extra",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].extra",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].flaky",
+			"kind": "property",
+			"path": "results.tests[].flaky",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].stdout",
+			"kind": "property",
+			"path": "results.tests[].stdout",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].stderr",
+			"kind": "property",
+			"path": "results.tests[].stderr",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].threadId",
+			"kind": "property",
+			"path": "results.tests[].threadId",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].browser",
+			"kind": "property",
+			"path": "results.tests[].browser",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].device",
+			"kind": "property",
+			"path": "results.tests[].device",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].screenshot",
+			"kind": "property",
+			"path": "results.tests[].screenshot",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].attachments",
+			"kind": "property",
+			"path": "results.tests[].attachments",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].attachments[].attachmentId",
+			"kind": "property",
+			"path": "results.tests[].attachments[].attachmentId",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].attachments[].name",
+			"kind": "property",
+			"path": "results.tests[].attachments[].name",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.tests[].attachments[].contentType",
+			"kind": "property",
+			"path": "results.tests[].attachments[].contentType",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.tests[].attachments[].path",
+			"kind": "property",
+			"path": "results.tests[].attachments[].path",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.tests[].attachments[].extra",
+			"kind": "property",
+			"path": "results.tests[].attachments[].extra",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].parameters",
+			"kind": "property",
+			"path": "results.tests[].parameters",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].steps",
+			"kind": "property",
+			"path": "results.tests[].steps",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].steps[].name",
+			"kind": "property",
+			"path": "results.tests[].steps[].name",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.tests[].steps[].status",
+			"kind": "property",
+			"path": "results.tests[].steps[].status",
+			"required": true
+		},
+		{
+			"id": "conformance/property/results.tests[].steps[].extra",
+			"kind": "property",
+			"path": "results.tests[].steps[].extra",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights",
+			"kind": "property",
+			"path": "results.tests[].insights",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.passRate",
+			"kind": "property",
+			"path": "results.tests[].insights.passRate",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.passRate.current",
+			"kind": "property",
+			"path": "results.tests[].insights.passRate.current",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.passRate.baseline",
+			"kind": "property",
+			"path": "results.tests[].insights.passRate.baseline",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.passRate.change",
+			"kind": "property",
+			"path": "results.tests[].insights.passRate.change",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.failRate",
+			"kind": "property",
+			"path": "results.tests[].insights.failRate",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.failRate.current",
+			"kind": "property",
+			"path": "results.tests[].insights.failRate.current",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.failRate.baseline",
+			"kind": "property",
+			"path": "results.tests[].insights.failRate.baseline",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.failRate.change",
+			"kind": "property",
+			"path": "results.tests[].insights.failRate.change",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.flakyRate",
+			"kind": "property",
+			"path": "results.tests[].insights.flakyRate",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.flakyRate.current",
+			"kind": "property",
+			"path": "results.tests[].insights.flakyRate.current",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.flakyRate.baseline",
+			"kind": "property",
+			"path": "results.tests[].insights.flakyRate.baseline",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.flakyRate.change",
+			"kind": "property",
+			"path": "results.tests[].insights.flakyRate.change",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.averageTestDuration",
+			"kind": "property",
+			"path": "results.tests[].insights.averageTestDuration",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.averageTestDuration.current",
+			"kind": "property",
+			"path": "results.tests[].insights.averageTestDuration.current",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.averageTestDuration.baseline",
+			"kind": "property",
+			"path": "results.tests[].insights.averageTestDuration.baseline",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.averageTestDuration.change",
+			"kind": "property",
+			"path": "results.tests[].insights.averageTestDuration.change",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.p95TestDuration",
+			"kind": "property",
+			"path": "results.tests[].insights.p95TestDuration",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.p95TestDuration.current",
+			"kind": "property",
+			"path": "results.tests[].insights.p95TestDuration.current",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.p95TestDuration.baseline",
+			"kind": "property",
+			"path": "results.tests[].insights.p95TestDuration.baseline",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.p95TestDuration.change",
+			"kind": "property",
+			"path": "results.tests[].insights.p95TestDuration.change",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.executedInRuns",
+			"kind": "property",
+			"path": "results.tests[].insights.executedInRuns",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].insights.extra",
+			"kind": "property",
+			"path": "results.tests[].insights.extra",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].extra",
+			"kind": "property",
+			"path": "results.tests[].extra",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.environment",
+			"kind": "property",
+			"path": "results.environment",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.environment.reportName",
+			"kind": "property",
+			"path": "results.environment.reportName",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.environment.appName",
+			"kind": "property",
+			"path": "results.environment.appName",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.environment.appVersion",
+			"kind": "property",
+			"path": "results.environment.appVersion",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.environment.buildId",
+			"kind": "property",
+			"path": "results.environment.buildId",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.environment.buildName",
+			"kind": "property",
+			"path": "results.environment.buildName",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.environment.buildNumber",
+			"kind": "property",
+			"path": "results.environment.buildNumber",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.environment.buildUrl",
+			"kind": "property",
+			"path": "results.environment.buildUrl",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.environment.repositoryName",
+			"kind": "property",
+			"path": "results.environment.repositoryName",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.environment.repositoryUrl",
+			"kind": "property",
+			"path": "results.environment.repositoryUrl",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.environment.commit",
+			"kind": "property",
+			"path": "results.environment.commit",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.environment.branchName",
+			"kind": "property",
+			"path": "results.environment.branchName",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.environment.osPlatform",
+			"kind": "property",
+			"path": "results.environment.osPlatform",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.environment.osRelease",
+			"kind": "property",
+			"path": "results.environment.osRelease",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.environment.osVersion",
+			"kind": "property",
+			"path": "results.environment.osVersion",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.environment.testEnvironment",
+			"kind": "property",
+			"path": "results.environment.testEnvironment",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.environment.shardId",
+			"kind": "property",
+			"path": "results.environment.shardId",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.environment.healthy",
+			"kind": "property",
+			"path": "results.environment.healthy",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.environment.extra",
+			"kind": "property",
+			"path": "results.environment.extra",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.extra",
+			"kind": "property",
+			"path": "results.extra",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights",
+			"kind": "property",
+			"path": "insights",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.passRate",
+			"kind": "property",
+			"path": "insights.passRate",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.passRate.current",
+			"kind": "property",
+			"path": "insights.passRate.current",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.passRate.baseline",
+			"kind": "property",
+			"path": "insights.passRate.baseline",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.passRate.change",
+			"kind": "property",
+			"path": "insights.passRate.change",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.failRate",
+			"kind": "property",
+			"path": "insights.failRate",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.failRate.current",
+			"kind": "property",
+			"path": "insights.failRate.current",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.failRate.baseline",
+			"kind": "property",
+			"path": "insights.failRate.baseline",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.failRate.change",
+			"kind": "property",
+			"path": "insights.failRate.change",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.flakyRate",
+			"kind": "property",
+			"path": "insights.flakyRate",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.flakyRate.current",
+			"kind": "property",
+			"path": "insights.flakyRate.current",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.flakyRate.baseline",
+			"kind": "property",
+			"path": "insights.flakyRate.baseline",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.flakyRate.change",
+			"kind": "property",
+			"path": "insights.flakyRate.change",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.averageRunDuration",
+			"kind": "property",
+			"path": "insights.averageRunDuration",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.averageRunDuration.current",
+			"kind": "property",
+			"path": "insights.averageRunDuration.current",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.averageRunDuration.baseline",
+			"kind": "property",
+			"path": "insights.averageRunDuration.baseline",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.averageRunDuration.change",
+			"kind": "property",
+			"path": "insights.averageRunDuration.change",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.p95RunDuration",
+			"kind": "property",
+			"path": "insights.p95RunDuration",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.p95RunDuration.current",
+			"kind": "property",
+			"path": "insights.p95RunDuration.current",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.p95RunDuration.baseline",
+			"kind": "property",
+			"path": "insights.p95RunDuration.baseline",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.p95RunDuration.change",
+			"kind": "property",
+			"path": "insights.p95RunDuration.change",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.averageTestDuration",
+			"kind": "property",
+			"path": "insights.averageTestDuration",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.averageTestDuration.current",
+			"kind": "property",
+			"path": "insights.averageTestDuration.current",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.averageTestDuration.baseline",
+			"kind": "property",
+			"path": "insights.averageTestDuration.baseline",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.averageTestDuration.change",
+			"kind": "property",
+			"path": "insights.averageTestDuration.change",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.runsAnalyzed",
+			"kind": "property",
+			"path": "insights.runsAnalyzed",
+			"required": false
+		},
+		{
+			"id": "conformance/property/insights.extra",
+			"kind": "property",
+			"path": "insights.extra",
+			"required": false
+		},
+		{
+			"id": "conformance/property/baseline",
+			"kind": "property",
+			"path": "baseline",
+			"required": false
+		},
+		{
+			"id": "conformance/property/baseline.reportId",
+			"kind": "property",
+			"path": "baseline.reportId",
+			"required": true
+		},
+		{
+			"id": "conformance/property/baseline.timestamp",
+			"kind": "property",
+			"path": "baseline.timestamp",
+			"required": false
+		},
+		{
+			"id": "conformance/property/baseline.source",
+			"kind": "property",
+			"path": "baseline.source",
+			"required": false
+		},
+		{
+			"id": "conformance/property/baseline.buildNumber",
+			"kind": "property",
+			"path": "baseline.buildNumber",
+			"required": false
+		},
+		{
+			"id": "conformance/property/baseline.buildName",
+			"kind": "property",
+			"path": "baseline.buildName",
+			"required": false
+		},
+		{
+			"id": "conformance/property/baseline.buildUrl",
+			"kind": "property",
+			"path": "baseline.buildUrl",
+			"required": false
+		},
+		{
+			"id": "conformance/property/baseline.commit",
+			"kind": "property",
+			"path": "baseline.commit",
+			"required": false
+		},
+		{
+			"id": "conformance/property/baseline.extra",
+			"kind": "property",
+			"path": "baseline.extra",
+			"required": false
+		},
+		{
+			"id": "conformance/report/utf8-without-bom",
+			"kind": "report",
+			"rule": "utf8-without-bom"
+		},
+		{
+			"id": "conformance/report/single-json-object",
+			"kind": "report",
+			"rule": "single-json-object"
+		},
+		{
+			"id": "conformance/report/declares-supported-contract",
+			"kind": "report",
+			"rule": "declares-supported-contract"
+		},
+		{
+			"id": "conformance/report/summary-matches-final-results",
+			"kind": "report",
+			"rule": "summary-matches-final-results"
+		},
+		{
+			"id": "conformance/report/summary-matches-flaky-results",
+			"kind": "report",
+			"rule": "summary-matches-flaky-results"
+		},
+		{
+			"id": "conformance/report/orders-start-and-stop",
+			"kind": "report",
+			"rule": "orders-start-and-stop"
+		},
+		{
+			"id": "conformance/report/history-requires-retry-count",
+			"kind": "report",
+			"rule": "history-requires-retry-count"
+		},
+		{
+			"id": "conformance/report/positive-retries-require-history",
+			"kind": "report",
+			"rule": "positive-retries-require-history"
+		},
+		{
+			"id": "conformance/report/zero-retries-omit-history",
+			"kind": "report",
+			"rule": "zero-retries-omit-history"
+		},
+		{
+			"id": "conformance/report/retry-count-matches-history-length",
+			"kind": "report",
+			"rule": "retry-count-matches-history-length"
+		},
+		{
+			"id": "conformance/report/history-orders-contiguous-attempts",
+			"kind": "report",
+			"rule": "history-orders-contiguous-attempts"
+		},
+		{
+			"id": "conformance/report/history-excludes-final-attempt",
+			"kind": "report",
+			"rule": "history-excludes-final-attempt"
+		},
+		{
+			"id": "conformance/report/flaky-matches-attempt-outcomes",
+			"kind": "report",
+			"rule": "flaky-matches-attempt-outcomes"
+		},
+		{
+			"id": "conformance/report/case-identity-stable-across-runs",
+			"kind": "report",
+			"rule": "case-identity-stable-across-runs"
+		},
+		{
+			"id": "conformance/report/execution-identity-distinguishes-executions",
+			"kind": "report",
+			"rule": "execution-identity-distinguishes-executions"
+		},
+		{
+			"id": "conformance/report/attempt-identity-scoped-to-execution",
+			"kind": "report",
+			"rule": "attempt-identity-scoped-to-execution"
+		},
+		{
+			"id": "conformance/report/attachment-identity-scoped-to-parent",
+			"kind": "report",
+			"rule": "attachment-identity-scoped-to-parent"
+		},
+		{
+			"id": "conformance/report/document-identity-follows-emission",
+			"kind": "report",
+			"rule": "document-identity-follows-emission"
+		},
+		{
+			"id": "conformance/report/coordinates-run-and-shard-identity",
+			"kind": "report",
+			"rule": "coordinates-run-and-shard-identity"
+		},
+		{
+			"id": "conformance/report/respects-reserved-extension-ownership",
+			"kind": "report",
+			"rule": "respects-reserved-extension-ownership"
+		}
+	]
+}

@@ -27,7 +27,13 @@
 		"format": "biome format --write .",
 		"format:check": "biome format .",
 		"all": "npm run lint:check && npm run format:check && npm run build:check && npm run test:coverage && npm run build",
-		"check": "biome check ."
+		"check": "biome check .",
+		"test:standard:conformance:unit": "vitest run --config vitest.conformance.config.ts",
+		"test:standard:conformance:integration": "npm run build && node tests/standard/conformance/integration/run.mjs",
+		"test:standard:conformance": "node tests/standard/conformance/run-all.mjs",
+		"test:standard:unit": "npm run test:standard:conformance:unit",
+		"test:standard:integration": "npm run test:standard:conformance:integration",
+		"test:standard": "npm run test:standard:conformance"
 	},
 	"repository": {
 		"type": "git",
@@ -68,7 +74,9 @@
 		"tsup": "8.5.1",
 		"typescript": "npm:@typescript/typescript6@6.0.2",
 		"vitest": "5.0.3",
-		"@typescript/native": "npm:typescript@7.0.2"
+		"@typescript/native": "npm:typescript@7.0.2",
+		"ajv": "8.20.0",
+		"ajv-formats": "3.0.1"
 	},
 	"dependencies": {
 		"ctrf": "0.5.0"

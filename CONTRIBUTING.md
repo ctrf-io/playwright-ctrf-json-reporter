@@ -61,7 +61,20 @@ To set up the project for local development:
 
 Make sure all checks pass before submitting a pull request.
 
-### Real Playwright integration smoke
+### Standard conformance pilot
+
+The separate [standard conformance suite](tests/standard/conformance/README.md)
+registers the shared property/relationship catalogue against controlled native
+inputs and real installed-package output. Run
+`npm run test:standard:conformance:unit` and
+`npm run test:standard:conformance:integration`, or both with
+`npm run test:standard:conformance`. The combined command still runs integration
+when unit checks fail. The pilot deliberately exposes current reporter defects;
+keep failures visible while assessing them. Existing tests and the original
+integration smoke remain separate. See the suite README for Chromium setup,
+capability/skip rules, temporary diagnostics and the shared/adapter boundary.
+
+### Original integration smoke
 
 Run `npm run test:integration` to build and pack the reporter, install it into
 an isolated temporary consumer, and run real Playwright tests. This command
