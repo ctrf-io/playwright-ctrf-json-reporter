@@ -88,8 +88,10 @@ Check schema and written-specification implications, including valid omission an
 conditional rules. Recommendations remain advisory. Do not change expectations
 to match incorrect reporter output.
 
-CI runs both conformance levels independently on Node 22, 24 and 26 and uploads
-unit JSON results or integration reports/logs, including on failure. Both levels
+CI runs both conformance levels as separate steps in the existing integration
+job on Node 22, 24 and 26. A unit failure does not prevent integration from running.
+The job uploads unit JSON results and integration reports/logs, including on
+failure. Both levels
 also run before release staging. Known expected failures allow the baseline check
 to pass while the defects remain tracked; this does not establish full conformance
 or authorize releasing those defects. Unit results label expected-failure cases

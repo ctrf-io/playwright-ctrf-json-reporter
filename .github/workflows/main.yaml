@@ -93,11 +93,13 @@ jobs:
     name: Real Playwright integration (Node ${{ matrix.node }})
     runs-on: ubuntu-latest
     needs: [quality]
-    timeout-minutes: 15
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
         node: ['22', '24', '26']
+    env:
+      CTRF_STANDARD_ARTIFACTS: ${{ runner.temp }}/conformance
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -109,10 +111,24 @@ jobs:
           cache: npm
 
       - name: Install
+        id: install
         run: npm ci
 
       - name: Run packed reporter through real Playwright
         run: npm run test:integration
+
+      - name: Run unit conformance and checker controls
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run test:standard:conformance:unit -- --reporter=default --reporter=json --outputFile="$CTRF_STANDARD_ARTIFACTS/unit.json"
+
+      - name: Install Chromium and system dependencies
+        id: browser
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npx playwright install --with-deps chromium
+
+      - name: Run installed-package conformance with real Playwright
+        if: ${{ !cancelled() && steps.browser.outcome == 'success' }}
+        run: npm run test:standard:conformance:integration
 
       - name: Upload integration reports and logs
         uses: actions/upload-artifact@v4
@@ -123,51 +139,11 @@ jobs:
           include-hidden-files: true
           if-no-files-found: warn
 
-  conformance:
-    name: Conformance ${{ matrix.suite }} (Node ${{ matrix.node }})
-    runs-on: ubuntu-latest
-    needs: [quality]
-    timeout-minutes: 20
-    strategy:
-      fail-fast: false
-      matrix:
-        node: ['22', '24', '26']
-        suite: [unit, integration]
-    env:
-      CTRF_STANDARD_ARTIFACTS: ${{ runner.temp }}/conformance-${{ matrix.suite }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: ${{ matrix.node }}
-          cache: npm
-
-      - name: Install
-        run: npm ci
-
-      - name: Install Chromium and system dependencies
-        if: matrix.suite == 'integration'
-        run: npx playwright install --with-deps chromium
-
-      - name: Prepare conformance diagnostics
-        run: mkdir -p "$CTRF_STANDARD_ARTIFACTS"
-
-      - name: Run unit conformance and checker controls
-        if: matrix.suite == 'unit'
-        run: npm run test:standard:conformance:unit -- --reporter=default --reporter=json --outputFile="$CTRF_STANDARD_ARTIFACTS/unit.json"
-
-      - name: Run installed-package conformance with real Playwright
-        if: matrix.suite == 'integration'
-        run: npm run test:standard:conformance:integration
-
       - name: Upload conformance results and diagnostics
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: conformance-${{ matrix.suite }}-node-${{ matrix.node }}
+          name: conformance-node-${{ matrix.node }}
           path: ${{ env.CTRF_STANDARD_ARTIFACTS }}/
           include-hidden-files: true
           if-no-files-found: warn
