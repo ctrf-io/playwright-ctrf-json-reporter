@@ -1,0 +1,39 @@
+{
+	"specVersion": "0.2.0",
+	"summary": {
+		"tests": 5,
+		"passed": 3,
+		"failed": 1,
+		"skipped": 1,
+		"pending": 0,
+		"other": 0
+	},
+	"cases": {
+		"passes": { "status": "passed", "rawStatus": "passed", "retries": 0 },
+		"fails": { "status": "failed", "rawStatus": "failed", "retries": 1 },
+		"skipped": { "status": "skipped", "rawStatus": "skipped", "retries": 0 },
+		"expected failure": {
+			"status": "passed",
+			"rawStatus": "failed",
+			"retries": 0
+		},
+		"passes on retry": {
+			"status": "passed",
+			"rawStatus": "passed",
+			"retries": 1
+		}
+	},
+	"scenarios": [
+		{ "name": "full", "options": { "buildNumber": 100 } },
+		{
+			"name": "annotated",
+			"options": {
+				"annotations": true,
+				"runId": "integration-run",
+				"shardId": "integration-shard",
+				"buildNumber": 0
+			}
+		},
+		{ "name": "minimal", "options": { "minimal": true, "annotations": false } }
+	]
+}

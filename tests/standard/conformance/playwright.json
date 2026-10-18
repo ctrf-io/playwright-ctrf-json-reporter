@@ -1,0 +1,748 @@
+{
+	"reporter": "playwright",
+	"specVersion": "0.2.0",
+	"properties": {
+		"reportFormat": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"specVersion": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"reportId": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"runId": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"timestamp": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"generatedBy": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"extra": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tool": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tool.name": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tool.version": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tool.extra": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.summary": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.summary.tests": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.summary.passed": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.summary.failed": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.summary.skipped": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.summary.pending": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.summary.other": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.summary.flaky": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.summary.suites": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.summary.start": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.summary.stop": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.summary.duration": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.summary.extra": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].id": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].testId": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].executionId": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].attemptId": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].name": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].status": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].duration": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].start": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].stop": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].suite": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].message": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].trace": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].snippet": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].ai": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].line": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].rawStatus": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].tags": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].labels": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].type": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].filePath": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].retries": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].retryAttempts": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].retryAttempts[].attempt": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].retryAttempts[].attemptId": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].retryAttempts[].status": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].retryAttempts[].duration": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].retryAttempts[].message": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].retryAttempts[].trace": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].retryAttempts[].line": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].retryAttempts[].snippet": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].retryAttempts[].stdout": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].retryAttempts[].stderr": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].retryAttempts[].start": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].retryAttempts[].stop": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].retryAttempts[].attachments": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].retryAttempts[].attachments[].attachmentId": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].retryAttempts[].attachments[].name": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].retryAttempts[].attachments[].contentType": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].retryAttempts[].attachments[].path": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].retryAttempts[].attachments[].extra": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].retryAttempts[].extra": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].flaky": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].stdout": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].stderr": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].threadId": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].browser": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].device": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].screenshot": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].attachments": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].attachments[].attachmentId": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].attachments[].name": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].attachments[].contentType": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].attachments[].path": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].attachments[].extra": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].parameters": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].steps": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].steps[].name": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].steps[].status": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.tests[].steps[].extra": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.passRate": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.passRate.current": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.passRate.baseline": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.passRate.change": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.failRate": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.failRate.current": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.failRate.baseline": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.failRate.change": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.flakyRate": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.flakyRate.current": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.flakyRate.baseline": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.flakyRate.change": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.averageTestDuration": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.averageTestDuration.current": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.averageTestDuration.baseline": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.averageTestDuration.change": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.p95TestDuration": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.p95TestDuration.current": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.p95TestDuration.baseline": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.p95TestDuration.change": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.executedInRuns": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].insights.extra": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.tests[].extra": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.environment": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.environment.reportName": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.environment.appName": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.environment.appVersion": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.environment.buildId": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.environment.buildName": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.environment.buildNumber": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.environment.buildUrl": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.environment.repositoryName": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.environment.repositoryUrl": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.environment.commit": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.environment.branchName": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.environment.osPlatform": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.environment.osRelease": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.environment.osVersion": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.environment.testEnvironment": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.environment.shardId": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"results.environment.healthy": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.environment.extra": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"results.extra": {
+			"supported": true,
+			"reason": "Emitted by the adapter"
+		},
+		"insights": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.passRate": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.passRate.current": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.passRate.baseline": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.passRate.change": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.failRate": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.failRate.current": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.failRate.baseline": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.failRate.change": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.flakyRate": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.flakyRate.current": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.flakyRate.baseline": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.flakyRate.change": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.averageRunDuration": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.averageRunDuration.current": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.averageRunDuration.baseline": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.averageRunDuration.change": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.p95RunDuration": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.p95RunDuration.current": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.p95RunDuration.baseline": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.p95RunDuration.change": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.averageTestDuration": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.averageTestDuration.current": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.averageTestDuration.baseline": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.averageTestDuration.change": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.runsAnalyzed": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"insights.extra": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"baseline": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"baseline.reportId": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"baseline.timestamp": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"baseline.source": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"baseline.buildNumber": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"baseline.buildName": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"baseline.buildUrl": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"baseline.commit": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"baseline.extra": {
+			"supported": false,
+			"reason": "The Playwright adapter does not emit this optional property"
+		}
+	},
+	"rules": {
+		"utf8-without-bom": {
+			"supported": true,
+			"reason": "Applicable to supported output"
+		},
+		"single-json-object": {
+			"supported": true,
+			"reason": "Applicable to supported output"
+		},
+		"declares-supported-contract": {
+			"supported": true,
+			"reason": "Applicable to supported output"
+		},
+		"summary-matches-final-results": {
+			"supported": true,
+			"reason": "Applicable to supported output"
+		},
+		"summary-matches-flaky-results": {
+			"supported": false,
+			"reason": "The adapter emits test.flaky but does not offer summary.flaky"
+		},
+		"orders-start-and-stop": {
+			"supported": true,
+			"reason": "Applicable to supported output"
+		},
+		"history-requires-retry-count": {
+			"supported": true,
+			"reason": "Applicable to supported output"
+		},
+		"positive-retries-require-history": {
+			"supported": true,
+			"reason": "Applicable to supported output"
+		},
+		"zero-retries-omit-history": {
+			"supported": true,
+			"reason": "Applicable to supported output"
+		},
+		"retry-count-matches-history-length": {
+			"supported": true,
+			"reason": "Applicable to supported output"
+		},
+		"history-orders-contiguous-attempts": {
+			"supported": true,
+			"reason": "Applicable to supported output"
+		},
+		"history-excludes-final-attempt": {
+			"supported": true,
+			"reason": "Applicable to supported output"
+		},
+		"flaky-matches-attempt-outcomes": {
+			"supported": true,
+			"reason": "Applicable to supported output"
+		},
+		"case-identity-stable-across-runs": {
+			"supported": true,
+			"reason": "Applicable to supported output"
+		},
+		"execution-identity-distinguishes-executions": {
+			"supported": true,
+			"reason": "Applicable to supported output"
+		},
+		"attempt-identity-scoped-to-execution": {
+			"supported": true,
+			"reason": "Applicable to supported output"
+		},
+		"attachment-identity-scoped-to-parent": {
+			"supported": true,
+			"reason": "Applicable to supported output"
+		},
+		"document-identity-follows-emission": {
+			"supported": true,
+			"reason": "Applicable to supported output"
+		},
+		"coordinates-run-and-shard-identity": {
+			"supported": true,
+			"reason": "Applicable to supported output"
+		},
+		"respects-reserved-extension-ownership": {
+			"supported": true,
+			"reason": "Applicable to supported output"
+		}
+	}
+}

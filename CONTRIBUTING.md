@@ -33,7 +33,7 @@ To set up the project for local development:
 1. **Install dependencies**:
 
    ```bash
-   npm install
+   npm ci
    ```
 
 2. **Run linting checks**:
@@ -59,7 +59,76 @@ To set up the project for local development:
    npm run build
    ```
 
-Make sure all checks pass before submitting a pull request.
+Run the relevant checks before submitting a pull request and report their results.
+CI publishes the existing reporter tests through GitHub Test Reporter. The
+reference Node job maintains a `reporter-tests` PR comment, separately from the
+conformance comment; both comments are overwritten on subsequent builds.
+
+### Conformance tests
+
+For reporter output changes, update the affected conformance fixtures and run:
+
+```bash
+npm run test:standard:conformance:unit
+npx playwright install chromium
+npm run test:standard:conformance:integration
+```
+
+`npm run test:standard:conformance` runs both levels even when unit fails.
+The [suite guide](tests/standard/conformance/README.md) explains setup and file roles.
+Unit tests use controlled native inputs; integration tests install the packed
+reporter and run real Playwright with an independent native observer. They remain
+separate from `npm test` and the original integration smoke.
+
+Keep common family IDs stable, update `playwright.json` when capabilities change,
+and provide positive evidence for supported properties. Unsupported optional
+features are skipped with reasons; unrecorded broken behavior must fail.
+Expected-failure entries in `tests/standard/conformance/expected-failures.mjs`
+must link to a GitHub issue and match specific levels/samples. Keep checks running;
+unexpected passes and changed failures must fail. Remove markers with the fix.
+Check schema and written-specification implications, including valid omission and
+conditional rules. Recommendations remain advisory. Do not change expectations
+to match incorrect reporter output.
+
+CI runs both conformance levels as separate steps in the existing integration
+job on Node 22, 24 and 26. A unit failure does not prevent integration from running.
+The job publishes CTRF results for both levels through GitHub Test Reporter, with
+the built-in summary and collapsed test table. Node 24 also maintains one PR
+comment tagged `reporter-conformance`, overwriting it on later runs. It describes
+the reference runtime; check the full matrix for compatibility results. Fork PRs
+keep build summaries/artifacts without posting a comment. Expected failures retain
+explicit test-name labels and use Other with defect metadata rather than passed.
+Unit/integration names and identities stay distinct; checker controls are included.
+CTRF artifacts, conformance summaries and integration reports/logs are retained,
+including on failure. The unit command uses the default and CTRF reporters from
+`vitest.conformance.config.ts`; no additional Vitest JSON output is required.
+In your PR, include commands and results and explain skips, expected failures and
+warnings. Track defect details and fixes in GitHub issues rather than these docs.
+
+### Original integration smoke
+
+Run `npm run test:integration` to build and pack the reporter, install it into
+an isolated temporary consumer, and run real Playwright tests. This command
+needs npm registry access to install the exact Playwright and CTRF versions
+declared in this repository. It does not publish a package or install browsers.
+
+The fixture suite uses plain assertions and covers passing, failing, skipped,
+expected-failure and retried tests. It runs in full, annotations-enabled and
+minimal modes. A harness requires the expected failing runner exit code and
+then validates the actual report files against CTRF specification 0.2.0, the
+expected outcomes, retry history, timestamps, failure text, runtime metadata
+and supported identities. The checker also has to reject deliberately
+corrupted reports, including schema-valid semantic errors.
+
+Reports and command logs are retained in `.integration-artifacts/`; temporary
+consumer installations are removed. CI runs this check on Node 22, 24 and 26,
+uploads diagnostics. Release-workflow behavior is unchanged by this test setup. Validation
+scripts and fixtures are excluded from the published package and runtime.
+
+Keep fixture expectations in `tests/integration/expectations.json` explicit.
+When adding a scenario, preserve the distinction between final test outcomes
+and prior attempts. Do not ignore unexpected runner failures or reuse output
+from a previous run. Browser-specific behavior needs separate browser tests.
 
 ## Finding Bugs
 
