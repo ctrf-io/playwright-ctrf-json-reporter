@@ -103,7 +103,7 @@ Unit/integration names and identities stay distinct; checker controls are includ
 CTRF artifacts, conformance summaries and integration reports/logs are retained,
 including on failure. The unit command uses the default and CTRF reporters from
 `vitest.conformance.config.ts`; no additional Vitest JSON output is required.
-Both levels also run before release staging. Known expected failures allow the baseline check
+Both levels run in CI. Known expected failures allow the baseline check
 to pass while the defects remain tracked; this does not establish full conformance
 or authorize releasing those defects. Unit results label expected-failure cases
 and retain a separate exception artifact; integration summaries separate expected
@@ -127,7 +127,7 @@ corrupted reports, including schema-valid semantic errors.
 
 Reports and command logs are retained in `.integration-artifacts/`; temporary
 consumer installations are removed. CI runs this check on Node 22, 24 and 26,
-uploads diagnostics, and runs it again before staging a release. Validation
+uploads diagnostics. Release-workflow behavior is unchanged by this test setup. Validation
 scripts and fixtures are excluded from the published package and runtime.
 
 Keep fixture expectations in `tests/integration/expectations.json` explicit.

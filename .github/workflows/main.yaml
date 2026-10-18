@@ -83,7 +83,6 @@ jobs:
           pull-request: ${{ matrix.node == '24' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
           overwrite-comment: true
           comment-tag: reporter-tests
-          summary-delta-report: true
           github-report: true
           insights-report: true
           flaky-rate-report: true
