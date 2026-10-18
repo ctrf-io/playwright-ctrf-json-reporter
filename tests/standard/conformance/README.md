@@ -40,8 +40,8 @@ they are not counted as passed. Unit and integration identities remain distinct.
 Unsupported optional features remain skipped with reasons. Supported fields need
 positive evidence; all emitted fields undergo full-document validation. Mandatory
 violations fail, recommendations warn, and missing fixture evidence cannot count
-as a pass. Recorded defects in [known-issues.md](known-issues.md) use narrowly
-matched, per-sample exceptions in `expected-failures.mjs`. They still execute and
+as a pass. Expected-failure entries in `expected-failures.mjs` link to GitHub issues
+and match specific samples. They still execute and
 are reported separately as expected failures; different errors or unexpected
 passes fail CI. Remove the matching markers when fixing a defect. Expected
 failures are not conformance passes.

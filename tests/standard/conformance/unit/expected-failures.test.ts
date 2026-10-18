@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { it } from "vitest";
 import { expectedFailures, runConformance } from "../expected-failures.mjs";
 import { catalogue, disposition } from "../shared/checks.mjs";
@@ -12,7 +12,7 @@ function context() {
 	return unitContext();
 }
 
-it("expected-failure declarations refer to supported catalogue entries and local follow-ups", () => {
+it("expected-failure declarations refer to supported catalogue entries and GitHub issue follow-ups", () => {
 	const manifest = JSON.parse(
 		readFileSync(new URL("../playwright.json", import.meta.url), "utf8"),
 	);
@@ -24,10 +24,11 @@ it("expected-failure declarations refer to supported catalogue entries and local
 		assert.ok(item);
 		assert.ok(disposition(item, manifest).supported);
 		assert.ok(issue.reason);
-		assert.ok(
-			existsSync(
-				new URL(`../${issue.followUp.split("#")[0]}`, import.meta.url),
-			),
+		const followUp = new URL(issue.followUp);
+		assert.equal(followUp.origin, "https://github.com");
+		assert.match(
+			followUp.pathname,
+			/^\/ctrf-io\/playwright-ctrf-json-reporter\/issues\/\d+$/u,
 		);
 	}
 });

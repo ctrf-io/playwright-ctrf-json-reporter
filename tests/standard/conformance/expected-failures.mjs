@@ -13,13 +13,15 @@ const unitSamples = [
 const mappingIssue = {
 	issue: "unexpected-pass",
 	reason: "Playwright unexpected pass is normalized to passed",
-	followUp: "known-issues.md#unexpected-pass",
+	followUp:
+		"https://github.com/ctrf-io/playwright-ctrf-json-reporter/issues/116",
 	samples: { unit: unitSamples, integration: ["timeout-and-hooks"] },
 };
 const numericIssue = {
 	issue: "invalid-build-number",
 	reason: "Fractional and non-finite build numbers produce invalid output",
-	followUp: "known-issues.md#invalid-build-number",
+	followUp:
+		"https://github.com/ctrf-io/playwright-ctrf-json-reporter/issues/117",
 	samples: { unit: ["fractional-build-number", "nonfinite-build-number"] },
 };
 

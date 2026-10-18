@@ -82,10 +82,9 @@ separate from `npm test` and the original integration smoke.
 
 Keep common family IDs stable, update `playwright.json` when capabilities change,
 and provide positive evidence for supported properties. Unsupported optional
-features are skipped with reasons; unrecorded broken behavior must fail. Known
-defects can use narrowly matched, per-level/sample entries in
-`tests/standard/conformance/expected-failures.mjs`, with a reason and follow-up in
-[known issues](tests/standard/conformance/known-issues.md). Keep checks running;
+features are skipped with reasons; unrecorded broken behavior must fail.
+Expected-failure entries in `tests/standard/conformance/expected-failures.mjs`
+must link to a GitHub issue and match specific levels/samples. Keep checks running;
 unexpected passes and changed failures must fail. Remove markers with the fix.
 Check schema and written-specification implications, including valid omission and
 conditional rules. Recommendations remain advisory. Do not change expectations
@@ -103,12 +102,8 @@ Unit/integration names and identities stay distinct; checker controls are includ
 CTRF artifacts, conformance summaries and integration reports/logs are retained,
 including on failure. The unit command uses the default and CTRF reporters from
 `vitest.conformance.config.ts`; no additional Vitest JSON output is required.
-Both levels run in CI. Known expected failures allow the baseline check
-to pass while the defects remain tracked; this does not establish full conformance
-or authorize releasing those defects. Unit results label expected-failure cases
-and retain a separate exception artifact; integration summaries separate expected
-failures from conformance passes. In your PR, include commands and results, explain
-skips, expected failures and warnings, and identify remaining defects.
+In your PR, include commands and results and explain skips, expected failures and
+warnings. Track defect details and fixes in GitHub issues rather than these docs.
 
 ### Original integration smoke
 
