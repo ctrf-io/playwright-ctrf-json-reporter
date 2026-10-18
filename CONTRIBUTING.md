@@ -33,7 +33,7 @@ To set up the project for local development:
 1. **Install dependencies**:
 
    ```bash
-   npm install
+   npm ci
    ```
 
 2. **Run linting checks**:
@@ -59,20 +59,37 @@ To set up the project for local development:
    npm run build
    ```
 
-Make sure all checks pass before submitting a pull request.
+Run the relevant checks before submitting a pull request and report their results.
 
-### Standard conformance pilot
+### Conformance tests
 
-The separate [standard conformance suite](tests/standard/conformance/README.md)
-registers the shared property/relationship catalogue against controlled native
-inputs and real installed-package output. Run
-`npm run test:standard:conformance:unit` and
-`npm run test:standard:conformance:integration`, or both with
-`npm run test:standard:conformance`. The combined command still runs integration
-when unit checks fail. The pilot deliberately exposes current reporter defects;
-keep failures visible while assessing them. Existing tests and the original
-integration smoke remain separate. See the suite README for Chromium setup,
-capability/skip rules, temporary diagnostics and the shared/adapter boundary.
+For reporter output changes, update the affected conformance fixtures and run:
+
+```bash
+npm run test:standard:conformance:unit
+npx playwright install chromium
+npm run test:standard:conformance:integration
+```
+
+`npm run test:standard:conformance` runs both levels even when unit fails.
+The [suite guide](tests/standard/conformance/README.md) explains setup and file roles.
+Unit tests use controlled native inputs; integration tests install the packed
+reporter and run real Playwright with an independent native observer. They remain
+separate from `npm test` and the original integration smoke.
+
+Keep common family IDs stable, update `playwright.json` when capabilities change,
+and provide positive evidence for supported properties. Unsupported optional
+features are skipped with reasons; broken supported behavior must fail. Check
+schema and written-specification implications, including valid omission and
+conditional rules. Recommendations remain advisory. Do not change expectations
+to match incorrect reporter output.
+
+CI runs both conformance levels independently on Node 22, 24 and 26 and uploads
+unit JSON results or integration reports/logs, including on failure. Both levels
+also gate release staging. The pilot currently exposes known reporter defects;
+these failures must be resolved before the conformance gate passes. In your PR,
+include commands and results, explain skips or warnings, and identify any remaining
+failures rather than claiming all checks pass.
 
 ### Original integration smoke
 

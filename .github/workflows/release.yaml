@@ -43,6 +43,23 @@ jobs:
           include-hidden-files: true
           if-no-files-found: warn
 
+      - name: Install Chromium and system dependencies
+        run: npx playwright install --with-deps chromium
+
+      - name: Verify unit and installed-package conformance
+        run: npm run test:standard:conformance
+        env:
+          CTRF_STANDARD_ARTIFACTS: ${{ runner.temp }}/conformance-release
+
+      - name: Upload conformance results and diagnostics
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: conformance-release
+          path: ${{ runner.temp }}/conformance-release/
+          include-hidden-files: true
+          if-no-files-found: warn
+
       - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
         run: npm audit signatures
 
