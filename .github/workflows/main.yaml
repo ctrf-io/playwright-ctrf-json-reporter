@@ -98,8 +98,6 @@ jobs:
       fail-fast: false
       matrix:
         node: ['22', '24', '26']
-    env:
-      CTRF_STANDARD_ARTIFACTS: ${{ runner.temp }}/conformance
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -109,6 +107,11 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: npm
+
+      - name: Prepare conformance diagnostics
+        run: |
+          echo "CTRF_STANDARD_ARTIFACTS=$RUNNER_TEMP/conformance" >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/conformance"
 
       - name: Install
         id: install
@@ -144,7 +147,7 @@ jobs:
         if: always()
         with:
           name: conformance-node-${{ matrix.node }}
-          path: ${{ env.CTRF_STANDARD_ARTIFACTS }}/
+          path: ${{ runner.temp }}/conformance/
           include-hidden-files: true
           if-no-files-found: warn
 
