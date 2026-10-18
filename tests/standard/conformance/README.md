@@ -27,8 +27,8 @@ Both suites generate schema-validated CTRF under `$CTRF_STANDARD_ARTIFACTS/repor
 (or `ctrf/reports` locally). CI publishes these through GitHub Test Reporter in the
 integration job summary and retains CTRF artifacts. The reference Node job also
 maintains one PR comment using the built-in summary and collapsed test table;
-no custom template is needed. Fork PRs retain build summaries and artifacts without
-requesting write access. Unit results include checker controls. Expected failures use **Other**, explicit labels and defect metadata;
+no custom template is needed. Fork PRs retain build summaries and artifacts with
+read-only tokens. Unit results include checker controls. Expected failures use **Other**, explicit labels and defect metadata;
 they are not counted as passed. Unit and integration identities remain distinct.
 
 - `shared/catalogue.json`: common family IDs for this pilot; property paths are
