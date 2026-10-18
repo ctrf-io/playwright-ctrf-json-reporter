@@ -1,8 +1,9 @@
 # Standard conformance
 
-CTRF 0.2.0 conformance uses the same 185 families at both levels: 165 property
-paths and 20 report/relationship rules. These are coverage families, not an
-exhaustive set of cases. Existing reporter tests and integration smoke are separate.
+Conformance uses shared property and report/relationship checks at both unit and
+integration levels, against the declared CTRF specification version. These are
+coverage families, not an exhaustive set of cases. Existing reporter tests and
+integration smoke are separate.
 
 ```sh
 npm run test:standard:conformance:unit
@@ -12,7 +13,7 @@ npm run test:standard:conformance:integration
 npm run test:standard:conformance
 ```
 
-Unit tests capture output from controlled native inputs; ten separate controls
+Unit tests capture output from controlled native inputs; separate controls
 test the checker. Integration installs the packed reporter in a temporary consumer
 and runs real Playwright, including Chromium. It needs npm registry access and
 the browser matching the pinned Playwright version. CI installs browser system
