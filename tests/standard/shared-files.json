@@ -1,0 +1,13 @@
+{
+	"revision": "standard-checker-controls-v1",
+	"files": {
+		"conformance/shared/catalogue.json": "a700f698e2c7b9a695628fb56e491fea49eaecb464b74b790752d4abcfde1c6c",
+		"conformance/shared/checks.mjs": "08b1a64c56a57ce31305a01c39076518e46b55fdb0aa9bd3051803b5ed04402a",
+		"conformance/shared/expected-failures.mjs": "c8677174694a5ce433abd54205f5f2122e0d0b37ee062d6fa39df9f615d09120",
+		"checker/checker.test.mjs": "7aa7670edf15f2a5ae75b962141ab56bf282f5c3011b6c1accd25ae18489cd37",
+		"checker/run.mjs": "132eb103a0d2d939151110c62b639432d371d9d081f8d2adc26b7d6fd73836dc",
+		"conformance/reporters/ctrf.mjs": "4bf221fdce90646a8d9d43fca1aeb0b258d7cf4f56f32a66d8ba0ef4b36c5bc9",
+		"conformance/reporters/node.mjs": "dfe202dea4c8813c9bed6fea1ec0bcd7635c45066a95bf7e58d8df114f589c69",
+		"run-all.mjs": "0e7029e95ea4a36fc4438cd5eb6cf3703ffa56152f97bc6dc2a75bbf1cb6da4a"
+	}
+}

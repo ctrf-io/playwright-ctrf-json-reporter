@@ -33,7 +33,8 @@
 		"test:standard:conformance": "node tests/standard/conformance/run-all.mjs",
 		"test:standard:unit": "npm run test:standard:conformance:unit",
 		"test:standard:integration": "npm run test:standard:conformance:integration",
-		"test:standard": "npm run test:standard:conformance"
+		"test:standard": "node tests/standard/run-all.mjs",
+		"test:standard:checker": "node tests/standard/checker/run.mjs"
 	},
 	"repository": {
 		"type": "git",

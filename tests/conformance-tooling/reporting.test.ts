@@ -3,9 +3,12 @@ import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { it } from "vitest";
-import { createReport, reportPath } from "../reporters/ctrf.mjs";
-import nodeReporter from "../reporters/node.mjs";
-import VitestReporter from "../reporters/vitest.mjs";
+import {
+	createReport,
+	reportPath,
+} from "../standard/conformance/reporters/ctrf.mjs";
+import nodeReporter from "../standard/conformance/reporters/node.mjs";
+import VitestReporter from "../standard/conformance/reporters/vitest.mjs";
 
 const name =
 	"conformance/property/results.environment.buildNumber [expected failure: invalid-build-number]";
@@ -160,6 +163,6 @@ it("Vitest reporting includes checker cases and runner errors", async () => {
 		const report = JSON.parse(readFileSync(reportPath("unit"), "utf8"));
 		assert.equal(report.results.summary.tests, 3);
 		assert.equal(report.results.summary.failed, 2);
-		assert.equal(report.results.tests[0].suite.at(-1), "checker-controls");
+		assert.equal(report.results.tests[0].suite.at(-1), "Runner/setup failures");
 	});
 });

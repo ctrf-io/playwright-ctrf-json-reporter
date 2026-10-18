@@ -12,11 +12,11 @@ addFormats(ajv);
 const validate = ajv.compile(getSchema("0.2.0"));
 
 export function reportPath(level) {
-	return path.resolve(
-		process.env.CTRF_STANDARD_ARTIFACTS ?? "ctrf",
-		"reports",
-		`conformance-${level}.json`,
-	);
+	const base = process.env.CTRF_STANDARD_ARTIFACTS ?? "ctrf";
+	if (level === "checker")
+		return path.resolve(base, "checker-reports", "shared-checker.json");
+	if (level === "tooling") return path.resolve(base, "reporter-tooling.json");
+	return path.resolve(base, "reports", `conformance-${level}.json`);
 }
 
 export function createReport(records, level, tool, start, stop = Date.now()) {
@@ -38,12 +38,23 @@ export function createReport(records, level, tool, start, stop = Date.now()) {
 			duration: Math.round(record.duration ?? 0),
 			rawStatus: observed ? "expected-failure" : record.status,
 			type: level,
-			suite: [
-				"standard",
-				"conformance",
-				level,
-				id.startsWith("conformance/") ? "contract" : "checker-controls",
-			],
+			suite:
+				level === "checker"
+					? ["Shared checker controls", id.split("/")[1] ?? "setup"]
+					: level === "tooling"
+						? ["Reporter-specific tooling"]
+						: [
+								level === "unit"
+									? "Unit conformance"
+									: "Integration conformance",
+								observed
+									? "Expected failures (tracked defects)"
+									: id.startsWith("conformance/property/")
+										? "Schema properties"
+										: id.startsWith("conformance/report/")
+											? "Specification relationships"
+											: "Runner/setup failures",
+							],
 			...(record.filePath ? { filePath: record.filePath } : {}),
 			...(record.message ? { message: record.message } : {}),
 			...(record.trace ? { trace: record.trace } : {}),
@@ -70,7 +81,7 @@ export function createReport(records, level, tool, start, stop = Date.now()) {
 		specVersion: "0.2.0",
 		reportId: randomUUID(),
 		timestamp: new Date(stop).toISOString(),
-		generatedBy: "playwright-ctrf-conformance-tests",
+		generatedBy: "ctrf-standard-tests",
 		results: {
 			tool: { name: tool },
 			summary,

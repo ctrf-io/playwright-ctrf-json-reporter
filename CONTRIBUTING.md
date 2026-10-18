@@ -93,12 +93,17 @@ to match incorrect reporter output.
 CI runs both conformance levels as separate steps in the existing integration
 job on Node 22, 24 and 26. A unit failure does not prevent integration from running.
 The job publishes CTRF results for both levels through GitHub Test Reporter, with
-the built-in summary and collapsed test table. Node 24 also maintains one PR
+the built-in summary and folded suite table, grouped by level and check category. Node 24 also maintains one PR
 comment tagged `reporter-conformance`, overwriting it on later runs. It describes
 the reference runtime; check the full matrix for compatibility results. Fork PRs
 keep build summaries/artifacts without posting a comment. Expected failures retain
 explicit test-name labels and use Other with defect metadata rather than passed.
-Unit/integration names and identities stay distinct; checker controls are included.
+Unit/integration names and identities stay distinct; the conformance comment
+contains contract families only. Shared checker controls use the same independent
+fixtures and test IDs across reporters, run with `npm run test:standard:checker`,
+and publish separately under `reporter-checker`. Reporter-specific fixture,
+matcher and reporting controls belong in the reporter's own tests and
+`reporter-tests` results. `npm run test:standard` runs all standard suites.
 CTRF artifacts, conformance summaries and integration reports/logs are retained,
 including on failure. The unit command uses the default and CTRF reporters from
 `vitest.conformance.config.ts`; no additional Vitest JSON output is required.

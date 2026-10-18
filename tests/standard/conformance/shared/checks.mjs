@@ -90,6 +90,17 @@ export function checkProperty(entry, context) {
 			}
 		}
 		for (const value of actual) {
+			if (
+				/^results\.summary\.(tests|passed|failed|skipped|pending|other|flaky|suites|duration)$/u.test(
+					entry.path,
+				) ||
+				entry.path.endsWith(".duration") ||
+				entry.path.endsWith(".retries")
+			)
+				assert.ok(
+					value >= 0,
+					`${sample.name}: ${entry.path} must be nonnegative`,
+				);
 			assert.ok(
 				validate(value),
 				`${sample.name}: ${entry.path}: ${ajv.errorsText(validate.errors)}`,
@@ -117,6 +128,7 @@ export function checkProperty(entry, context) {
 		// Source expectations are partial for objects with generated identity.
 		// Primitive values and arrays of primitives can be compared exactly.
 		if (
+			entry.path !== "results.summary.tests" &&
 			expected.length &&
 			expected.every(
 				(value) =>
@@ -205,7 +217,12 @@ export const reportChecks = {
 	"summary-matches-final-results": (context) => {
 		for (const { report } of context.samples) {
 			const { summary, tests: cases } = report.results;
-			assert.equal(summary.tests, cases.length);
+			if (summary.tests !== cases.length) {
+				context.warnings ??= [];
+				context.warnings.push(
+					"summary.tests differs from test array length (SHOULD, Core §8.1)",
+				);
+			}
 			for (const status of [
 				"passed",
 				"failed",

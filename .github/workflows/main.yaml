@@ -131,7 +131,11 @@ jobs:
       - name: Run packed reporter through real Playwright
         run: npm run test:integration
 
-      - name: Run unit conformance and checker controls
+      - name: Run shared checker controls
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run test:standard:checker
+
+      - name: Run unit conformance
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run test:standard:conformance:unit
 
@@ -149,15 +153,33 @@ jobs:
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         with:
           report-path: '${{ runner.temp }}/conformance/reports/*.json'
-          title: 'Reporter conformance (Node ${{ matrix.node }})'
+          title: 'Reporter conformance — contract families (Node ${{ matrix.node }})'
           summary-report: true
-          test-report: true
+          suite-folded-report: true
+          group-by: suite
           pull-request: ${{ matrix.node == '24' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
           overwrite-comment: true
           comment-tag: reporter-conformance
           collapse-large-reports: true
           upload-artifact: true
           artifact-name: ctrf-conformance-node-${{ matrix.node }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish shared checker controls
+        uses: ctrf-io/github-test-reporter@v1
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        with:
+          report-path: '${{ runner.temp }}/conformance/checker-reports/*.json'
+          title: 'Shared checker controls (Node ${{ matrix.node }})'
+          summary-report: true
+          suite-folded-report: true
+          group-by: suite
+          pull-request: ${{ matrix.node == '24' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+          overwrite-comment: true
+          comment-tag: reporter-checker
+          upload-artifact: true
+          artifact-name: ctrf-checker-node-${{ matrix.node }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
