@@ -8,7 +8,7 @@ import nodeReporter from "../reporters/node.mjs";
 import VitestReporter from "../reporters/vitest.mjs";
 
 const name =
-	"conformance/property/results.tests[].status [expected failure: unexpected-pass]";
+	"conformance/property/results.environment.buildNumber [expected failure: invalid-build-number]";
 async function withOutput(callback: () => unknown) {
 	const directory = mkdtempSync(path.join(tmpdir(), "ctrf-reporting-control-"));
 	const previous = process.env.CTRF_STANDARD_ARTIFACTS;
@@ -49,7 +49,7 @@ it("reports expected failures as Other with defect metadata, not conformance pas
 	assert.equal(report.results.tests[0].duration, 1);
 	assert.equal(
 		report.results.tests[0].extra.expectedFailure.issue,
-		"unexpected-pass",
+		"invalid-build-number",
 	);
 	assert.equal(report.results.tests[3].name, "unit / unsupported — reason");
 });
@@ -128,7 +128,8 @@ it("Node reporting retains skipped and failed cases without duplicating failed p
 		for await (const chunk of nodeReporter(events())) assert.equal(chunk, "");
 		const report = JSON.parse(readFileSync(reportPath("integration"), "utf8"));
 		assert.equal(report.results.summary.tests, 3);
-		assert.equal(report.results.summary.other, 1);
+		assert.equal(report.results.summary.other, 0);
+		assert.equal(report.results.summary.passed, 1);
 		assert.equal(report.results.summary.failed, 1);
 		assert.equal(report.results.summary.skipped, 1);
 	});

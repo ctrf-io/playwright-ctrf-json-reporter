@@ -39,6 +39,18 @@ if (mode === "all-passed") {
 		test("affected case", () => {});
 	});
 } else if (mode === "multiple-retries") {
+	test("unexpected pass exhausts retries", () => {
+		test.fail();
+		expect(true).toBe(true);
+	});
+	test("expected failure after retry", () => {
+		test.fail();
+		expect(test.info().retry).toBe(0);
+	});
+	test("expected failure without retry", () => {
+		test.fail();
+		expect(true).toBe(false);
+	});
 	test("recovers after two failures", async () => {
 		await evidence("retry-evidence");
 		expect(test.info().retry).toBe(2);

@@ -235,6 +235,25 @@ try {
 		const native = JSON.parse(
 			readFileSync(path.join(consumer, "native.json"), "utf8"),
 		);
+		if (scenario.mode === "multiple-retries") {
+			for (const [name, statuses, expectedCtrfStatus] of [
+				[
+					"unexpected pass exhausts retries",
+					["passed", "passed", "passed"],
+					"failed",
+				],
+				["expected failure after retry", ["passed", "failed"], "passed"],
+				["expected failure without retry", ["failed"], "passed"],
+			]) {
+				const observed = native.tests.find((test) => test.name === name);
+				assert.ok(observed, `Missing retry scenario: ${name}`);
+				assert.deepEqual(
+					observed.attempts.map((attempt) => attempt.status),
+					statuses,
+				);
+				assert.equal(observed.expectedCtrfStatus, expectedCtrfStatus);
+			}
+		}
 		if (scenario.mode === "workers-and-distinct-cases")
 			assert.equal(native.tests.length, 4);
 		if (scenario.shard)
