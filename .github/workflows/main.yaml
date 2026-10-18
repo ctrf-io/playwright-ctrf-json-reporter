@@ -51,6 +51,7 @@ jobs:
     permissions:
       contents: read
       actions: read
+      pull-requests: write
 
     steps:
       - name: Checkout
@@ -75,6 +76,13 @@ jobs:
         uses: ctrf-io/github-test-reporter@v1
         with:
           report-path: './ctrf/*.json'
+          title: 'Reporter tests (Node ${{ matrix.node }})'
+          summary-report: true
+          test-report: true
+          collapse-large-reports: true
+          pull-request: ${{ matrix.node == '24' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+          overwrite-comment: true
+          comment-tag: reporter-tests
           summary-delta-report: true
           github-report: true
           insights-report: true
@@ -126,7 +134,7 @@ jobs:
 
       - name: Run unit conformance and checker controls
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
-        run: npm run test:standard:conformance:unit -- --reporter=default --reporter=json --reporter=./tests/standard/conformance/reporters/vitest.mjs --outputFile="$CTRF_STANDARD_ARTIFACTS/unit.json"
+        run: npm run test:standard:conformance:unit
 
       - name: Install Chromium and system dependencies
         id: browser

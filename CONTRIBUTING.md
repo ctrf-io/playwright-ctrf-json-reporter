@@ -60,6 +60,9 @@ To set up the project for local development:
    ```
 
 Run the relevant checks before submitting a pull request and report their results.
+CI publishes the existing reporter tests through GitHub Test Reporter. The
+reference Node job maintains a `reporter-tests` PR comment, separately from the
+conformance comment; both comments are overwritten on subsequent builds.
 
 ### Conformance tests
 
@@ -95,11 +98,12 @@ the built-in summary and collapsed test table. Node 24 also maintains one PR
 comment tagged `reporter-conformance`, overwriting it on later runs. It describes
 the reference runtime; check the full matrix for compatibility results. Fork PRs
 keep build summaries/artifacts without posting a comment. Expected failures retain
-explicit test-name labels and use Other with defect metadata rather than passed. Unit/integration
-names and identities stay distinct; checker controls are included. CTRF artifacts,
-unit JSON results and integration reports/logs are retained, including on failure.
-Both levels
-also run before release staging. Known expected failures allow the baseline check
+explicit test-name labels and use Other with defect metadata rather than passed.
+Unit/integration names and identities stay distinct; checker controls are included.
+CTRF artifacts, conformance summaries and integration reports/logs are retained,
+including on failure. The unit command uses the default and CTRF reporters from
+`vitest.conformance.config.ts`; no additional Vitest JSON output is required.
+Both levels also run before release staging. Known expected failures allow the baseline check
 to pass while the defects remain tracked; this does not establish full conformance
 or authorize releasing those defects. Unit results label expected-failure cases
 and retain a separate exception artifact; integration summaries separate expected
