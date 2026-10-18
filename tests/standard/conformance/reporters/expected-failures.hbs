@@ -1,0 +1,12 @@
+### Expected conformance failures
+
+These confirmed defects still execute and are reported as **Other**, not passed.
+Different failures and unexpected passes fail the build.
+
+| Test | Level | Known defect |
+| --- | --- | --- |
+{{#each ctrf.tests}}
+{{#if extra.expectedFailure}}
+| {{name}} | {{type}} | {{extra.expectedFailure.reason}} |
+{{/if}}
+{{/each}}

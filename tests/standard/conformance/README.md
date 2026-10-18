@@ -23,6 +23,12 @@ Temporary consumers are cleaned automatically. Set `CTRF_STANDARD_ARTIFACTS` to 
 absolute directory outside the checkout to retain integration reports and logs.
 Use `PLAYWRIGHT_BROWSERS_PATH` for a separate browser installation.
 
+Both suites generate schema-validated CTRF under `$CTRF_STANDARD_ARTIFACTS/reports`
+(or `ctrf/reports` locally). CI publishes these through GitHub Test Reporter in the
+integration job summary and retains CTRF artifacts. Unit results include checker
+controls. Expected failures use **Other**, explicit labels and defect metadata;
+they are not counted as passed. Unit and integration identities remain distinct.
+
 - `shared/catalogue.json`: common family IDs for this pilot; property paths are
   checked against the schema. It is a local snapshot pending shared distribution.
 - `shared/checks.mjs`: schema and specification assertions.

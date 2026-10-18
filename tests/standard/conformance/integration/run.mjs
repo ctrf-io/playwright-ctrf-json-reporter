@@ -13,6 +13,7 @@ import {
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { reportPath, writeReport } from "../reporters/ctrf.mjs";
 import { configuredOptions, expectedReport } from "../expected.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -136,6 +137,8 @@ const scenarios = [
 	},
 ];
 
+const conformanceStart = Date.now();
+rmSync(reportPath("integration"), { force: true });
 try {
 	const packed = JSON.parse(
 		execute(
@@ -260,7 +263,14 @@ try {
 		);
 	const result = spawnSync(
 		process.execPath,
-		["--test", "--test-reporter=tap", path.join(here, "conformance.test.mjs")],
+		[
+			"--test",
+			"--test-reporter=tap",
+			"--test-reporter-destination=stdout",
+			`--test-reporter=${path.join(here, "../reporters/node.mjs")}`,
+			"--test-reporter-destination=stdout",
+			path.join(here, "conformance.test.mjs"),
+		],
 		{
 			cwd: root,
 			env: { ...env, CTRF_CONFORMANCE_CONTEXT: contextPath },
@@ -322,6 +332,22 @@ try {
 		);
 	}
 	process.exitCode = result.status === 0 ? 0 : 1;
+} catch (error) {
+	if (!existsSync(reportPath("integration")))
+		writeReport(
+			[
+				{
+					name: "Integration harness failure",
+					status: "failed",
+					message: error.message,
+					trace: error.stack,
+				},
+			],
+			"integration",
+			"node:test",
+			conformanceStart,
+		);
+	throw error;
 } finally {
 	rmSync(consumer, { recursive: true, force: true });
 }

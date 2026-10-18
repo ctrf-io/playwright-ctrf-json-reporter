@@ -4,7 +4,7 @@ export default defineConfig({
 	test: {
 		include: ["tests/standard/conformance/unit/**/*.test.ts"],
 		environment: "node",
-		reporters: ["default"],
+		reporters: ["default", "./tests/standard/conformance/reporters/vitest.mjs"],
 		fileParallelism: false,
 	},
 });
