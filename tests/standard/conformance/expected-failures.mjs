@@ -1,5 +1,6 @@
+import { runExpectedFailure } from "./shared/expected-failures.mjs";
 import assert, { AssertionError } from "node:assert/strict";
-import { checkEntry, valuesAt } from "./shared/checks.mjs";
+import { checkEntry } from "./shared/checks.mjs";
 
 const numericIssue = {
 	issue: "invalid-build-number",
@@ -20,7 +21,7 @@ export function expectedFailure(entry, level) {
 	return issue?.samples[level] ? issue : undefined;
 }
 
-function matchesKnownFailure(entry, sample, error) {
+function matchesKnownFailure(entry, sample, _issue, error) {
 	if (!(error instanceof AssertionError)) return false;
 	const value = sample.report.results.environment.buildNumber;
 	if (value !== (sample.name === "fractional-build-number" ? 1.5 : null))
@@ -38,51 +39,12 @@ function matchesKnownFailure(entry, sample, error) {
 }
 
 export function runConformance(entry, context, level, check = checkEntry) {
-	const issue = expectedFailure(entry, level);
-	if (!issue) return check(entry, context);
-	const expectedSamples = new Set(issue.samples[level]);
-	for (const name of expectedSamples)
-		assert.equal(
-			context.samples.filter((sample) => sample.name === name).length,
-			1,
-			`Expected-failure fixture missing or duplicated: ${name}`,
-		);
-	// Check every sample, including those after the original first failure.
-	for (const sample of context.samples) {
-		const parentPath = entry.path?.split(".").slice(0, -1).join(".");
-		const hasParent =
-			!parentPath || valuesAt(sample.report, parentPath).length > 0;
-		// Optional absence in other modes is legitimate. The required known-bug
-		// samples below still have to emit and reproduce their exact violation.
-		if (
-			entry.kind === "property" &&
-			(!entry.required || !hasParent) &&
-			!expectedSamples.has(sample.name) &&
-			valuesAt(sample.report, entry.path).length === 0
-		)
-			continue;
-		let failure;
-		try {
-			check(entry, { ...context, samples: [sample] });
-		} catch (error) {
-			failure = error;
-		}
-		if (!expectedSamples.has(sample.name)) {
-			if (failure) throw failure;
-			continue;
-		}
-		assert.ok(
-			failure,
-			`Unexpected pass: ${entry.id} / ${sample.name}; review and remove the expected-failure marker`,
-		);
-		if (!matchesKnownFailure(entry, sample, failure)) throw failure;
-	}
-	return {
-		id: entry.id,
+	return runExpectedFailure(
+		entry,
+		context,
 		level,
-		samples: [...expectedSamples],
-		issue: issue.issue,
-		reason: issue.reason,
-		followUp: issue.followUp,
-	};
+		expectedFailure(entry, level),
+		check,
+		matchesKnownFailure,
+	);
 }

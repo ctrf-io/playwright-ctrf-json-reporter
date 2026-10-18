@@ -1,9 +1,15 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { it } from "vitest";
-import { expectedFailures, runConformance } from "../expected-failures.mjs";
-import { catalogue, disposition } from "../shared/checks.mjs";
-import { unitContext } from "./fixtures";
+import {
+	expectedFailures,
+	runConformance,
+} from "../standard/conformance/expected-failures.mjs";
+import {
+	catalogue,
+	disposition,
+} from "../standard/conformance/shared/checks.mjs";
+import { unitContext } from "../standard/conformance/unit/fixtures";
 
 const entry = catalogue.entries.find(
 	(item: any) => item.path === "results.environment.buildNumber",
@@ -14,7 +20,10 @@ function context() {
 
 it("expected-failure declarations refer to supported catalogue entries and GitHub issue follow-ups", () => {
 	const manifest = JSON.parse(
-		readFileSync(new URL("../playwright.json", import.meta.url), "utf8"),
+		readFileSync(
+			new URL("../standard/conformance/playwright.json", import.meta.url),
+			"utf8",
+		),
 	);
 	for (const [id, issue] of Object.entries(expectedFailures) as [
 		string,

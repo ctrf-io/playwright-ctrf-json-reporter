@@ -28,6 +28,11 @@ export default async function* conformanceCtrfReporter(events) {
 			trace: data.details.error?.cause?.stack ?? data.details.error?.stack,
 		});
 	}
-	writeReport(records, "integration", "node:test", start);
+	writeReport(
+		records,
+		process.env.CTRF_CONFORMANCE_LEVEL ?? "integration",
+		"node:test",
+		start,
+	);
 	yield "";
 }
