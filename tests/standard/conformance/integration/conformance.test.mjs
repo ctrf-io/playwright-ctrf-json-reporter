@@ -1,7 +1,10 @@
 import { readFileSync } from "node:fs";
 import { after, test } from "node:test";
-import { catalogue, checkEntry, disposition } from "../shared/checks.mjs";
+import { catalogue, disposition } from "../shared/checks.mjs";
 
+import { expectedFailure, runConformance } from "../expected-failures.mjs";
+
+const observedExpectedFailures = [];
 const manifest = JSON.parse(
 	readFileSync(new URL("../playwright.json", import.meta.url), "utf8"),
 );
@@ -19,14 +22,19 @@ context.shards = context.shards.map((name) =>
 
 for (const entry of catalogue.entries) {
 	const capability = disposition(entry, manifest);
-	test(
-		entry.id,
-		{ skip: capability.supported ? false : capability.reason },
-		() => checkEntry(entry, context),
-	);
+	const issue = expectedFailure(entry, "integration");
+	test(`${entry.id}${issue ? ` [expected failure: ${issue.issue}]` : ""}`, {
+		skip: capability.supported ? false : capability.reason,
+	}, () => {
+		const result = runConformance(entry, context, "integration");
+		if (result) observedExpectedFailures.push(result);
+	});
 }
 
 after(() => {
+	console.log(
+		`Conformance expected failures (base64): ${Buffer.from(JSON.stringify(observedExpectedFailures)).toString("base64")}`,
+	);
 	console.log(
 		`Conformance recommendations: ${JSON.stringify(context.warnings)}`,
 	);

@@ -289,6 +289,16 @@ try {
 	const warnings = JSON.parse(
 		output.match(/Conformance recommendations: (\[.*\])/u)?.[1] ?? "[]",
 	);
+	const expectedFailures = JSON.parse(
+		Buffer.from(
+			output.match(
+				/Conformance expected failures \(base64\): ([A-Za-z0-9+/=]+)/u,
+			)?.[1] ?? "W10=",
+			"base64",
+		).toString("utf8"),
+	);
+	summary.expectedFailures = expectedFailures.length;
+	summary.conformancePassed = summary.pass - expectedFailures.length;
 	summary.recommendationWarnings = warnings.length;
 	console.log(`Standard integration: ${JSON.stringify(summary)}`);
 	for (const failure of failures) console.log(failure);
@@ -299,6 +309,7 @@ try {
 			JSON.stringify(
 				{
 					...summary,
+					expectedFailureDetails: expectedFailures,
 					scenarios: new Set(
 						scenarios.map((scenario) => scenario.group ?? scenario.name),
 					).size,

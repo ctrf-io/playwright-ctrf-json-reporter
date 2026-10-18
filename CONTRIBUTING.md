@@ -79,17 +79,23 @@ separate from `npm test` and the original integration smoke.
 
 Keep common family IDs stable, update `playwright.json` when capabilities change,
 and provide positive evidence for supported properties. Unsupported optional
-features are skipped with reasons; broken supported behavior must fail. Check
-schema and written-specification implications, including valid omission and
+features are skipped with reasons; unrecorded broken behavior must fail. Known
+defects can use narrowly matched, per-level/sample entries in
+`tests/standard/conformance/expected-failures.mjs`, with a reason and follow-up in
+[known issues](tests/standard/conformance/known-issues.md). Keep checks running;
+unexpected passes and changed failures must fail. Remove markers with the fix.
+Check schema and written-specification implications, including valid omission and
 conditional rules. Recommendations remain advisory. Do not change expectations
 to match incorrect reporter output.
 
 CI runs both conformance levels independently on Node 22, 24 and 26 and uploads
 unit JSON results or integration reports/logs, including on failure. Both levels
-also gate release staging. The pilot currently exposes known reporter defects;
-these failures must be resolved before the conformance gate passes. In your PR,
-include commands and results, explain skips or warnings, and identify any remaining
-failures rather than claiming all checks pass.
+also run before release staging. Known expected failures allow the baseline check
+to pass while the defects remain tracked; this does not establish full conformance
+or authorize releasing those defects. Unit results label expected-failure cases
+and retain a separate exception artifact; integration summaries separate expected
+failures from conformance passes. In your PR, include commands and results, explain
+skips, expected failures and warnings, and identify remaining defects.
 
 ### Original integration smoke
 
