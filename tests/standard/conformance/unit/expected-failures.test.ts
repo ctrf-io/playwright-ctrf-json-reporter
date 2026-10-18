@@ -6,7 +6,7 @@ import { catalogue, disposition } from "../shared/checks.mjs";
 import { unitContext } from "./fixtures";
 
 const entry = catalogue.entries.find(
-	(item: any) => item.path === "results.tests[].status",
+	(item: any) => item.path === "results.environment.buildNumber",
 );
 function context() {
 	return unitContext();
@@ -32,24 +32,25 @@ it("expected-failure declarations refer to supported catalogue entries and GitHu
 		);
 	}
 });
-it("accepts only the recorded unexpected-pass mismatch", () => {
+it("accepts only the recorded build-number mismatch", () => {
 	assert.equal(
 		runConformance(entry, context(), "unit").issue,
-		"unexpected-pass",
+		"invalid-build-number",
 	);
 });
 it("rejects an unexpected pass after a known defect is fixed", () => {
 	const value = context();
 	for (const sample of value.samples)
-		sample.report.results.tests.find(
-			(test: any) => test.name === "unexpected pass",
-		).status = "failed";
+		if (sample.name.includes("build-number"))
+			sample.report.results.environment.buildNumber = 1;
 	assert.throws(() => runConformance(entry, value, "unit"), /Unexpected pass:/);
 });
-it("rejects a different source mapping failure", () => {
+it("rejects a different schema failure", () => {
 	const value = context();
-	value.samples[0].report.results.tests[0].status = "failed";
-	assert.throws(() => runConformance(entry, value, "unit"), /source mapping/);
+	value.samples.find(
+		(sample: any) => sample.name === "fractional-build-number",
+	).report.results.environment.buildNumber = "invalid";
+	assert.throws(() => runConformance(entry, value, "unit"), /must be integer/);
 });
 it("rejects infrastructure errors rather than expecting any exception", () => {
 	assert.throws(
@@ -62,11 +63,7 @@ it("rejects infrastructure errors rather than expecting any exception", () => {
 });
 it("requires every recorded failing sample, including later samples", () => {
 	const value = context();
-	value.samples
-		.at(-1)
-		.report.results.tests.find(
-			(test: any) => test.name === "unexpected pass",
-		).status = "failed";
+	value.samples.at(-1).report.results.environment.buildNumber = 1;
 	assert.throws(() => runConformance(entry, value, "unit"), /Unexpected pass:/);
 });
 it("rejects missing expected-failure fixtures", () => {
@@ -114,12 +111,28 @@ it("does not accept the same defect in an unrecorded sample", () => {
 	);
 });
 
-it("allows required children to have no instances in an empty run", () => {
+it("allows a schema-valid empty run outside known-failure samples", () => {
+	const document = catalogue.entries.find(
+		(item: any) => item.id === "conformance/report/single-json-object",
+	);
 	const value = context();
-	value.samples.push({
-		name: "empty",
-		report: { results: { tests: [] } },
-		expected: { results: { tests: [] } },
-	});
-	assert.equal(runConformance(entry, value, "unit").issue, "unexpected-pass");
+	const empty = structuredClone(value.samples[0]);
+	empty.name = "empty";
+	delete empty.report.results.environment;
+	empty.report.results.tests = [];
+	for (const key of [
+		"tests",
+		"passed",
+		"failed",
+		"skipped",
+		"pending",
+		"other",
+	])
+		empty.report.results.summary[key] = 0;
+	empty.bytes = Buffer.from(JSON.stringify(empty.report));
+	value.samples.push(empty);
+	assert.equal(
+		runConformance(document, value, "unit").issue,
+		"invalid-build-number",
+	);
 });

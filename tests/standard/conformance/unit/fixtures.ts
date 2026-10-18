@@ -94,6 +94,13 @@ function suite() {
 		["other", ["unknown"], "passed", "other"],
 		["expected failure", ["failed"], "failed", "passed"],
 		["unexpected pass", ["passed"], "failed", "failed"],
+		[
+			"unexpected pass exhausts retries",
+			["passed", "passed", "passed"],
+			"failed",
+			"failed",
+		],
+		["expected failure after retry", ["passed", "failed"], "failed", "passed"],
 		["timeout", ["timedOut"], "passed", "failed"],
 	];
 	group.tests = definitions.map(([name, attempts, expectedStatus]) => ({

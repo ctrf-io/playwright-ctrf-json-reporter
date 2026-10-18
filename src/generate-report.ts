@@ -303,7 +303,13 @@ class GenerateCtrfReport implements Reporter {
 			test.type = this.reporterConfigOptions.testType ?? "e2e";
 			test.filePath = testCase.location.file;
 			test.retries = testResult.retry;
-			test.flaky = testResult.status === "passed" && testResult.retry > 0;
+			test.flaky =
+				status === "passed" &&
+				testCase.results
+					.slice(0, -1)
+					.some((attempt) =>
+						["failed", "timedOut", "interrupted"].includes(attempt.status),
+					);
 			test.steps = [];
 			if (testResult.steps.length > 0) {
 				testResult.steps.forEach((step) => {
@@ -377,10 +383,21 @@ class GenerateCtrfReport implements Reporter {
 	}
 
 	getCtrfTestStatus(testCase: TestCase, testResult: TestResult): TestStatus {
-		return testResult.status === testCase.expectedStatus &&
+		if (
+			testResult.status === testCase.expectedStatus &&
 			testResult.status !== "skipped"
-			? "passed"
-			: this.mapPlaywrightStatusToCtrf(testResult.status);
+		) {
+			return "passed";
+		}
+
+		if (
+			testResult.status === "passed" &&
+			testCase.expectedStatus === "failed"
+		) {
+			return "failed";
+		}
+
+		return this.mapPlaywrightStatusToCtrf(testResult.status);
 	}
 
 	mapPlaywrightStatusToCtrf(testStatus: string): TestStatus {

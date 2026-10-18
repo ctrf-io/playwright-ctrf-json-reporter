@@ -15,19 +15,6 @@ function context() {
 	const samples = source.samples.filter(
 		(sample) => !sample.name.includes("build-number"),
 	);
-	// Checker controls use a valid independent document, not the reporter's
-	// known unexpected-pass mapping. Adjust the control only, never reporter tests.
-	for (const sample of samples) {
-		const test = sample.report.results.tests.find(
-			(test: any) => test.name === "unexpected pass",
-		);
-		if (test?.status === "passed") {
-			test.status = "failed";
-			sample.report.results.summary.passed--;
-			sample.report.results.summary.failed++;
-			sample.bytes = Buffer.from(JSON.stringify(sample.report));
-		}
-	}
 	return { ...source, samples, repeated: samples.slice(0, 2) };
 }
 
