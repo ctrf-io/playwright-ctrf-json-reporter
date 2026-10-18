@@ -97,6 +97,7 @@ jobs:
     permissions:
       contents: read
       actions: read
+      pull-requests: write
     strategy:
       fail-fast: false
       matrix:
@@ -144,8 +145,9 @@ jobs:
           title: 'Reporter conformance (Node ${{ matrix.node }})'
           summary-report: true
           test-report: true
-          custom-report: true
-          template-path: tests/standard/conformance/reporters/expected-failures.hbs
+          pull-request: ${{ matrix.node == '24' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+          overwrite-comment: true
+          comment-tag: reporter-conformance
           collapse-large-reports: true
           upload-artifact: true
           artifact-name: ctrf-conformance-node-${{ matrix.node }}

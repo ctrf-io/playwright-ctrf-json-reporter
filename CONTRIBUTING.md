@@ -91,8 +91,11 @@ to match incorrect reporter output.
 CI runs both conformance levels as separate steps in the existing integration
 job on Node 22, 24 and 26. A unit failure does not prevent integration from running.
 The job publishes CTRF results for both levels through GitHub Test Reporter, with
-all test cases and an expected-failure table in the build summary. Expected
-failures use Other with defect metadata rather than passed. Unit/integration
+the built-in summary and collapsed test table. Node 24 also maintains one PR
+comment tagged `reporter-conformance`, overwriting it on later runs. It describes
+the reference runtime; check the full matrix for compatibility results. Fork PRs
+keep build summaries/artifacts without posting a comment. Expected failures retain
+explicit test-name labels and use Other with defect metadata rather than passed. Unit/integration
 names and identities stay distinct; checker controls are included. CTRF artifacts,
 unit JSON results and integration reports/logs are retained, including on failure.
 Both levels
