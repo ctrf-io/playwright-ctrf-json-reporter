@@ -305,11 +305,8 @@ class GenerateCtrfReport implements Reporter {
 			test.retries = testResult.retry;
 			test.flaky =
 				status === "passed" &&
-				testCase.results
-					.slice(0, -1)
-					.some((attempt) =>
-						["failed", "timedOut", "interrupted"].includes(attempt.status),
-					);
+				testResult.status === "passed" &&
+				testResult.retry > 0;
 			test.steps = [];
 			if (testResult.steps.length > 0) {
 				testResult.steps.forEach((step) => {
