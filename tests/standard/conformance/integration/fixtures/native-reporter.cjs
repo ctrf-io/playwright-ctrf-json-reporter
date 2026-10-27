@@ -15,6 +15,7 @@ class NativeWitness {
 				const final = test.results.at(-1);
 				let expectedCtrfStatus;
 				if (final.status === "skipped") expectedCtrfStatus = "skipped";
+				else if (final.status === "interrupted") expectedCtrfStatus = "other";
 				else if (test.outcome() === "unexpected") expectedCtrfStatus = "failed";
 				else expectedCtrfStatus = "passed";
 				return {

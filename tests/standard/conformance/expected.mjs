@@ -9,9 +9,15 @@ export function expectedReport(native, options = {}) {
 			status: test.expectedCtrfStatus,
 			duration: last.duration,
 			sourceAttempts: test.attempts.map((attempt) => ({
-				status: ["timedOut", "interrupted"].includes(attempt.status)
-					? "failed"
-					: attempt.status,
+				// The oracle maps source statuses independently of the adapter
+				// under test: a timeout is a failure, an interruption is neither
+				// a pass nor a fail.
+				status:
+					attempt.status === "timedOut"
+						? "failed"
+						: attempt.status === "interrupted"
+							? "other"
+							: attempt.status,
 				duration: attempt.duration,
 			})),
 		};
@@ -26,13 +32,16 @@ export function expectedReport(native, options = {}) {
 			type: options.testType ?? "e2e",
 			filePath: test.filePath,
 			retries: test.attempts.length - 1,
+			// Flaky means a pass that followed a failure: an interrupted
+			// attempt is neither a pass nor a fail, so it does not count. The
+			// reporter computes flaky from the final outcome and retry count
+			// alone; both definitions agree on every status combination
+			// Playwright can produce within a single run.
 			flaky:
 				test.expectedCtrfStatus === "passed" &&
 				test.attempts
 					.slice(0, -1)
-					.some((attempt) =>
-						["failed", "timedOut", "interrupted"].includes(attempt.status),
-					),
+					.some((attempt) => ["failed", "timedOut"].includes(attempt.status)),
 			stdout: last.stdout,
 			stderr: last.stderr,
 		};

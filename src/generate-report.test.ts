@@ -36,6 +36,38 @@ const fakeConfig = { version: "1.63.0" } as unknown as FullConfig;
 
 const fakeTest = (): TestCase => ({ results: [] }) as unknown as TestCase;
 
+const interruptedResult = (
+	overrides: Record<string, unknown> = {},
+): TestResult =>
+	({
+		retry: 0,
+		duration: 100,
+		status: "interrupted",
+		startTime: new Date("2026-10-05T00:00:00.000Z"),
+		error: undefined,
+		attachments: [],
+		steps: [],
+		stdout: [],
+		stderr: [],
+		...overrides,
+	}) as unknown as TestResult;
+
+const fakeTestCase = (
+	results: TestResult[],
+	expectedStatus: TestCase["expectedStatus"] = "passed",
+	parent?: Suite,
+): TestCase =>
+	({
+		id: "interrupted-test-id",
+		title: "is interrupted",
+		annotations: [],
+		tags: [],
+		expectedStatus,
+		location: { file: "interrupted.spec.ts", line: 1, column: 1 },
+		parent,
+		results,
+	}) as unknown as TestCase;
+
 const fakeAnnotatedTestCase = (): TestCase => {
 	const annotations = [{ type: "issue", description: "CTR-101" }];
 	const result = {
@@ -281,6 +313,155 @@ describe("GenerateCtrfReport", () => {
 			reporter.processTest(fakeAnnotatedTestCase());
 
 			expect(reporter.ctrfReport.results.tests[0]).not.toHaveProperty("id");
+		});
+	});
+
+	describe("interrupted results", () => {
+		it("maps an interrupted final result to the other status", () => {
+			const reporter = new GenerateCtrfReport();
+
+			reporter.processTest(fakeTestCase([interruptedResult()]));
+
+			expect(reporter.ctrfReport.results.tests[0]?.status).toBe("other");
+		});
+
+		it("counts an interrupted test under summary.other, not summary.failed", () => {
+			const reporter = new GenerateCtrfReport();
+
+			reporter.processTest(fakeTestCase([interruptedResult()]));
+
+			const { summary } = reporter.ctrfReport.results;
+			expect(summary.tests).toBe(1);
+			expect(summary.other).toBe(1);
+			expect(summary.failed).toBe(0);
+		});
+
+		it("counts a genuine failure and an interrupted test separately in the same run", () => {
+			const reporter = new GenerateCtrfReport();
+
+			reporter.processTest(
+				fakeTestCase([
+					interruptedResult({
+						status: "failed",
+						error: { message: "boom", stack: "Error: boom", snippet: "s" },
+					}),
+				]),
+			);
+			reporter.processTest(fakeTestCase([interruptedResult()]));
+
+			const { summary, tests } = reporter.ctrfReport.results;
+			expect(summary.tests).toBe(2);
+			expect(summary.failed).toBe(1);
+			expect(summary.other).toBe(1);
+			expect(summary.passed).toBe(0);
+
+			const failedTest = tests.find((test) => test.status === "failed");
+			const interruptedTest = tests.find((test) => test.status === "other");
+			expect(failedTest?.message).toBe("boom");
+			expect(failedTest?.rawStatus).toBe("failed");
+			expect(interruptedTest?.rawStatus).toBe("interrupted");
+			expect(interruptedTest?.message).toBeUndefined();
+		});
+
+		it("preserves the interrupted rawStatus while mapping status to other", () => {
+			const reporter = new GenerateCtrfReport();
+
+			reporter.processTest(fakeTestCase([interruptedResult()]));
+
+			const test = reporter.ctrfReport.results.tests[0];
+			expect(test?.rawStatus).toBe("interrupted");
+			expect(test?.status).toBe("other");
+		});
+
+		it("omits failure details for an interrupted result without an error", () => {
+			const reporter = new GenerateCtrfReport();
+
+			reporter.processTest(
+				fakeTestCase([interruptedResult({ error: undefined })]),
+			);
+
+			const test = reporter.ctrfReport.results.tests[0];
+			expect(test?.message).toBeUndefined();
+			expect(test?.trace).toBeUndefined();
+			expect(test?.snippet).toBeUndefined();
+
+			const serialized = JSON.parse(JSON.stringify(test));
+			expect("message" in serialized).toBe(false);
+			expect("trace" in serialized).toBe(false);
+			expect("snippet" in serialized).toBe(false);
+			expect(serialized.status).toBe("other");
+		});
+
+		it("keeps failure details for an interrupted result that carries an error", () => {
+			const reporter = new GenerateCtrfReport();
+
+			reporter.processTest(
+				fakeTestCase([
+					interruptedResult({
+						error: {
+							message: "interrupted",
+							stack: "Error: interrupted",
+							snippet: "snippet",
+						},
+					}),
+				]),
+			);
+
+			const test = reporter.ctrfReport.results.tests[0];
+			expect(test?.message).toBe("interrupted");
+			expect(test?.trace).toBe("Error: interrupted");
+			expect(test?.snippet).toBe("snippet");
+			expect(test?.status).toBe("other");
+		});
+
+		it("maps an earlier interrupted attempt to other without affecting the final failed status", () => {
+			const reporter = new GenerateCtrfReport();
+
+			reporter.processTest(
+				fakeTestCase([
+					interruptedResult({ retry: 0 }),
+					interruptedResult({ retry: 1, status: "failed" }),
+				]),
+			);
+
+			const test = reporter.ctrfReport.results.tests[0];
+			expect(test?.retryAttempts?.[0]?.status).toBe("other");
+			expect(test?.status).toBe("failed");
+			expect(test?.flaky).toBe(false);
+		});
+
+		it("maps an interrupted final result to other when the test was expected to fail", () => {
+			const reporter = new GenerateCtrfReport();
+
+			reporter.processTest(fakeTestCase([interruptedResult()], "failed"));
+
+			expect(reporter.ctrfReport.results.tests[0]?.status).toBe("other");
+		});
+
+		it("emits a valid report for a run containing an interrupted test", () => {
+			const file = fakeSuite("sample.spec.ts", "file");
+			const testCase = fakeTestCase([interruptedResult()], "passed", file);
+			file.tests.push(testCase);
+			const root = fakeSuite("", "root", [file]);
+			const reporter = new GenerateCtrfReport();
+
+			reporter.onBegin(fakeConfig, root);
+			reporter.onEnd();
+
+			expect(() =>
+				validateStrict(reporter.ctrfReport, {
+					specVersion: CURRENT_SPEC_VERSION,
+				}),
+			).not.toThrow();
+			expect(reporter.ctrfReport.results.tests[0]?.status).toBe("other");
+		});
+
+		it("maps an interrupted final result to other in minimal reports", () => {
+			const reporter = new GenerateCtrfReport({ minimal: true });
+
+			reporter.processTest(fakeTestCase([interruptedResult()]));
+
+			expect(reporter.ctrfReport.results.tests[0]?.status).toBe("other");
 		});
 	});
 

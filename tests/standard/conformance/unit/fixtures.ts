@@ -16,7 +16,7 @@ const image = Buffer.from(
 );
 
 function result(status: string, retry: number): TestResult {
-	const failed = ["failed", "timedOut", "interrupted"].includes(status);
+	const failed = ["failed", "timedOut"].includes(status);
 	return {
 		status,
 		retry,
@@ -102,6 +102,8 @@ function suite() {
 		],
 		["expected failure after retry", ["passed", "failed"], "failed", "passed"],
 		["timeout", ["timedOut"], "passed", "failed"],
+		["interrupted", ["interrupted"], "passed", "other"],
+		["interrupted-retries", ["interrupted", "interrupted"], "passed", "other"],
 	];
 	group.tests = definitions.map(([name, attempts, expectedStatus]) => ({
 		id: `native:${name}`,
