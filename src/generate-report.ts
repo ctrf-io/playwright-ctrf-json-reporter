@@ -9,6 +9,7 @@ import type {
 	TestCase,
 	TestResult,
 	FullConfig,
+	FullResult,
 	TestError,
 	TestStep,
 	WorkerInfo,
@@ -167,9 +168,16 @@ class GenerateCtrfReport implements Reporter {
 		this.globalErrors.push(serialized);
 	}
 
-	onEnd(): void {
+	onEnd(result?: FullResult): void {
 		const stop = Date.now();
 		this.ctrfReport.results.summary.stop = stop;
+		// When the run aborts before onBegin (for example a global setup
+		// failure), the summary would otherwise keep the placeholder start of
+		// 0. FullResult carries the real run timing, so backfill from it.
+		if (this.startTime === undefined && result?.startTime instanceof Date) {
+			this.startTime = result.startTime.getTime();
+			this.ctrfReport.results.summary.start = this.startTime;
+		}
 		if (this.startTime !== undefined) {
 			this.ctrfReport.results.summary.duration = stop - this.startTime;
 		}
@@ -188,7 +196,52 @@ class GenerateCtrfReport implements Reporter {
 				this.ctrfReport.results.summary.suites = this.countSuites(this.suite);
 			}
 		}
+
+		if (
+			result !== undefined &&
+			result.status !== "passed" &&
+			this.ctrfReport.results.summary.failed === 0
+		) {
+			this.appendRunLevelFailure(result);
+		}
+
 		this.writeReportToFile(this.ctrfReport);
+	}
+
+	/**
+	 * Append a synthetic failed entry when the run failed without any failing
+	 * test. Run-level failures — global setup/teardown errors, worker-scoped
+	 * fixture teardown errors, global timeouts and interruptions — exit
+	 * Playwright non-zero while every executed test can still be green, which
+	 * would leave summary.failed at 0. The entry keeps the summary counters
+	 * consistent with the tests array; details reported through onError remain
+	 * in results.extra.errors.
+	 */
+	private appendRunLevelFailure(result: FullResult): void {
+		const firstError = this.globalErrors[0];
+		const test: Test = {
+			executionId: crypto.randomUUID(),
+			attemptId: crypto.randomUUID(),
+			name: "Playwright run-level failure",
+			status: "failed",
+			duration: 0,
+		};
+
+		if (this.reporterConfigOptions.minimal === false) {
+			test.rawStatus = result.status;
+			if (typeof firstError?.message === "string") {
+				test.message = firstError.message;
+			}
+			if (typeof firstError?.stack === "string") {
+				test.trace = firstError.stack;
+			}
+			if (typeof firstError?.snippet === "string") {
+				test.snippet = firstError.snippet;
+			}
+		}
+
+		this.ctrfReport.results.tests.push(test);
+		this.updateSummaryFromTestStatus("failed", this.ctrfReport);
 	}
 
 	/**

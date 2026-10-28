@@ -38,6 +38,29 @@ if (mode === "all-passed") {
 		});
 		test("affected case", () => {});
 	});
+} else if (mode === "worker-teardown-error") {
+	// Issue 120 reproduction: a worker-scoped fixture whose teardown throws
+	// after every test has passed. Playwright exits non-zero and reports a
+	// run-level error, yet no individual test fails.
+	const testWithWorkerFixture = test.extend({
+		boom: [
+			// biome-ignore lint/correctness/noEmptyPattern: Playwright requires the first fixture argument to be a destructuring pattern.
+			async ({}, use) => {
+				await use();
+				throw new Error("controlled worker teardown failure");
+			},
+			{ scope: "worker" },
+		],
+	});
+	testWithWorkerFixture("passing case one", async ({ boom }) => {
+		// Requesting the fixture instantiates it; only its teardown fails.
+		expect(boom).toBeUndefined();
+		expect(1 + 1).toBe(2);
+	});
+	testWithWorkerFixture("passing case two", async ({ boom }) => {
+		expect(boom).toBeUndefined();
+		expect(2 + 2).toBe(4);
+	});
 } else if (mode === "multiple-retries") {
 	test("unexpected pass exhausts retries", () => {
 		test.fail();

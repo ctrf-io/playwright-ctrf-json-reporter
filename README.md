@@ -303,6 +303,30 @@ test('example test', async ({ page }) => {
 
 The browser metadata file must be called metadata.json and contain properties name and version in the body.
 
+### Run-level failures and global errors
+
+Playwright can fail a run without any test failing: a global setup or teardown error, a worker-scoped fixture that throws during teardown, an unhandled exception in a worker, or a run that times out or is interrupted. Playwright exits non-zero, but every executed test may still be green.
+
+The reporter handles this in two places:
+
+- **`results.extra.errors`** — every run-level error Playwright reports through the `onError` hook is recorded here, with `message`, `stack`, `snippet`, and `location` where available.
+- **A synthetic failed test entry** — when Playwright ends the run with a `FullResult.status` other than `passed` (`failed`, `timedout`, or `interrupted`) and no individual test was counted as failed, the reporter appends a `Playwright run-level failure` entry to `results.tests`:
+
+```json
+{
+  "executionId": "...",
+  "attemptId": "...",
+  "name": "Playwright run-level failure",
+  "status": "failed",
+  "duration": 0,
+  "rawStatus": "failed",
+  "message": "Error: worker teardown boom",
+  "trace": "..."
+}
+```
+
+The entry increments `summary.failed` and `summary.tests` like any other test, so consumers that gate on `summary.failed === 0` (CI verdicts, merge queues, dashboards) reliably see a red run, and the summary stays consistent with the `tests` array. `rawStatus` carries Playwright's run-level status verbatim (`failed`, `timedout`, or `interrupted`). In `minimal` reports the detail fields (`rawStatus`, `message`, `trace`, and `snippet`) are omitted. If a real test already failed, no synthetic entry is added — the run is already red. When Playwright reports global errors, the synthetic entry uses the first error's details and the full list remains in `results.extra.errors`.
+
 ## What is CTRF?
 
 CTRF is a universal JSON test report schema that addresses the lack of a standardized format for JSON test reports.
