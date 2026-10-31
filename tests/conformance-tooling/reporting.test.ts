@@ -24,7 +24,7 @@ async function withOutput(callback: () => unknown) {
 		rmSync(directory, { recursive: true, force: true });
 	}
 }
-it("reports expected failures as Other with defect metadata, not conformance passes", () => {
+it("keeps removed build-number exception labels as ordinary results", () => {
 	const report = createReport(
 		[
 			{ name, status: "passed", duration: 0.51 },
@@ -42,18 +42,15 @@ it("reports expected failures as Other with defect metadata, not conformance pas
 		tests: 5,
 		start: 0,
 		stop: 10,
-		passed: 1,
+		passed: 2,
 		failed: 1,
 		skipped: 1,
 		pending: 1,
-		other: 1,
+		other: 0,
 	});
-	assert.equal(report.results.tests[0].rawStatus, "expected-failure");
+	assert.equal(report.results.tests[0].rawStatus, "passed");
 	assert.equal(report.results.tests[0].duration, 1);
-	assert.equal(
-		report.results.tests[0].extra.expectedFailure.issue,
-		"invalid-build-number",
-	);
+	assert.equal(report.results.tests[0].extra?.expectedFailure, undefined);
 	assert.equal(report.results.tests[3].name, "unit / unsupported — reason");
 });
 it("does not relabel unexpected passes or different failures as expected", () => {

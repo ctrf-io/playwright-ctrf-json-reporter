@@ -57,7 +57,11 @@ export function expectedReport(native, options = {}) {
 		"testEnvironment",
 		"shardId",
 	]) {
-		if (options[key] !== undefined) environment[key] = options[key];
+		if (
+			options[key] !== undefined &&
+			(key !== "buildNumber" || Number.isInteger(options[key]))
+		)
+			environment[key] = options[key];
 	}
 	return {
 		reportFormat: "CTRF",
