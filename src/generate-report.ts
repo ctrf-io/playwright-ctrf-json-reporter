@@ -403,12 +403,13 @@ class GenerateCtrfReport implements Reporter {
 				return "passed";
 			case "failed":
 			case "timedOut":
-			case "interrupted":
 				return "failed";
 			case "skipped":
 				return "skipped";
 			case "pending":
 				return "pending";
+			case "interrupted":
+				return "other";
 			default:
 				return "other";
 		}
