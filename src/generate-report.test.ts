@@ -5,6 +5,7 @@
 import GenerateCtrfReport from "./generate-report";
 import type {
 	FullConfig,
+	FullResult,
 	Suite,
 	TestCase,
 	TestError,
@@ -60,6 +61,54 @@ const fakeAnnotatedTestCase = (): TestCase => {
 		results: [result],
 	} as unknown as TestCase;
 };
+
+const fakeFailingTestCase = (): TestCase => {
+	const result = {
+		retry: 0,
+		duration: 60,
+		status: "failed",
+		startTime: new Date("2026-10-05T00:00:00.000Z"),
+		error: {
+			message: "assertion failed",
+			stack: "Error: assertion failed\n    at failing.spec.ts:4:5",
+			snippet: "expect(1 + 1).toBe(3)",
+		},
+		attachments: [],
+		steps: [],
+		stdout: [],
+		stderr: [],
+	} as unknown as TestResult;
+
+	return {
+		id: "failing-case-chromium",
+		title: "fails",
+		annotations: [],
+		tags: [],
+		expectedStatus: "passed",
+		location: { file: "failing.spec.ts", line: 1, column: 1 },
+		parent: undefined,
+		results: [result],
+	} as unknown as TestCase;
+};
+
+const globalError = (overrides: Partial<TestError> = {}): TestError => ({
+	message: "global setup failed",
+	stack:
+		"Error: global setup failed\n    at globalSetup (global-setup.ts:12:11)",
+	location: { file: "global-setup.ts", line: 12, column: 11 },
+	...overrides,
+});
+
+const fullResult = (
+	status: FullResult["status"],
+	overrides: Partial<FullResult> = {},
+): FullResult =>
+	({
+		status,
+		startTime: new Date(1_790_000_000_000),
+		duration: 500,
+		...overrides,
+	}) as FullResult;
 
 describe("GenerateCtrfReport", () => {
 	describe("CTRF conformance", () => {
@@ -454,14 +503,6 @@ describe("GenerateCtrfReport", () => {
 });
 
 describe("onError global errors", () => {
-	const globalError = (overrides: Partial<TestError> = {}): TestError => ({
-		message: "global setup failed",
-		stack:
-			"Error: global setup failed\n    at globalSetup (global-setup.ts:12:11)",
-		location: { file: "global-setup.ts", line: 12, column: 11 },
-		...overrides,
-	});
-
 	it("leaves results.extra undefined when there are no global errors", () => {
 		const reporter = new GenerateCtrfReport();
 		reporter.onEnd();
@@ -593,5 +634,170 @@ describe("onError global errors", () => {
 		// `{ message: undefined }` regression pass unnoticed.
 		expect(errors[0]).toStrictEqual({});
 		expect(Object.keys(errors[0] ?? {})).toEqual([]);
+	});
+});
+
+describe("onEnd run-level failure status", () => {
+	const passingRoot = (): Suite => {
+		const testCase = fakeAnnotatedTestCase();
+		testCase.parent = {
+			title: "passing.spec.ts",
+			parent: undefined,
+		} as Suite;
+		return fakeSuite("", "root", [], [testCase]);
+	};
+
+	const failingRoot = (): Suite =>
+		fakeSuite("", "root", [], [fakeFailingTestCase()]);
+
+	it("is a no-op when the run passed", () => {
+		const reporter = new GenerateCtrfReport();
+		reporter.onBegin(fakeConfig, passingRoot());
+		reporter.onEnd(fullResult("passed"));
+
+		const { summary, tests } = reporter.ctrfReport.results;
+		expect(summary).toMatchObject({ tests: 1, passed: 1, failed: 0 });
+		expect(tests).toHaveLength(1);
+	});
+
+	it("records a failed run with passing tests as a synthetic failed entry", () => {
+		const reporter = new GenerateCtrfReport();
+		reporter.onBegin(fakeConfig, passingRoot());
+		reporter.onError(globalError({ snippet: "> 1 | throw new Error('boom')" }));
+		reporter.onEnd(fullResult("failed"));
+
+		const { summary, tests, extra } = reporter.ctrfReport.results;
+		expect(summary).toMatchObject({ tests: 2, passed: 1, failed: 1 });
+		expect(tests).toHaveLength(2);
+		expect(tests[1]).toEqual({
+			executionId: expect.any(String),
+			attemptId: expect.any(String),
+			name: "Playwright run-level failure",
+			status: "failed",
+			duration: 0,
+			rawStatus: "failed",
+			message: "global setup failed",
+			trace:
+				"Error: global setup failed\n    at globalSetup (global-setup.ts:12:11)",
+			snippet: "> 1 | throw new Error('boom')",
+		});
+		expect((extra as { errors: unknown[] }).errors).toHaveLength(1);
+		expect(() =>
+			validateStrict(reporter.ctrfReport, {
+				specVersion: CURRENT_SPEC_VERSION,
+			}),
+		).not.toThrow();
+	});
+
+	it("does not double-count when a test already failed", () => {
+		const reporter = new GenerateCtrfReport();
+		reporter.onBegin(fakeConfig, failingRoot());
+		reporter.onError(globalError());
+		reporter.onEnd(fullResult("failed"));
+
+		const { summary, tests, extra } = reporter.ctrfReport.results;
+		expect(summary).toMatchObject({ tests: 1, passed: 0, failed: 1 });
+		expect(tests).toHaveLength(1);
+		expect((extra as { errors: unknown[] }).errors).toHaveLength(1);
+	});
+
+	it.each(["timedout", "interrupted"] as const)(
+		"maps a %s run to a synthetic failed entry",
+		(status) => {
+			const reporter = new GenerateCtrfReport();
+			reporter.onBegin(fakeConfig, passingRoot());
+			reporter.onEnd(fullResult(status));
+
+			const { summary, tests } = reporter.ctrfReport.results;
+			expect(summary).toMatchObject({ tests: 2, passed: 1, failed: 1 });
+			expect(tests[1]).toMatchObject({
+				name: "Playwright run-level failure",
+				status: "failed",
+				duration: 0,
+				rawStatus: status,
+			});
+		},
+	);
+
+	it("backfills run timing from FullResult when onBegin never ran", () => {
+		vi.useFakeTimers({ now: 1_790_000_000_500 });
+		try {
+			const reporter = new GenerateCtrfReport();
+			reporter.onError(globalError());
+			reporter.onEnd(
+				fullResult("failed", {
+					startTime: new Date(1_790_000_000_000),
+					duration: 500,
+				}),
+			);
+
+			const { summary } = reporter.ctrfReport.results;
+			expect(summary).toMatchObject({
+				tests: 1,
+				failed: 1,
+				start: 1_790_000_000_000,
+				stop: 1_790_000_000_500,
+				duration: 500,
+			});
+			expect(() =>
+				validateStrict(reporter.ctrfReport, {
+					specVersion: CURRENT_SPEC_VERSION,
+				}),
+			).not.toThrow();
+		} finally {
+			vi.useRealTimers();
+		}
+	});
+
+	it("still records one synthetic entry when the run reports several errors", () => {
+		const reporter = new GenerateCtrfReport();
+		reporter.onError(globalError({ message: "first" }));
+		reporter.onError(globalError({ message: "second" }));
+		reporter.onEnd(fullResult("failed"));
+
+		const { summary, tests, extra } = reporter.ctrfReport.results;
+		expect(summary).toMatchObject({ tests: 1, failed: 1 });
+		expect(tests).toHaveLength(1);
+		expect(tests[0]).toMatchObject({ message: "first" });
+		expect((extra as { errors: unknown[] }).errors).toHaveLength(2);
+	});
+
+	it("omits non-minimal fields from the synthetic entry in minimal reports", () => {
+		const reporter = new GenerateCtrfReport({ minimal: true });
+		reporter.onError(globalError({ snippet: "snip" }));
+		reporter.onEnd(fullResult("failed"));
+
+		const { summary, tests } = reporter.ctrfReport.results;
+		expect(summary).toMatchObject({ tests: 1, failed: 1 });
+		expect(tests).toHaveLength(1);
+		expect(tests[0]).toStrictEqual({
+			executionId: expect.any(String),
+			attemptId: expect.any(String),
+			name: "Playwright run-level failure",
+			status: "failed",
+			duration: 0,
+		});
+	});
+
+	it("keeps argless onEnd backward compatible", () => {
+		const reporter = new GenerateCtrfReport();
+		reporter.onError(globalError());
+		reporter.onEnd();
+
+		const { summary, tests, extra } = reporter.ctrfReport.results;
+		expect(summary).toMatchObject({ tests: 0, failed: 0 });
+		expect(tests).toHaveLength(0);
+		expect((extra as { errors: unknown[] }).errors).toHaveLength(1);
+	});
+
+	it("does not synthesize an entry for a passed run with a diagnostic error", () => {
+		const reporter = new GenerateCtrfReport();
+		reporter.onError(globalError());
+		reporter.onEnd(fullResult("passed"));
+
+		const { summary, tests, extra } = reporter.ctrfReport.results;
+		expect(summary).toMatchObject({ tests: 0, failed: 0 });
+		expect(tests).toHaveLength(0);
+		expect((extra as { errors: unknown[] }).errors).toHaveLength(1);
 	});
 });

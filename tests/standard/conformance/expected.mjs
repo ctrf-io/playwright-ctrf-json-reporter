@@ -37,6 +37,21 @@ export function expectedReport(native, options = {}) {
 			stderr: last.stderr,
 		};
 	});
+	// A run that Playwright ends in a non-passed state without any failed
+	// test is reported as one synthetic failure, keeping the summary and the
+	// tests array consistent (issue 120).
+	if (
+		native.runStatus !== undefined &&
+		native.runStatus !== "passed" &&
+		!cases.some((test) => test.status === "failed")
+	) {
+		cases.push({
+			name: "Playwright run-level failure",
+			status: "failed",
+			duration: 0,
+			...(options.minimal ? {} : { rawStatus: native.runStatus }),
+		});
+	}
 	const summary = { tests: cases.length };
 	for (const status of ["passed", "failed", "pending", "skipped", "other"])
 		summary[status] = cases.filter((test) => test.status === status).length;

@@ -90,6 +90,12 @@ const scenarios = [
 		options: { outputDir: ".", outputFile: "global-error.json" },
 	},
 	{
+		name: "worker-teardown-error",
+		group: "timeout-and-hooks",
+		mode: "worker-teardown-error",
+		expectedExit: 1,
+	},
+	{
 		name: "multiple-retries",
 		mode: "multiple-retries",
 		retries: 2,
@@ -256,6 +262,18 @@ try {
 		}
 		if (scenario.mode === "workers-and-distinct-cases")
 			assert.equal(native.tests.length, 4);
+		if (scenario.mode === "worker-teardown-error") {
+			assert.equal(native.tests.length, 2);
+			assert.ok(
+				native.tests.every((test) => test.expectedCtrfStatus === "passed"),
+				"Worker teardown fixture tests must pass before teardown fails",
+			);
+			assert.match(
+				report.results.tests.at(-1)?.message ?? "",
+				/controlled worker teardown failure/,
+			);
+			assert.equal(report.results.extra?.errors?.length, 1);
+		}
 		if (scenario.shard)
 			assert.equal(
 				native.tests.length,

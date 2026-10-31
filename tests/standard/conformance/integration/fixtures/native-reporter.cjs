@@ -8,7 +8,7 @@ class NativeWitness {
 		this.version = config.version;
 		this.suite = suite;
 	}
-	onEnd() {
+	onEnd(result) {
 		const tests = (this.suite?.allTests() ?? [])
 			.filter((test) => test.results.length)
 			.map((test) => {
@@ -35,7 +35,11 @@ class NativeWitness {
 			});
 		fs.writeFileSync(
 			"native.json",
-			JSON.stringify({ version: this.version, tests }),
+			JSON.stringify({
+				version: this.version,
+				runStatus: result?.status,
+				tests,
+			}),
 		);
 	}
 }
