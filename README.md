@@ -36,36 +36,36 @@ By standardizing test results, reports can be validated, merged, compared, and a
 
 ```json
 {
-  "results": {
-    "tool": {
-      "name": "playwright",
-      "version": "1.63.0"
-    },
-    "summary": {
-      "tests": 1,
-      "passed": 1,
-      "failed": 0,
-      "pending": 0,
-      "skipped": 0,
-      "other": 0,
-      "start": 1706828654274,
-      "stop": 1706828655782,
-      "duration": 1508
-    },
-    "tests": [
-      {
-        "testId": "5a6f2a3e1c9d4b7e8f01-a1b2c3d4e5f6a7b8c9d0",
-        "name": "ctrf should generate the same report with any tool",
-        "status": "passed",
-        "duration": 100
-      }
-    ],
-    "environment": {
-      "appName": "MyApp",
-      "buildName": "MyBuild",
-      "buildNumber": 1
-    }
-  }
+	"results": {
+		"tool": {
+			"name": "playwright",
+			"version": "1.63.0"
+		},
+		"summary": {
+			"tests": 1,
+			"passed": 1,
+			"failed": 0,
+			"pending": 0,
+			"skipped": 0,
+			"other": 0,
+			"start": 1706828654274,
+			"stop": 1706828655782,
+			"duration": 1508
+		},
+		"tests": [
+			{
+				"testId": "5a6f2a3e1c9d4b7e8f01-a1b2c3d4e5f6a7b8c9d0",
+				"name": "ctrf should generate the same report with any tool",
+				"status": "passed",
+				"duration": 100
+			}
+		],
+		"environment": {
+			"appName": "MyApp",
+			"buildName": "MyBuild",
+			"buildNumber": 1
+		}
+	}
 }
 ```
 
@@ -180,42 +180,42 @@ See the [CTRF extra specification](https://www.ctrf.io/docs/specification/extra)
 Import `ctrf` from the reporter and call `ctrf.extra()` inside any test:
 
 ```typescript
-import { test, expect } from '@playwright/test'
-import { ctrf } from 'playwright-ctrf-json-reporter'
+import { test, expect } from "@playwright/test";
+import { ctrf } from "playwright-ctrf-json-reporter";
 
-test('checkout flow', async ({ page }) => {
-  ctrf.extra({ owner: 'checkout-team', priority: 'P1' })
+test("checkout flow", async ({ page }) => {
+	ctrf.extra({ owner: "checkout-team", priority: "P1" });
 
-  // ... test logic ...
-})
+	// ... test logic ...
+});
 ```
 
 You can call it multiple times in a single test:
 
 ```typescript
-test('search results', async ({ page }) => {
-  ctrf.extra({ owner: 'search-team' })
-  ctrf.extra({ feature: 'search', environment: 'staging' })
+test("search results", async ({ page }) => {
+	ctrf.extra({ owner: "search-team" });
+	ctrf.extra({ feature: "search", environment: "staging" });
 
-  // ... test logic ...
+	// ... test logic ...
 
-  ctrf.extra({ customMetric: 'some-value' })
-})
+	ctrf.extra({ customMetric: "some-value" });
+});
 ```
 
 The resulting `extra` field in the CTRF report:
 
 ```json
 {
-  "name": "search results",
-  "status": "passed",
-  "duration": 300,
-  "extra": {
-    "owner": "search-team",
-    "feature": "search",
-    "environment": "staging",
-    "customMetric": "some-value"
-  }
+	"name": "search results",
+	"status": "passed",
+	"duration": 300,
+	"extra": {
+		"owner": "search-team",
+		"feature": "search",
+		"environment": "staging",
+		"customMetric": "some-value"
+	}
 }
 ```
 
@@ -240,16 +240,16 @@ By setting `annotations: true` you can include annotations in the test extra pro
 You can include base-64 screenshots in your test report, you'll need to capture and attach screenshots in your Playwright tests:
 
 ```javascript
-import { test, expect } from '@playwright/test'
+import { test, expect } from "@playwright/test";
 
-test('basic test', async ({ page }, testInfo) => {
-  await page.goto('https://playwright.dev')
-  const screenshot = await page.screenshot({ quality: 50, type: 'jpeg' })
-  await testInfo.attach('screenshot', {
-    body: screenshot,
-    contentType: 'image/jpeg',
-  })
-})
+test("basic test", async ({ page }, testInfo) => {
+	await page.goto("https://playwright.dev");
+	const screenshot = await page.screenshot({ quality: 50, type: "jpeg" });
+	await testInfo.attach("screenshot", {
+		body: screenshot,
+		contentType: "image/jpeg",
+	});
+});
 ```
 
 #### Supported Formats
@@ -266,8 +266,8 @@ You can include browser information in your test report. You will need to extend
 
 ```javascript
 // tests/helpers.ts
-import { test as _test, expect } from '@playwright/test';
-import os from 'os';
+import { test as _test, expect } from "@playwright/test";
+import os from "os";
 
 export const test = _test.extend<{ _autoAttachMetadata: void }>({
     _autoAttachMetadata: [async ({ browser, browserName }, use, testInfo) => {
@@ -294,11 +294,11 @@ Replace the standard Playwright test import with the custom test fixture in your
 
 ```javascript
 // tests/my-test.spec.ts
-import { test, expect } from './helpers' // Adjust the path as necessary
+import { test, expect } from "./helpers"; // Adjust the path as necessary
 
-test('example test', async ({ page }) => {
-  // ... your test logic ...
-})
+test("example test", async ({ page }) => {
+	// ... your test logic ...
+});
 ```
 
 The browser metadata file must be called metadata.json and contain properties name and version in the body.
