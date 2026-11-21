@@ -37,7 +37,7 @@ afterAll(() => {
 		);
 });
 
-describe("CTRF 0.2.0 standard conformance / unit", () => {
+describe("CTRF 0.3.0 standard conformance / unit", () => {
 	for (const entry of catalogue.entries) {
 		const capability = disposition(entry, manifest);
 		if (!capability.supported) {

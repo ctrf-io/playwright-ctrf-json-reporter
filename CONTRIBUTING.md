@@ -121,7 +121,7 @@ declared in this repository. It does not publish a package or install browsers.
 The fixture suite uses plain assertions and covers passing, failing, skipped,
 expected-failure and retried tests. It runs in full, annotations-enabled and
 minimal modes. A harness requires the expected failing runner exit code and
-then validates the actual report files against CTRF specification 0.2.0, the
+then validates the actual report files against CTRF specification 0.3.0, the
 expected outcomes, retry history, timestamps, failure text, runtime metadata
 and supported identities. The checker also has to reject deliberately
 corrupted reports, including schema-valid semantic errors.

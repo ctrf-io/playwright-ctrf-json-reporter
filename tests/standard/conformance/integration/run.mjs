@@ -13,6 +13,7 @@ import {
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { catalogue } from "../shared/checks.mjs";
 import { reportPath, writeReport } from "../reporters/ctrf.mjs";
 import { configuredOptions, expectedReport } from "../expected.mjs";
 
@@ -309,7 +310,7 @@ try {
 	);
 	assert.equal(
 		summary.tests,
-		185,
+		catalogue.entries.length,
 		`Incomplete test registration\n${output}\n${result.stderr}`,
 	);
 	const failures = output
