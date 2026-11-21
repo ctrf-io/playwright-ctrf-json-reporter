@@ -9,7 +9,7 @@ import { expectedFailure } from "../expected-failures.mjs";
 
 const ajv = new Ajv({ allErrors: true, allowUnionTypes: true });
 addFormats(ajv);
-const validate = ajv.compile(getSchema("0.2.0"));
+const validate = ajv.compile(getSchema("0.3.0"));
 
 export function reportPath(level) {
 	const base = process.env.CTRF_STANDARD_ARTIFACTS ?? "ctrf";
@@ -78,7 +78,7 @@ export function createReport(records, level, tool, start, stop = Date.now()) {
 		summary[status] = tests.filter((test) => test.status === status).length;
 	const report = {
 		reportFormat: "CTRF",
-		specVersion: "0.2.0",
+		specVersion: "0.3.0",
 		reportId: randomUUID(),
 		timestamp: new Date(stop).toISOString(),
 		generatedBy: "ctrf-standard-tests",

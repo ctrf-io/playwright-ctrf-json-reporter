@@ -1,6 +1,6 @@
 {
-	"version": 1,
-	"specVersion": "0.2.0",
+	"version": 2,
+	"specVersion": "0.3.0",
 	"entries": [
 		{
 			"id": "conformance/property/reportFormat",
@@ -36,6 +36,36 @@
 			"id": "conformance/property/generatedBy",
 			"kind": "property",
 			"path": "generatedBy",
+			"required": false
+		},
+		{
+			"id": "conformance/property/provenance",
+			"kind": "property",
+			"path": "provenance",
+			"required": false
+		},
+		{
+			"id": "conformance/property/provenance.inputs",
+			"kind": "property",
+			"path": "provenance.inputs",
+			"required": true
+		},
+		{
+			"id": "conformance/property/provenance.inputs[].reportId",
+			"kind": "property",
+			"path": "provenance.inputs[].reportId",
+			"required": true
+		},
+		{
+			"id": "conformance/property/provenance.inputs[].extra",
+			"kind": "property",
+			"path": "provenance.inputs[].extra",
+			"required": false
+		},
+		{
+			"id": "conformance/property/provenance.extra",
+			"kind": "property",
+			"path": "provenance.extra",
 			"required": false
 		},
 		{
@@ -189,6 +219,12 @@
 			"required": true
 		},
 		{
+			"id": "conformance/property/results.tests[].description",
+			"kind": "property",
+			"path": "results.tests[].description",
+			"required": false
+		},
+		{
 			"id": "conformance/property/results.tests[].status",
 			"kind": "property",
 			"path": "results.tests[].status",
@@ -228,6 +264,42 @@
 			"id": "conformance/property/results.tests[].trace",
 			"kind": "property",
 			"path": "results.tests[].trace",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].assertionFailures",
+			"kind": "property",
+			"path": "results.tests[].assertionFailures",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].assertionFailures[].message",
+			"kind": "property",
+			"path": "results.tests[].assertionFailures[].message",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].assertionFailures[].trace",
+			"kind": "property",
+			"path": "results.tests[].assertionFailures[].trace",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].assertionFailures[].expected",
+			"kind": "property",
+			"path": "results.tests[].assertionFailures[].expected",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].assertionFailures[].actual",
+			"kind": "property",
+			"path": "results.tests[].assertionFailures[].actual",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].assertionFailures[].extra",
+			"kind": "property",
+			"path": "results.tests[].assertionFailures[].extra",
 			"required": false
 		},
 		{
@@ -327,6 +399,42 @@
 			"required": false
 		},
 		{
+			"id": "conformance/property/results.tests[].retryAttempts[].assertionFailures",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].assertionFailures",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].assertionFailures[].message",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].assertionFailures[].message",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].assertionFailures[].trace",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].assertionFailures[].trace",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].assertionFailures[].expected",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].assertionFailures[].expected",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].assertionFailures[].actual",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].assertionFailures[].actual",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].assertionFailures[].extra",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].assertionFailures[].extra",
+			"required": false
+		},
+		{
 			"id": "conformance/property/results.tests[].retryAttempts[].line",
 			"kind": "property",
 			"path": "results.tests[].retryAttempts[].line",
@@ -360,6 +468,12 @@
 			"id": "conformance/property/results.tests[].retryAttempts[].stop",
 			"kind": "property",
 			"path": "results.tests[].retryAttempts[].stop",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.tests[].retryAttempts[].threadId",
+			"kind": "property",
+			"path": "results.tests[].retryAttempts[].threadId",
 			"required": false
 		},
 		{
@@ -771,6 +885,30 @@
 			"required": false
 		},
 		{
+			"id": "conformance/property/results.errors",
+			"kind": "property",
+			"path": "results.errors",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.errors[].message",
+			"kind": "property",
+			"path": "results.errors[].message",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.errors[].trace",
+			"kind": "property",
+			"path": "results.errors[].trace",
+			"required": false
+		},
+		{
+			"id": "conformance/property/results.errors[].extra",
+			"kind": "property",
+			"path": "results.errors[].extra",
+			"required": false
+		},
+		{
 			"id": "conformance/property/results.extra",
 			"kind": "property",
 			"path": "results.extra",
@@ -1091,6 +1229,36 @@
 			"id": "conformance/report/respects-reserved-extension-ownership",
 			"kind": "report",
 			"rule": "respects-reserved-extension-ownership"
+		},
+		{
+			"id": "conformance/report/provenance-identities-are-distinct",
+			"kind": "report",
+			"rule": "provenance-identities-are-distinct"
+		},
+		{
+			"id": "conformance/report/provenance-records-direct-sources",
+			"kind": "report",
+			"rule": "provenance-records-direct-sources"
+		},
+		{
+			"id": "conformance/report/assertion-failures-belong-to-attempt",
+			"kind": "report",
+			"rule": "assertion-failures-belong-to-attempt"
+		},
+		{
+			"id": "conformance/report/global-errors-belong-to-run",
+			"kind": "report",
+			"rule": "global-errors-belong-to-run"
+		},
+		{
+			"id": "conformance/report/thread-ids-belong-to-attempt",
+			"kind": "report",
+			"rule": "thread-ids-belong-to-attempt"
+		},
+		{
+			"id": "conformance/report/global-error-merge-preserves-inputs",
+			"kind": "report",
+			"rule": "global-error-merge-preserves-inputs"
 		}
 	]
 }

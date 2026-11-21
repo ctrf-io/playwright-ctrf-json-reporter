@@ -1,6 +1,6 @@
 {
 	"reporter": "playwright",
-	"specVersion": "0.2.0",
+	"specVersion": "0.3.0",
 	"properties": {
 		"reportFormat": {
 			"supported": true,
@@ -661,6 +661,98 @@
 		"baseline.extra": {
 			"supported": false,
 			"reason": "The Playwright adapter does not emit this optional property"
+		},
+		"provenance": {
+			"supported": false,
+			"reason": "Source reports are not CTRF inputs; this producer does not emit document provenance."
+		},
+		"provenance.inputs": {
+			"supported": false,
+			"reason": "Source reports are not CTRF inputs; this producer does not emit document provenance."
+		},
+		"provenance.inputs[].reportId": {
+			"supported": false,
+			"reason": "Source reports are not CTRF inputs; this producer does not emit document provenance."
+		},
+		"provenance.inputs[].extra": {
+			"supported": false,
+			"reason": "Source reports are not CTRF inputs; this producer does not emit document provenance."
+		},
+		"provenance.extra": {
+			"supported": false,
+			"reason": "Source reports are not CTRF inputs; this producer does not emit document provenance."
+		},
+		"results.tests[].description": {
+			"supported": false,
+			"reason": "The reporter does not yet emit this optional CTRF 0.3.0 property."
+		},
+		"results.tests[].assertionFailures": {
+			"supported": false,
+			"reason": "The reporter does not yet emit this optional CTRF 0.3.0 property."
+		},
+		"results.tests[].assertionFailures[].message": {
+			"supported": false,
+			"reason": "The reporter does not yet emit this optional CTRF 0.3.0 property."
+		},
+		"results.tests[].assertionFailures[].trace": {
+			"supported": false,
+			"reason": "The reporter does not yet emit this optional CTRF 0.3.0 property."
+		},
+		"results.tests[].assertionFailures[].expected": {
+			"supported": false,
+			"reason": "The reporter does not yet emit this optional CTRF 0.3.0 property."
+		},
+		"results.tests[].assertionFailures[].actual": {
+			"supported": false,
+			"reason": "The reporter does not yet emit this optional CTRF 0.3.0 property."
+		},
+		"results.tests[].assertionFailures[].extra": {
+			"supported": false,
+			"reason": "The reporter does not yet emit this optional CTRF 0.3.0 property."
+		},
+		"results.tests[].retryAttempts[].assertionFailures": {
+			"supported": false,
+			"reason": "The reporter does not yet emit this optional CTRF 0.3.0 property."
+		},
+		"results.tests[].retryAttempts[].assertionFailures[].message": {
+			"supported": false,
+			"reason": "The reporter does not yet emit this optional CTRF 0.3.0 property."
+		},
+		"results.tests[].retryAttempts[].assertionFailures[].trace": {
+			"supported": false,
+			"reason": "The reporter does not yet emit this optional CTRF 0.3.0 property."
+		},
+		"results.tests[].retryAttempts[].assertionFailures[].expected": {
+			"supported": false,
+			"reason": "The reporter does not yet emit this optional CTRF 0.3.0 property."
+		},
+		"results.tests[].retryAttempts[].assertionFailures[].actual": {
+			"supported": false,
+			"reason": "The reporter does not yet emit this optional CTRF 0.3.0 property."
+		},
+		"results.tests[].retryAttempts[].assertionFailures[].extra": {
+			"supported": false,
+			"reason": "The reporter does not yet emit this optional CTRF 0.3.0 property."
+		},
+		"results.tests[].retryAttempts[].threadId": {
+			"supported": false,
+			"reason": "The reporter does not yet emit this optional CTRF 0.3.0 property."
+		},
+		"results.errors": {
+			"supported": false,
+			"reason": "The reporter does not yet emit this optional CTRF 0.3.0 property."
+		},
+		"results.errors[].message": {
+			"supported": false,
+			"reason": "The reporter does not yet emit this optional CTRF 0.3.0 property."
+		},
+		"results.errors[].trace": {
+			"supported": false,
+			"reason": "The reporter does not yet emit this optional CTRF 0.3.0 property."
+		},
+		"results.errors[].extra": {
+			"supported": false,
+			"reason": "The reporter does not yet emit this optional CTRF 0.3.0 property."
 		}
 	},
 	"rules": {
@@ -743,6 +835,31 @@
 		"respects-reserved-extension-ownership": {
 			"supported": true,
 			"reason": "Applicable to supported output"
+		},
+		"provenance-identities-are-distinct": {
+			"supported": false,
+			"reason": "The reporter does not implement the optional diagnostic or CTRF derivation capability required for this scenario."
+		},
+		"provenance-records-direct-sources": {
+			"supported": false,
+			"reason": "The reporter does not implement the optional diagnostic or CTRF derivation capability required for this scenario."
+		},
+		"assertion-failures-belong-to-attempt": {
+			"supported": false,
+			"reason": "The reporter does not implement the optional diagnostic or CTRF derivation capability required for this scenario."
+		},
+		"global-errors-belong-to-run": {
+			"supported": false,
+			"reason": "The reporter does not implement the optional diagnostic or CTRF derivation capability required for this scenario."
+		},
+		"thread-ids-belong-to-attempt": {
+			"supported": false,
+			"reason": "The reporter does not implement the optional diagnostic or CTRF derivation capability required for this scenario."
+		},
+		"global-error-merge-preserves-inputs": {
+			"supported": false,
+			"reason": "The reporter does not implement the optional diagnostic or CTRF derivation capability required for this scenario."
 		}
-	}
+	},
+	"sourceRevision": "ctrf-io/ctrf@v0.3.0; standard-checker-controls-v2-0.3.0"
 }

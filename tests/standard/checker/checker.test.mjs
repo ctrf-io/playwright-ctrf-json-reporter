@@ -16,7 +16,7 @@ const rule = (name) => catalogue.entries.find((entry) => entry.rule === name);
 function control() {
 	const report = {
 		reportFormat: "CTRF",
-		specVersion: "0.2.0",
+		specVersion: "0.3.0",
 		results: {
 			tool: { name: "independent-control" },
 			summary: {
@@ -381,4 +381,232 @@ test("checker/schema/shared-snapshot-matches-declared-files", () => {
 			sha256,
 			`Shared file drift: ${file}; review and synchronize the standard revision across reporters`,
 		);
+});
+
+const sourceA = "abcdefab-e29b-41d4-a716-446655440001";
+const sourceB = "abcdefab-e29b-41d4-a716-446655440002";
+const derived = "abcdefab-e29b-41d4-a716-446655440003";
+const syncBytes = (sample) => {
+	sample.bytes = Buffer.from(JSON.stringify(sample.report));
+};
+
+test("checker/0.3.0/optional-fields-accept-omission-and-valid-emission", () => {
+	const c = control();
+	checkEntry(rule("single-json-object"), c);
+	checkEntry(rule("declares-supported-contract"), c);
+	const { report } = c.samples[0];
+	const [result] = report.results.tests;
+	result.description = "";
+	result.threadId = "host-b/worker-2";
+	result.retryAttempts[0].threadId = "host-a/worker-1";
+	result.retryAttempts[0].assertionFailures = [{ expected: "", extra: {} }];
+	report.results.errors = [{ extra: {} }];
+	report.provenance = { inputs: [{ reportId: sourceA, extra: {} }], extra: {} };
+	syncBytes(c.samples[0]);
+	checkEntry(rule("single-json-object"), c);
+	for (const path of [
+		"results.tests[].description",
+		"results.tests[].retryAttempts[].threadId",
+		"results.tests[].retryAttempts[].assertionFailures[].expected",
+		"results.errors[].extra",
+		"provenance.inputs[].reportId",
+	])
+		checkEntry(property(path), c);
+});
+
+for (const [name, mutate] of [
+	[
+		"description",
+		(r) => {
+			r.results.tests[0].description = null;
+		},
+	],
+	[
+		"retry-thread",
+		(r) => {
+			r.results.tests[0].retryAttempts[0].threadId = 1;
+		},
+	],
+	[
+		"empty-assertions",
+		(r) => {
+			r.results.tests[0].assertionFailures = [];
+		},
+	],
+	[
+		"unformatted-comparison",
+		(r) => {
+			r.results.tests[0].retryAttempts[0].assertionFailures = [
+				{ actual: { unformatted: true } },
+			];
+		},
+	],
+	[
+		"empty-global-error",
+		(r) => {
+			r.results.errors = [{}];
+		},
+	],
+	[
+		"missing-provenance-inputs",
+		(r) => {
+			r.provenance = { extra: {} };
+		},
+	],
+	[
+		"bad-source-uuid",
+		(r) => {
+			r.provenance = { inputs: [{ reportId: "not-a-uuid" }] };
+		},
+	],
+]) {
+	test(`checker/0.3.0/rejects-${name}-even-without-capability`, () => {
+		const c = control();
+		mutate(c.samples[0].report);
+		syncBytes(c.samples[0]);
+		assert.throws(() => checkEntry(rule("single-json-object"), c));
+	});
+}
+
+test("checker/0.3.0/duplicate-identity-ignores-case-and-input-metadata", () => {
+	const c = control();
+	c.samples[0].report.provenance = {
+		inputs: [
+			{ reportId: sourceA },
+			{ reportId: sourceA.toUpperCase(), extra: { shard: 2 } },
+		],
+	};
+	syncBytes(c.samples[0]);
+	assert.throws(
+		() => checkEntry(rule("single-json-object"), c),
+		/duplicate provenance reportId/,
+	);
+});
+
+test("checker/0.3.0/no-self-reference-even-with-different-case", () => {
+	const c = control();
+	c.samples[0].report.reportId = sourceA;
+	c.samples[0].report.provenance = {
+		inputs: [{ reportId: sourceA.toUpperCase() }],
+	};
+	syncBytes(c.samples[0]);
+	assert.throws(
+		() => checkEntry(rule("single-json-object"), c),
+		/references its own/,
+	);
+});
+
+test("checker/0.3.0/direct-lineage-excludes-flattened-ancestors-and-omits-unidentified-sources", () => {
+	const c = control();
+	const [sample] = c.samples;
+	sample.report.reportId = derived;
+	sample.directSources = [
+		{ reportId: sourceA, provenance: { inputs: [{ reportId: "ancestor" }] } },
+		{ reportId: sourceB },
+	];
+	sample.report.provenance = {
+		inputs: [{ reportId: sourceB }, { reportId: sourceA.toUpperCase() }],
+	};
+	const unidentified = control().samples[0];
+	unidentified.directSources = [{ reportId: sourceA }, {}];
+	c.samples.push(unidentified);
+	const check = () => checkEntry(rule("provenance-records-direct-sources"), c);
+	check();
+	delete sample.report.reportId;
+	check();
+	assert.match(c.warnings.at(-1), /SHOULD/);
+	sample.report.provenance.inputs[0] = { reportId: "ancestor" };
+	assert.throws(check, /all and only direct/);
+	sample.report.provenance.inputs[0] = { reportId: sourceB };
+	unidentified.report.provenance = { inputs: [{ reportId: sourceA }] };
+	assert.throws(check, /omit lineage/);
+});
+
+test("checker/0.3.0/assertion-and-thread-mapping-uses-independent-attempt-evidence", () => {
+	const c = control();
+	const [sample] = c.samples;
+	assert.throws(
+		() => checkEntry(rule("assertion-failures-belong-to-attempt"), c),
+		/Missing positive native attempt evidence/,
+	);
+	const [native] = sample.expected.results.tests;
+	native.assertionFailures = undefined; // Earlier failure must be omitted on final pass.
+	native.threadId = "host-b/worker-2";
+	native.retryAttempts = [
+		{
+			threadId: "host-a/worker-1",
+			assertionFailures: [{ message: "comparison", actual: "" }],
+		},
+	];
+	const [output] = sample.report.results.tests;
+	output.threadId = "host-b/worker-2";
+	output.retryAttempts[0].threadId = "host-a/worker-1";
+	output.retryAttempts[0].assertionFailures = [
+		{ message: "comparison", actual: "" },
+	];
+	const assertionRule = rule("assertion-failures-belong-to-attempt");
+	const threadRule = rule("thread-ids-belong-to-attempt");
+	checkEntry(assertionRule, c);
+	checkEntry(threadRule, c);
+	output.retryAttempts[0].threadId = output.threadId;
+	assert.throws(() => checkEntry(threadRule, c), /attempt 1/);
+	output.retryAttempts[0].assertionFailures[0].expected = "inferred";
+	assert.throws(() => checkEntry(assertionRule, c), /attempt 1/);
+	delete output.retryAttempts[0].assertionFailures[0].expected;
+	output.assertionFailures = [{ message: "comparison", actual: "" }];
+	assert.throws(() => checkEntry(assertionRule, c), /assertionFailures/);
+});
+
+test("checker/0.3.0/global-errors-do-not-become-tests-even-if-counts-are-consistent", () => {
+	const c = control();
+	const [sample] = c.samples;
+	sample.expected.results.errors = [{ message: "worker setup" }];
+	sample.expected.results.tests[0].name = "case";
+	sample.report.results.errors = [{ message: "worker setup" }];
+	checkEntry(rule("global-errors-belong-to-run"), c);
+	sample.report.results.tests.push({
+		name: "worker setup",
+		status: "failed",
+		duration: 0,
+	});
+	sample.report.results.summary.tests++;
+	sample.report.results.summary.failed++;
+	checkEntry(rule("summary-matches-final-results"), c);
+	assert.throws(
+		() => checkEntry(rule("global-errors-belong-to-run"), c),
+		/must not become test results/,
+	);
+});
+
+test("checker/0.3.0/error-merge-multiplicity-is-advisory-but-evidence-is-required", () => {
+	const c = control();
+	const [sample] = c.samples;
+	const check = () =>
+		checkEntry(rule("global-error-merge-preserves-inputs"), c);
+	assert.throws(check, /Missing merge evidence/);
+	const error = { message: "setup", extra: { retryable: true } };
+	sample.directSources = [
+		{ results: {} },
+		{ results: { errors: [error, error] } },
+	];
+	sample.report.results.errors = structuredClone([error, error]);
+	check();
+	assert.equal(c.warnings.length, 0);
+	sample.report.results.errors.pop();
+	check();
+	assert.match(c.warnings[0], /SHOULD/);
+});
+
+test("checker/0.3.0/core-accepts-opaque-extension-values-without-extension-validation", () => {
+	const c = control();
+	const [sample] = c.samples;
+	sample.report.extra = {
+		"example/private": null,
+		"ctrf.future": { extensionVersion: 42 },
+	};
+	sample.report.results.tests[0].extra = {
+		"ctrf.future": ["opaque", false],
+	};
+	syncBytes(sample);
+	checkEntry(rule("single-json-object"), c);
 });

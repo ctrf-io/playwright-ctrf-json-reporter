@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { TextDecoder } from "node:util";
+import { isDeepStrictEqual, TextDecoder } from "node:util";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
 import { getSchema } from "ctrf";
@@ -188,7 +188,162 @@ function sourcePairs(sample) {
 	]);
 }
 
+function checkProvenanceIdentities(report, name) {
+	const inputs = report.provenance?.inputs;
+	if (!inputs) return;
+	const ids = inputs.map(({ reportId }) => reportId.toLowerCase());
+	unique(ids, `${name}: duplicate provenance reportId`);
+	assert.ok(
+		!ids.includes(report.reportId?.toLowerCase()),
+		`${name}: provenance references its own reportId`,
+	);
+}
+
+// A diagnostic is evidence only when a controlled source oracle explicitly
+// records it. An own property of undefined means the output must omit it.
+function matchSourceValue(actual, expected, key, label) {
+	if (!Object.hasOwn(expected ?? {}, key)) return false;
+	assert.deepEqual(actual[key], expected[key], label);
+	if (expected[key] === undefined)
+		assert.ok(!Object.hasOwn(actual, key), `${label}: expected omission`);
+	return expected[key] !== undefined;
+}
+
+function checkAttemptEvidence(context, key) {
+	let witnessed = false;
+	for (const sample of context.samples) {
+		for (const [test, expected] of sourcePairs(sample)) {
+			const label = `${sample.name}: ${test.name} ${key}`;
+			witnessed = matchSourceValue(test, expected, key, label) || witnessed;
+			if (!expected?.retryAttempts) continue;
+			for (const [index, attempt] of expected.retryAttempts.entries()) {
+				if (!Object.hasOwn(attempt ?? {}, key)) continue;
+				const actual = test.retryAttempts?.[index];
+				assert.ok(actual, `${label}: missing history attempt ${index + 1}`);
+				witnessed =
+					matchSourceValue(
+						actual,
+						attempt,
+						key,
+						`${label} (attempt ${index + 1})`,
+					) || witnessed;
+			}
+		}
+	}
+	assert.ok(witnessed, `Missing positive native attempt evidence for ${key}`);
+}
+
 export const reportChecks = {
+	"provenance-identities-are-distinct": (context) => {
+		assert.ok(
+			context.samples.some(({ report }) => report.provenance),
+			"Missing provenance output",
+		);
+		for (const { report, name } of context.samples)
+			checkProvenanceIdentities(report, name);
+	},
+	"provenance-records-direct-sources": (context) => {
+		let witnessed = false;
+		for (const { report, name, directSources } of context.samples) {
+			if (!directSources) continue;
+			assert.ok(
+				directSources.length > 0,
+				`${name}: missing direct source evidence`,
+			);
+			const sourceIds = directSources.map(({ reportId }) =>
+				reportId?.toLowerCase(),
+			);
+			if (sourceIds.includes(undefined)) {
+				assert.ok(
+					!Object.hasOwn(report, "provenance"),
+					`${name}: omit lineage when a source lacks an ID`,
+				);
+				continue;
+			}
+			assert.ok(
+				report.provenance,
+				`${name}: missing provenance for the implemented scenario`,
+			);
+			checkProvenanceIdentities(report, name);
+			const expected = [...new Set(sourceIds)].sort();
+			const actual = report.provenance.inputs
+				.map(({ reportId }) => reportId.toLowerCase())
+				.sort();
+			assert.deepEqual(
+				actual,
+				expected,
+				`${name}: record all and only direct source IDs`,
+			);
+			if (!report.reportId) {
+				context.warnings ??= [];
+				context.warnings.push(
+					`${name}: a derived report should have a new reportId (SHOULD, Core §20.1)`,
+				);
+			}
+			witnessed = true;
+		}
+		assert.ok(witnessed, "Missing positive direct source evidence");
+	},
+	"assertion-failures-belong-to-attempt": (context) =>
+		checkAttemptEvidence(context, "assertionFailures"),
+	"thread-ids-belong-to-attempt": (context) =>
+		checkAttemptEvidence(context, "threadId"),
+	"global-errors-belong-to-run": (context) => {
+		let witnessed = false;
+		for (const { report, name, expected } of context.samples) {
+			witnessed =
+				matchSourceValue(
+					report.results,
+					expected?.results,
+					"errors",
+					`${name}: run error mapping`,
+				) || witnessed;
+			if (
+				report.results.errors &&
+				Object.hasOwn(expected?.results ?? {}, "errors")
+			) {
+				assert.ok(
+					Array.isArray(expected.results.tests),
+					`${name}: missing independent test case evidence`,
+				);
+				assert.deepEqual(
+					report.results.tests.map(({ name }) => name),
+					expected.results.tests.map(({ name }) => name),
+					`${name}: global errors must not become test results`,
+				);
+			}
+		}
+		assert.ok(witnessed, "Missing positive native global error evidence");
+	},
+	"global-error-merge-preserves-inputs": (context) => {
+		let witnessed = false;
+		for (const { report, name, directSources } of context.samples) {
+			if (!directSources || directSources.length < 2) continue;
+			const expected = directSources.flatMap(
+				(source) => source.results.errors ?? [],
+			);
+			if (!expected.length) continue;
+			witnessed = true;
+			// The recommendation requires preservation of entries and multiplicity.
+			// There is no prescribed relative order of source reports.
+			const extra = [...(report.results.errors ?? [])];
+			let missing = false;
+			for (const error of expected) {
+				const index = extra.findIndex((candidate) =>
+					isDeepStrictEqual(candidate, error),
+				);
+				if (index === -1) missing = true;
+				else extra.splice(index, 1);
+			}
+			if (missing || extra.length) {
+				context.warnings ??= [];
+				context.warnings.push(
+					`${name}: merge should retain all input errors without deduplicating (SHOULD, Core §6.5)`,
+				);
+			}
+		}
+		assert.ok(witnessed, "Missing merge evidence with input errors");
+	},
 	"utf8-without-bom": (context) => {
 		for (const sample of context.samples) {
 			assert.ok(
@@ -206,6 +361,8 @@ export const reportChecks = {
 				validateDocument(report),
 				`${sample.name}: ${ajv.errorsText(validateDocument.errors)}`,
 			);
+			// Even unsupported optional features must obey intrinsic rules if emitted.
+			checkProvenanceIdentities(report, sample.name);
 		}
 	},
 	"declares-supported-contract": (context) => {

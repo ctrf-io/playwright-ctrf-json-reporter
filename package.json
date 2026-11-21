@@ -1,6 +1,6 @@
 {
 	"name": "playwright-ctrf-json-reporter",
-	"version": "0.2.2",
+	"version": "0.3.0",
 	"description": "A Playwright JSON test reporter to create test results reports",
 	"type": "module",
 	"main": "./dist/index.cjs",
@@ -67,22 +67,19 @@
 		"url": "https://github.com/ctrf-io/.github/blob/main/SECURITY.md"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.6.4",
+		"@biomejs/biome": "2.6.8",
 		"@d2t/vitest-ctrf-json-reporter": "1.3.0",
-		"@playwright/test": "1.64.1",
+		"@playwright/test": "1.65.1",
 		"@types/node": "26.6.6",
-		"@vitest/coverage-v8": "5.0.5",
+		"@vitest/coverage-v8": "5.1.1",
 		"tsup": "9.0.0",
 		"typescript": "npm:@typescript/typescript6@6.0.2",
-		"vitest": "5.0.5",
+		"vitest": "5.1.1",
 		"@typescript/native": "npm:typescript@7.0.2",
 		"ajv": "8.20.0",
 		"ajv-formats": "3.0.1"
 	},
 	"dependencies": {
-		"ctrf": "0.5.0"
-	},
-	"overrides": {
-		"esbuild": "0.28.2"
+		"ctrf": "0.6.0"
 	}
 }
