@@ -1,5 +1,16 @@
 // Playwright adapter oracle. The shared checker imports neither the reporter
 // implementation nor this framework-specific mapping.
+
+// Playwright's worker process (workerIndex, new after each restart) names the
+// thread, after the shard label when there is one. A result that never ran in
+// a worker has -1 and records no thread.
+const thread = (attempt, shardId) =>
+	attempt.workerIndex >= 0
+		? {
+				threadId: `${shardId ? `${shardId}/` : ""}worker-${attempt.workerIndex}`,
+			}
+		: {};
+
 export function expectedReport(native, options = {}) {
 	const cases = native.tests.map((test) => {
 		const last = test.attempts.at(-1);
@@ -44,6 +55,14 @@ export function expectedReport(native, options = {}) {
 					.some((attempt) => ["failed", "timedOut"].includes(attempt.status)),
 			stdout: last.stdout,
 			stderr: last.stderr,
+			...thread(last, options.shardId),
+			...(test.attempts.length > 1
+				? {
+						retryAttempts: test.attempts
+							.slice(0, -1)
+							.map((attempt) => thread(attempt, options.shardId)),
+					}
+				: {}),
 		};
 	});
 	const summary = { tests: cases.length };

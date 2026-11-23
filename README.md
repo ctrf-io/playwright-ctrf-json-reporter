@@ -163,6 +163,7 @@ The test object in the report includes the following [CTRF properties](https://c
 | `retries`     | Number           | Optional | The number of retries attempted for the test.                                       |
 | `flaky`       | Boolean          | Optional | Indicates whether the test result is flaky.                                         |
 | `browser`     | String           | Optional | The browser used for the test.                                                      |
+| `threadId`    | String           | Optional | The worker that ran the test: `worker-<workerIndex>`, after the shard label if any. |
 | `attachments` | Array of Objects | Optional | The attachments attached to the test.                                               |
 | `stdout`      | Array of Strings | Optional | The standard output of the test.                                                    |
 | `stderr`      | Array of Strings | Optional | The standard error of the test.                                                     |

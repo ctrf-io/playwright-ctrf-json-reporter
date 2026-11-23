@@ -303,6 +303,7 @@ class GenerateCtrfReport implements Reporter {
 			test.type = this.reporterConfigOptions.testType ?? "e2e";
 			test.filePath = testCase.location.file;
 			test.retries = testResult.retry;
+			test.threadId = this.threadIdFor(testResult);
 			test.flaky =
 				status === "passed" &&
 				testResult.status === "passed" &&
@@ -357,6 +358,7 @@ class GenerateCtrfReport implements Reporter {
 						attachments: this.filterValidAttachments(
 							retryResult.attachments ?? [],
 						),
+						threadId: this.threadIdFor(retryResult),
 					};
 					test.retryAttempts.push(retryAttempt);
 				}
@@ -589,6 +591,23 @@ class GenerateCtrfReport implements Reporter {
 	/** Convert a Playwright test start time to Unix epoch milliseconds. */
 	updateStart(startTime: Date): number {
 		return startTime.getTime();
+	}
+
+	/**
+	 * CTRF threadId for one Playwright attempt: the worker process that ran it
+	 * (`workerIndex`; a restarted worker gets a new one). When this report labels
+	 * a shard, the label comes first (`2-of-4/worker-0`), so threads stay
+	 * distinct when shard reports are merged. `playwright merge-reports`
+	 * renumbers `workerIndex` across shards itself. Omitted for a result that
+	 * never ran in a worker (index -1).
+	 */
+	threadIdFor(testResult: TestResult): string | undefined {
+		const { workerIndex } = testResult;
+		if (!(workerIndex >= 0)) return undefined;
+		const { shardId } = this.ctrfEnvironment;
+		return shardId
+			? `${shardId}/worker-${workerIndex}`
+			: `worker-${workerIndex}`;
 	}
 
 	/** Calculate a Playwright test stop time in Unix epoch milliseconds. */

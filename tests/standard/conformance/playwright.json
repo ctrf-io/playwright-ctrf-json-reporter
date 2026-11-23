@@ -283,8 +283,8 @@
 			"reason": "Emitted by the adapter"
 		},
 		"results.tests[].threadId": {
-			"supported": false,
-			"reason": "The Playwright adapter does not emit this optional property"
+			"supported": true,
+			"reason": "Emitted by the adapter"
 		},
 		"results.tests[].browser": {
 			"supported": true,
@@ -735,8 +735,8 @@
 			"reason": "The reporter does not yet emit this optional CTRF 0.3.0 property."
 		},
 		"results.tests[].retryAttempts[].threadId": {
-			"supported": false,
-			"reason": "The reporter does not yet emit this optional CTRF 0.3.0 property."
+			"supported": true,
+			"reason": "Emitted by the adapter"
 		},
 		"results.errors": {
 			"supported": false,
@@ -853,8 +853,8 @@
 			"reason": "The reporter does not implement the optional diagnostic or CTRF derivation capability required for this scenario."
 		},
 		"thread-ids-belong-to-attempt": {
-			"supported": false,
-			"reason": "The reporter does not implement the optional diagnostic or CTRF derivation capability required for this scenario."
+			"supported": true,
+			"reason": "Applicable to supported output"
 		},
 		"global-error-merge-preserves-inputs": {
 			"supported": false,
