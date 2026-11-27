@@ -20,6 +20,10 @@ function result(status: string, retry: number): TestResult {
 	return {
 		status,
 		retry,
+		// A retry runs in a new worker (workerIndex), which can take the same
+		// slot (parallelIndex) as the attempt before it; the two never match here.
+		parallelIndex: retry % 2,
+		workerIndex: retry + 5,
 		duration: 10 + retry,
 		startTime: new Date(epoch + retry * 30),
 		error: failed

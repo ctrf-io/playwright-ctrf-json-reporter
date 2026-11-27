@@ -466,6 +466,108 @@ describe("GenerateCtrfReport", () => {
 		});
 	});
 
+	describe("threadId", () => {
+		const retriedTest = () =>
+			fakeTestCase(
+				[
+					interruptedResult({
+						retry: 0,
+						status: "failed",
+						parallelIndex: 0,
+						workerIndex: 0,
+					}),
+					interruptedResult({
+						retry: 1,
+						status: "failed",
+						parallelIndex: 1,
+						workerIndex: 1,
+					}),
+					interruptedResult({
+						retry: 2,
+						status: "passed",
+						parallelIndex: 0,
+						workerIndex: 2,
+					}),
+				],
+				"passed",
+				fakeSuite("sample.spec.ts", "file"),
+			);
+
+		it("names the worker of the final attempt and of each earlier attempt", () => {
+			const reporter = new GenerateCtrfReport();
+
+			// Playwright starts a new worker after a failure (new workerIndex),
+			// which takes the slot (parallelIndex) of the one it replaces: worker 2
+			// runs in slot 0 after worker 0 failed there.
+			reporter.processTest(retriedTest());
+
+			const test = reporter.ctrfReport.results.tests[0];
+			expect(test?.threadId).toBe("worker-2");
+			expect(test?.retryAttempts?.map((attempt) => attempt.threadId)).toEqual([
+				"worker-0",
+				"worker-1",
+			]);
+			expect(() =>
+				validateStrict(reporter.ctrfReport, {
+					specVersion: CURRENT_SPEC_VERSION,
+				}),
+			).not.toThrow();
+		});
+
+		it("starts with the Playwright shard, so merged shards do not collide", () => {
+			const reporter = new GenerateCtrfReport();
+
+			reporter.onBegin(
+				{ ...fakeConfig, shard: { current: 2, total: 4 } },
+				fakeSuite("", "root"),
+			);
+			reporter.processTest(retriedTest());
+
+			const test = reporter.ctrfReport.results.tests[0];
+			expect(test?.threadId).toBe("2-of-4/worker-2");
+			expect(test?.retryAttempts?.map((attempt) => attempt.threadId)).toEqual([
+				"2-of-4/worker-0",
+				"2-of-4/worker-1",
+			]);
+		});
+
+		it("starts with the configured shardId when one is set", () => {
+			const reporter = new GenerateCtrfReport({ shardId: "firefox" });
+
+			reporter.onBegin(
+				{ ...fakeConfig, shard: { current: 2, total: 4 } },
+				fakeSuite("", "root"),
+			);
+			reporter.processTest(retriedTest());
+
+			expect(reporter.ctrfReport.results.tests[0]?.threadId).toBe(
+				"firefox/worker-2",
+			);
+		});
+
+		it("is omitted for a result that never ran in a worker", () => {
+			const reporter = new GenerateCtrfReport();
+
+			reporter.processTest(
+				fakeTestCase([
+					interruptedResult({ parallelIndex: -1, workerIndex: -1 }),
+				]),
+			);
+
+			expect(reporter.ctrfReport.results.tests[0]?.threadId).toBeUndefined();
+		});
+
+		it("is not emitted in minimal reports", () => {
+			const reporter = new GenerateCtrfReport({ minimal: true });
+
+			reporter.processTest(
+				fakeTestCase([interruptedResult({ parallelIndex: 0, workerIndex: 0 })]),
+			);
+
+			expect(reporter.ctrfReport.results.tests[0]?.threadId).toBeUndefined();
+		});
+	});
+
 	describe("annotations", () => {
 		it("omits annotations by default", () => {
 			const reporter = new GenerateCtrfReport();

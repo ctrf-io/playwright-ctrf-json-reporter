@@ -28,6 +28,7 @@ class NativeWitness {
 					attempts: test.results.map((result) => ({
 						status: result.status,
 						duration: result.duration,
+						workerIndex: result.workerIndex,
 						startTime: result.startTime.toISOString(),
 						stdout: result.stdout.map((value) => value.toString()),
 						stderr: result.stderr.map((value) => value.toString()),
